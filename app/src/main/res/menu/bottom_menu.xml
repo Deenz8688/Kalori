@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home"
+        android:title="Utama"/>
+
+    <item
+        android:id="@+id/nav_bmi"
+        android:icon="@drawable/ic_bmi"
+        android:title="BMI"/>
+
+    <item
+        android:id="@+id/nav_Me"
+        android:icon="@drawable/ic_user"
+        android:title="Me"/>
+
+    <item
+        android:id="@+id/nav_kalori"
+        android:icon="@drawable/ic_kalori"
+        android:title="Kalori"/>
+
+    
+
+    <item
+        android:id="@+id/nav_report"
+        android:icon="@drawable/ic_report"
+        android:title="report"/>
+
+    
+
+</menu>
