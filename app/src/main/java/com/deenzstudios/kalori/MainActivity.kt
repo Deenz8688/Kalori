@@ -44,16 +44,6 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
 
-                R.id.nav_bmi -> {
-                    replaceFragment(BmiFragment())
-                    true
-                }
-
-                R.id.nav_Me -> {
-                    replaceFragment(MeFragment())
-                    true
-                }
-
                 R.id.nav_kalori -> {
                     replaceFragment(KaloriFragment())
                     true
@@ -61,6 +51,10 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.nav_report -> {
                     replaceFragment(ReportFragment())
+                    true
+                }
+                R.id.nav_Me -> {
+                    replaceFragment(MeFragment())
                     true
                 }
 
