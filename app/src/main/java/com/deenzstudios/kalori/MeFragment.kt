@@ -220,6 +220,30 @@ class MeFragment : Fragment() {
 
             profileLayout.visibility = View.GONE
             formLayout.visibility = View.VISIBLE
+
+            edtName.setText(sharedPref.getString("name", ""))
+            edtWeight.setText(sharedPref.getString("weight", ""))
+            edtHeight.setText(sharedPref.getString("height", ""))
+            edtAge.setText(sharedPref.getString("age", ""))
+
+            val savedGender = sharedPref.getString("gender", "")
+
+            if (savedGender == "Lelaki") {
+
+                radioMale.isChecked = true
+
+            } else {
+
+                radioFemale.isChecked = true
+            }
+
+            val savedActivity =
+                sharedPref.getString("activity", "Tidak Aktif")
+
+            val position =
+                activityLevels.indexOf(savedActivity)
+
+            spinnerActivity.setSelection(position)
         }
 
         return view
