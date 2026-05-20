@@ -1,7 +1,445 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- TAJUK -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kira Kalori"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:textColor="#000000" />
+
+        <!-- ================= SARAPAN ================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="16dp"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🍳 Sarapan"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+
+            <!-- Cari makanan -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <AutoCompleteTextView
+                    android:id="@+id/edtBreakfastFood"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:hint="Cari makanan..."
+                    android:background="@android:drawable/editbox_background"
+                    android:padding="12dp"/>
+
+            </LinearLayout>
+
+            <!-- Pilihan Gram / Hidangan -->
+            <RadioGroup
+                android:id="@+id/radioGroupBreakfast"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+
+                android:layout_marginTop="16dp">
+
+                <RadioButton
+                    android:id="@+id/radioBreakfastGram"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gram"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/radioBreakfastServing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hidangan"
+                    android:layout_marginStart="20dp" />
+
+            </RadioGroup>
+
+            <!-- Input -->
+            <AutoCompleteTextView
+                android:id="@+id/edtBreakfastAmount"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="12dp"
+                android:hint="Masukkan gram"
+                android:inputType="numberDecimal"
+                android:background="@android:drawable/editbox_background"
+                android:padding="12dp"/>
+
+            <Button
+                android:id="@+id/btnAddBreakfast"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="Tambah Hidangan"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:backgroundTint="#FFC107"
+                android:layout_marginTop="16dp" />
+
+            <!-- List -->
+            <TextView
+                android:id="@+id/txtBreakfastList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Belum ada makanan"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                android:layout_marginTop="16dp" />
+
+            <!-- Kalori -->
+            <TextView
+                android:id="@+id/txtBreakfastCalories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kalori: 0 kcal"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#4CAF50"
+                android:layout_marginTop="16dp" />
+
+
+
+
+
+            <!-- Total -->
+            <TextView
+                android:id="@+id/txtBreakfastTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Jumlah Sarapan: 0 kcal"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#FF5722"
+                android:layout_marginTop="16dp" />
+
+        </LinearLayout>
+
+        <!-- ================= TENGAH HARI ================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="16dp"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🍛 Tengah Hari"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+
+            <!-- Cari -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <EditText
+                    android:id="@+id/edtLunchFood"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:hint="Cari makanan..."
+                    android:background="@android:drawable/editbox_background"
+                    android:padding="12dp" />
+
+
+
+            </LinearLayout>
+
+            <!-- Pilihan -->
+            <RadioGroup
+                android:id="@+id/radioGroupLunch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <RadioButton
+                    android:id="@+id/radioLunchGram"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gram"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/radioLunchServing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hidangan"
+                    android:layout_marginStart="20dp" />
+
+            </RadioGroup>
+
+            <!-- Tambah -->
+            <Button
+                android:id="@+id/btnAddLunch"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="Tambah Hidangan"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:backgroundTint="#FFC107"
+                android:layout_marginTop="16dp" />
+            <!-- Input -->
+            <EditText
+                android:id="@+id/edtLunchAmount"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="12dp"
+                android:hint="Masukkan gram / hidangan"
+                android:inputType="numberDecimal"
+                android:background="@android:drawable/editbox_background"
+                android:padding="12dp" />
+
+            <!-- Calories -->
+            <TextView
+                android:id="@+id/txtLunchCalories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kalori: 0 kcal"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#4CAF50"
+                android:layout_marginTop="16dp" />
+
+
+
+            <!-- List -->
+            <TextView
+                android:id="@+id/txtLunchList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Belum ada makanan"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                android:layout_marginTop="16dp" />
+
+            <!-- Total -->
+            <TextView
+                android:id="@+id/txtLunchTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Jumlah Tengah Hari: 0 kcal"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#FF5722"
+                android:layout_marginTop="16dp" />
+
+        </LinearLayout>
+
+        <!-- ================= MAKAN MALAM ================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="16dp"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🌙 Makan Malam"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+
+            <!-- Cari -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <EditText
+                    android:id="@+id/edtDinnerFood"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:hint="Cari makanan..."
+                    android:background="@android:drawable/editbox_background"
+                    android:padding="12dp" />
+
+
+
+            </LinearLayout>
+
+            <!-- Pilihan -->
+            <RadioGroup
+                android:id="@+id/radioGroupDinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <RadioButton
+                    android:id="@+id/radioDinnerGram"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gram"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/radioDinnerServing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hidangan"
+                    android:layout_marginStart="20dp" />
+
+            </RadioGroup>
+
+            <!-- Tambah -->
+            <Button
+                android:id="@+id/btnAddDinner"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="Tambah Hidangan"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:backgroundTint="#FFC107"
+                android:layout_marginTop="16dp" />
+            
+            <!-- Input -->
+            <EditText
+                android:id="@+id/edtDinnerAmount"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="12dp"
+                android:hint="Masukkan gram / hidangan"
+                android:inputType="numberDecimal"
+                android:background="@android:drawable/editbox_background"
+                android:padding="12dp" />
+
+            <!-- Calories -->
+            <TextView
+                android:id="@+id/txtDinnerCalories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kalori: 0 kcal"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#4CAF50"
+                android:layout_marginTop="16dp" />
+
+
+
+            <!-- List -->
+            <TextView
+                android:id="@+id/txtDinnerList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Belum ada makanan"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                android:layout_marginTop="16dp" />
+
+            <!-- Total -->
+            <TextView
+                android:id="@+id/txtDinnerTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Jumlah Makan Malam: 0 kcal"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#FF5722"
+                android:layout_marginTop="16dp" />
+
+        </LinearLayout>
+
+        <!-- ================= RINGKASAN ================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#E8F5E9"
+            android:padding="20dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="40dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📊 Ringkasan Harian"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/txtTotalCalories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Jumlah Kalori: 0 kcal"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#FF5722"
+                android:layout_marginTop="20dp" />
+
+            <TextView
+                android:id="@+id/txtTdee"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TDEE: 0 kcal"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#4CAF50"
+                android:layout_marginTop="12dp" />
+
+            <TextView
+                android:id="@+id/txtBmr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BMR: 0 kcal"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#2196F3"
+                android:layout_marginTop="12dp" />
+
+            <TextView
+                android:id="@+id/txtBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Baki Kalori: 0 kcal"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#E91E63"
+                android:layout_marginTop="16dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

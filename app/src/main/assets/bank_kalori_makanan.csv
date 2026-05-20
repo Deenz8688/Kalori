@@ -1,0 +1,891 @@
+Makanan ,Hidangan ,Berat (g) (ml),Kalori (kcal) 
+Bihun bandung ,1 mangkuk ,450,490
+Bihun bandung + sayur + 1 biji telur rebus ,1 mangkuk ,250,350
+Bihun goring ,2 senduk ,170,290
+Bihun goreng + sayur + fish cake ,2 senduk ,140,240
+Bihun goreng ala Cina ,2 senduk ,140,220
+Bihun goreng putih ,2 senduk ,120,200
+Bihun goreng Singapura ,2 senduk ,120,150
+Bihun hailam + sayur + ayam ,1 mangkuk ,250,350
+Bihun kantonis + sayur + ayam ,1 pinggan ,280,430
+Bihun kari ,1 mangkuk ,250,325
+Bihun kari + sayur + ayam ,1 mangkuk ,250,330
+Bihun latna + sayur + ayam ,1 mangkuk ,250,380
+Bihun rebus + sayur + ½ biji telur rebus ,1 mangkuk ,250,310
+Bihun Soto ,1 mangkuk cina ,130,50
+Bihun sup ,1 mangkuk ,200,200
+Bihun sup + sayur + ayam ,1 mangkuk ,200,200
+Bihun tom yam + sayur + ayam ,1 mangkuk ,250,230
+Bubur ayam ,1 mangkuk ,200,70
+Bubur daging ,1 mangkuk ,200,120
+Bubur ikan ,1 mangkuk ,200,80
+Bubur nasi ,1 cawan ,170,70
+Bubur nasi + sayur campur + bawang goreng,1 mangkuk ,150,140
+Chap chye ,1 senduk ,60,50
+Char kuetiau ,2 senduk ,120,230
+Ketupat nasi ,5 potong ,200,215
+Kuetiau bandung ,1 mangkuk kecil ,450,540
+Kuetiau bandung + sayur + 1 biji telur rebus ,1 mangkuk kecil ,200,300
+Kuetiau goreng + sayur + fish cake ,2 senduk ,120,250
+Kuetiau goreng ,2 senduk ,170,320
+Kuetiau hailam + sayur + ayam ,1 mangkuk ,250,380
+Kuetiau kantonis + sayur + ayam ,1 pinggan ,280,410
+Kuetiau kari ,1 mangkuk ,250,315
+Kuetiau kari + sayur + ayam ,1 mangkuk ,250,320
+Kuetiau latna + sayur + ayam ,1 mangkuk ,250,320
+Kuetiau sup ,1 mangkuk ,250,140
+Kuetiau sup + sayur + ayam ,1 mangkuk ,250,140
+Kuetiau tom yam + sayur + ayam ,1 mangkuk ,250,210
+Laksa + sayur + ½ biji telur rebus ,1 mangkuk ,250,240
+Laksa Johor ,1 mangkuk ,250,330
+Laksa Sarawak ,1 mangkuk ,250,320
+Lemang ,1 potong ,30,100
+Lontong + nasi impit ,1 mangkuk ,300,340
+Makaroni ayam ,1 senduk ,100,150
+Makaroni bakar ,2 senduk ,90,150
+Makaroni goring ,2 senduk ,90,300
+Mi bandung ,1 mangkuk ,450,550
+Mi bandung + sayur + ayam ,1 mangkuk ,250,310
+Mi goreng ,3 senduk ,170,280
+Mi goreng + sayur + fish cake ,3 senduk ,150,250
+Mi goreng mamak ,3 senduk ,150,270
+Mi hailam + sayur + ayam ,1 mangkuk ,250,340
+Mi hailam berkuah ,1 mangkuk ,250,340
+Mi kantonis + sayur + ayam ,1 mangkuk ,280,410
+Mi kari ,1 mangkuk ,410,530
+Mi kari + sayur + ayam ,1 mangkuk ,250,320
+Mi kungfu ,1 mangkuk ,250,220
+Mi latna + sayur + ayam ,1 mangkuk ,250,400
+Mi rebus ,1 mangkuk ,250,250
+Mi rebus + sayur + ½ biji telur rebus ,1 mangkuk ,250,170
+Mi siam ,2 senduk ,100,120
+Mi sup ,1 mangkuk ,560,380
+Mi sup + sayur + ayam ,1 mangkuk ,250,170
+Mi tom yam + sayur + ayam ,1 mangkuk ,250,130
+Mi udang sup ,1 mangkuk ,480,250
+Mi wantan sup ,1 mangkuk ,250,125
+Nasi ambang ,1 hidangan ,250,325
+Nasi ayam (nasi sahaja) ,2 senduk ,100,160
+Nasi ayam (set) ,1 pinggan ,250,280
+Nasi ayam + ayam + sayur + sos cili ,1 pinggan ,250,450
+Nasi beriani (nasi sahaja) ,1 cawan ,110,200
+Nasi briyani (set) ,1 pinggan ,250,460
+Nasi briyani + ayam goreng berempah ,1 pinggan ,250,450
+Nasi dagang ,1 pinggan ,250,510
+Nasi goreng ,3 senduk ,150,290
+Nasi goreng (biasa) + sayur + fish cake ,3 senduk ,150,290
+Nasi goreng ayam + cendawan ,1 set ,240,450
+Nasi goreng cendawan ,3 senduk ,150,290
+Nasi goreng cina ,3 senduk ,150,320
+Nasi goreng cina + sayur + telur ,3 senduk ,150,320
+Nasi goreng gajus ,3 senduk ,150,330
+Nasi goreng ikan masin ,3 senduk ,150,280
+Nasi goreng ikan masin + sayur + ikan masin ,3 senduk ,150,280
+Nasi goreng kampung ,3 senduk ,150,270
+Nasi goreng kampung,3 senduk ,150,290
+Nasi goreng kerabu ,3 senduk,150,340
+Nasi goreng lada hitam + sayur + ayam ,3 senduk ,150,290
+Nasi goreng paprik ,3 senduk ,150,240
+Nasi goreng paprik + sayur + ayam ,3 senduk ,150,240
+Nasi goreng pataya + sayur + ayam + telur dadar ,3 senduk ,150,370
+Nasi goreng pattaya ,3 senduk ,150,285
+Nasi goreng udang + sayur ,3 senduk ,150,380
+Nasi goreng USA ,3 senduk ,150,285
+Nasi goreng USA + sayur + udang +  telur mata,3 senduk ,150,490
+Nasi impit ,8 kiub ,50,80
+Nasi kerabu ,1 set ,250,260
+Nasi Khabsa ,1 cawan ,110,280
+Nasi lemak (biasa) ,1 set ,180,320
+Nasi lemak (set) ,1 pinggan ,200,340
+Nasi lemak ayam goreng berempah + timun ,1 set ,220,490
+Nasi lemak rendang ayam/ daging + timun + sambal ,1 set ,,420
+Nasi lemak sambal sotong + timun + sambal ,1 set ,210,410
+Nasi lemak telur mata kerbau + timun ,1 set ,180,350
+Nasi minyak (kosong) ,3 senduk ,150,265
+Nasi nenas ,3 senduk ,170,160
+Nasi putih ,2 senduk ,150,200
+Nasi tomato ,2 senduk ,100,185
+Pasta ,2 senduk ,110,165
+Soto ,1 mangkuk ,250,260
+Soto ayam ,1 mangkuk ,490,510
+Spagethi dengan keju & sos daging ,1 mangkuk ,440,440
+Ayam gajus ,1 senduk ,50,165
+Ayam goreng ,1 ketul ,120,270
+Ayam goreng berempah ,1 ketul ,90,200
+Ayam goreng KFC (peha),1 ketul(peha) ,65,110
+Ayam goreng KFC (dada),1 ketul (dada) ,55,160
+Ayam goreng madu ,1 ketul ,90,240
+Ayam masak cili ,1 ketul ,90,140
+Ayam masak halia ,1 senduk ,50,60
+Ayam masak kicap ,1 ketul ,90,200
+Ayam masak kunyit ,1 senduk ,50,80
+Ayam masak kurma ,1 ketul ,90,190
+Ayam masak kuzi ,1 ketul ,90,180
+Ayam masak lemak cili api ,1 ketul ,90,150
+Ayam masak lemon ,1 ketul ,90,160
+Ayam masak lengkuas ,1 senduk ,50,80
+Ayam masak merah ,1 ketul ,90,140
+Ayam masak nyonya ,1 ketul ,80,140
+Ayam masak paprik ,1 senduk ,70,70
+Ayam masak sambal ,1 ketul ,100,180
+Ayam masak tomato ,1 ketul ,100,150
+Ayam panggang ,1 ketul ,90,130
+Ayam panggang (tanpa kulit) ,1 ketul ,90,150
+Ayam percik ,1 ketul ,80,140
+Ayam percik Kelantan ,1 ketul ,80,140
+Ayam seroja ,1 ketul ,90,110
+Ayam Tandoori ,1 ketul ,100,200
+Ayam Tandoori (tanpa kulit) ,1 ketul ,100,175
+Bebola ikan goreng ,1 senduk ,40,105
+Bebola ikan masak sambal ,1 senduk ,70,110
+Braised Shark’s Fin Soup with Crabmeat ,1 mangkuk kecil ,100,90
+Burger daging/ ayam ,1set ,100,240
+Burger daging/ ayam special ,1 set ,130,290
+Buttered prawn ,5 ekor ,100,180
+Chicken boxing ,3 ketul ,50,120
+Chilli prawn chinese style ,3 ekor ,60,120
+Crispy Roasted Chicken with BBQ Sauce ,1 ketul ,90,170
+Daging asam pedas ,2 ketul (saiz kotak mancis),80,70
+Daging belada ,2 ketul (saiz kotak mancis),80,90
+Daging dendeng ,1 ketul (saiz kotak mancis) ,35,125
+Daging goreng ,1 ketul (saiz kotak mancis) ,40,140
+Daging goreng kunyit ,1 senduk ,80,80
+Daging kambing goreng ,2 ketul (saiz kotak mancis),80,220
+Daging kambing masak kurma ,1 senduk ,80,120
+Daging kicap berempah ,1 ketul (saiz kotak mancis),60,80
+Daging lembu goreng ,1 ketul (saiz kotak mancis) ,40,140
+Daging lembu masak merah ,1 ketul+4 sudu makan kuah,90,140
+Daging masak asam pedas ,1 ketul (saiz kotak mancis) ,40,45
+Daging masak dendeng ,1 senduk ,60,215
+Daging masak halia ,2 ketul ,60,90
+Daging masak hitam ,1 senduk ,90,145
+Daging masak kicap ,1 ketul (saiz kotak mancis),60,80
+Daging masak kurma ,2 ketul (saiz kotak mancis) ,80,80
+Daging masak lada hitam ,3 ketul ,90,180
+Daging masak lemak cili api ,1 ketul (saiz kotak mancis) ,42,65
+Daging masak singgang ,3 ketul ,90,100
+Daging masak taucu ,1 senduk ,80,180
+Daging merah Ala Thai ,2 keping ,60,100
+Daging palembang ,1 ketul (saiz kotak mancis) ,30,110
+Daging salai masak lemak ,3 ketul ,110,190
+Daging tetel masak asam pedas ,3 ketul ,90,160
+Kari ayam ,1 ketul ,130,200
+Kari kambing ,2 ketul ,80,140
+Kari lembu ,2 ketul ,90,130
+Kari telur ,½ biji ,20,130
+Kerabu perut ,1 senduk ,70,80
+Kuzee ayam ,1 senduk ,60,145
+Paru lembu goreng ,1 keping ,60,290
+Paru masak sambal ,1 senduk ,70,80
+Perut lembu masak lemak ,2 keping ,80,120
+Puyuh masak sambal ,1 ekor ,100,145
+Rendang ayam ,1 senduk ,50,100
+Rendang daging lembu ,2 keping ,50,130
+Rendang hati ayam ,1 ketul ,50,140
+Rendang hati lembu ,1 keping ,40,100
+Rendang limpa lembu ,1 keping ,40,90
+Sate ayam ,5 cucuk ,80,200
+Sate daging lembu ,5 cucuk ,80,190
+Sate perut lembu ,1 cucuk ,20,40
+Siput masak lemak ,1 senduk ,55,60
+Sosej ,1 ketul ,30,100
+Sosej + roti bakar + scramble egg ,1 set ,160,310
+Sosej koktail ,2 ketul ,33,105
+Soto ayam ,1 mangkuk ,490,510
+Stir fried boneless chicken with cashew nuts & sesame seeds ,1 ketul ,50,140
+Stir fried chicken with dry chilli ,1 ketul ,90,150
+Stir fry chicken with celery ,1 senduk ,60,125
+Sup ayam ,1 mangkuk kecil ,150,80
+Sup daging ,1 mangkuk kecil ,150,90
+Sup ekor ,1 mangkuk kecil ,150,120
+Sup tomyam kurang pedas ,1 mangkuk kecil ,150,90
+Sup tulang ,1 mangkuk ,150,75
+Telurs setengah masak ,1 biji ,50,80
+Telur Masin ,� biji ,50,50
+Telur dadar ,1 potong ,45,100
+Telur hancur ,2 sudu makan ,40,50
+Telur mata kerbau ,1 biji ,54,110
+Telur rebus ,1 biji ,50,75
+Telur setengah masak ,1 biji ,50,75
+Tomyam ayam ,1 mangkuk kecil ,150,75
+Tulang gulai nangka ,1 senduk ,40,110
+Ikan acar ,1 ekor ,90,155
+Ikan bawal hitam goreng ,1 ekor ,100,150
+Ikan bawal hitam goreng berlada ,1 ekor sederhana ,100,170
+Ikan bawal hitam masak 3 rasa ,1 ekor ,100,210
+Ikan bawal putih goreng ,1 ekor ,80,190
+Ikan cencaru goreng belada , 2 potong ,150,200
+Ikan cencaru kukus ,1 ekor ,100,80
+Ikan cencaru masak cuka ,1 ekor ,150,270
+Ikan cencaru sumbat ,1 ekor ,100,200
+Ikan goreng ,1 ekor ,70,180
+Ikan haruan kering goreng ,1 ekor kecil ,40,160
+Ikan keli goreng berlada ,1 ekor sederhana ,90,90
+Ikan kembong bakar ,1 ekor ,70,80
+Air asam,1 sudu makan ,20,10
+Ikan kembong goreng ,1 ekor ,70,160
+Ikan kembong goreng belada ,1 ekor ,110,300
+Ikan kembong masak asam rebus ,1 ekor ,80,100
+Ikan kembong masak kicap ,1 ekor ,80,160
+Ikan kembong masak taucu ,1 ekor ,80,130
+Ikan kerisi goreng ,1 ekor ,75,205
+Ikan kerisi goreng berlada ,1 ekor ,75,245
+Ikan kerisi masak kicap ,1 ekor ,75,150
+Ikan kukus dengan halia ,1 potong ,55,100
+Ikan masam manis ,1 ekor ,80,220
+Ikan masin goreng bawang ,3 ketul ,50,100
+Ikan masin masak lemak ,1 senduk ,50,145
+Ikan merah goreng berlada ,1 potong kecil ,50,130
+Ikan merah masak asam ,1 potong sederhana ,80,180
+Ikan merah masak asam pedas ,1 potong kecil ,80,190
+Ikan merah masak lemak ,1 potong sederhana,80,200
+Ikan merah singgang ,1 ekor ,80,115
+Ikan panggang Portugal Ala EDEN ,1 potong ,90,170
+Ikan pari masak asam pedas ,1 potong ,60,120
+Ikan selar goreng ,1 ekor ,60,105
+Ikan selar kuning goreng ,1 ekor ,60,100
+Ikan selar kuning masak asam pedas ,1 ekor kecil ,40,90
+Ikan sembilang goreng ,1 ekor ,100,280
+Ikan senangin goreng ,1 ekor ,80,220
+Ikan senangin masak cili ,1 potong ,60,145
+Ikan senangin masak masam manis ,2 potong ,100,210
+Ikan tenggiri asam pedas ,1keping ,55,120
+Ikan tenggiri goreng ,1 keping ,60,190
+Ikan tenggiri goreng berlada ,1 keping ,60,150
+Ikan tiga rasa ,1 ekor ,80,80
+Ikan tilapia goreng berlada ,1 ekor ,60,145
+Ikan tilapia masak lemak ,1 ekor ,60,70
+Ikan tongkol masak lemak ,1 potong + 4 sudu makan kuah ,60,70
+Isi ikan (fish fillet) ,3 ketul ,45,105
+Isi ikan harum wangi bunga kantan ,3 ketul ,60,80
+Isi ikan kukus cendawan hitam ,1 senduk ,60,80
+Isi ikan masak tiga rasa ,1 senduk ,60,85
+Isi ikan sweet sour ,1 keping ,60,90
+Kari ikan kembong ,1 ekor ,80,70
+Kari ikan masin ,3 ketul ,60,95
+Kari udang & nenas ,1 senduk ,70,30
+Kerabu Jelly Fish ,1 senduk ,50,50
+Kerabu sotong ,1 senduk ,50,55
+Kerang masak sambal ,1 senduk ,55,60
+Keropok ikan ,5 keping ,30,150
+Keropok udang ,� cawan ,20,85
+Ketam masak cili ,2 ekor ,100,140
+Kupang masak sambal ,1 senduk ,60,95
+Lala masak masam manis ,1 senduk ,55,50
+Nugget ayam ,1 keping ,20,60
+Otak-otak ,1 keping ,30,70
+Pan fried butter fish ,1 ketul ,90,190
+Salad crabstick with honeydew ,1 senduk ,80,120
+Sambal goreng ikan bilis + kacang tanah ,1 senduk ,50,150
+Sambal ikan bilis ,2 sudu makan ,30,100
+Sambal sardin ,2 sudu makan ,25,50
+Sambal sotong ,4 ekor kecil ,80,100
+Sambal sotong kembang ,1 senduk ,50,80
+Sambal telur rebus ,1 biji ,60,160
+Sambal tempe + ikan bilis+ kentang ,1 senduk ,40,100
+Sambal tumis udang ,1 senduk ,60,145
+Sambal udang kecil ,1 senduk ,40,70
+Sotong goreng kunyit ,1 senduk ,60,90
+Sotong goreng tepung ,1 senduk ,60,150
+Sotong kering masak sambal ,1 senduk ,45,65
+Sotong masak kicap ,2 ekor ,60,90
+Steamed red Talapia Fish Thai Style ,1 keping ,70,60
+Stir Fried Mantis Prawn with Thai Sauce ,2 ekor ,40,70
+Stir Fried Prawn with Butter and Curry Leaves ,1 ekor sederhana,30,70
+Sup ikan merah ,1 mangkuk kecil ,150,100
+Sup ikan merah & batang sederi ,1 mangkuk kecil ,150,40
+Udang dengan sos Mongolian ,3 ekor ,80,130
+Udang Goreng Kunyit ,3 ekor sederhana ,80,90
+Udang masak lemak kuning ,3 ekor ,40,95
+Udang masak lemak merah ,3 ekor ,40,95
+Acar timun ,1 senduk ,50,50
+Belimbing ,1 biji ,300,70
+Betik ,1 potong sederhana ,200,70
+Buah kurma ,3 biji ,30,60
+Buah lai ,1 biji sederhana ,200,70
+Buah naga ,3 hirisan kecil ,30,30
+Buah-buahan potong ,6 hirisan kecil ,80,30
+Buah-buahan potong ,8 hirisan kecil ,100,40
+Chilled Longan with Jelly ,1 cawan ,150,80
+Epal hijau ,1 biji ,110,60
+Epal merah ,1 biji ,110,60
+Fruit cocktail triffle pudding ,1 potong ,60,110
+Fruit tartlet ,1 biji ,60,160
+Jagung rebus ,1 cawan kecil ,120,110
+Jambu air ,1 biji ,50,10
+Jambu batu ,½ biji (tanpa biji) ,150,70
+Kerabu mangga ,1 senduk ,50,75
+Mangga ,1 biji sederhana ,100,70
+Nangka masak lemak ,1 senduk ,60,50
+Nenas ,1 potong sederhana ,130,60
+Nenas Bombay ,1 senduk ,45,40
+Pajeri nenas ,1 senduk ,25,45
+Pisang berangan ,1 biji sederhana ,90,60
+Pisang mas ,2 bji sederhana ,100,80
+Pisang masak lemak ,1 senduk ,60,90
+Rojak sayur + kuah kacang ,1 cawan ,100,90
+Tembikai ,1 potong sederhana ,130,40
+Thai style kerabu mango ,1 senduk ,70,110
+Tulang gulai nangka ,1 senduk ,40,110
+Bayam goreng ,1 senduk ,60,80
+Braised chinese cabbage with three mushroom,1 senduk ,50,80
+Brocolli & cauliflower goreng ,1 senduk ,60,20
+Cekur manis masak lemak ,1 senduk ,60,120
+Cili jeruk ,1 sudu makan ,10,10
+Cream of potatoes ,1 mangkuk kecil ,150,90
+Cucumber & tomato raita ,1 senduk ,80,30
+Dalca kacang kuda ,1 senduk ,60,130
+Dalca sayur ,1 senduk ,80,130
+Fucuk tumis air ,1 senduk ,90,80
+Jelatah (timun & nenas) ,1 senduk ,50,80
+Kacang botol goreng ,1 senduk ,60,50
+Kacang buncis goreng ,1 senduk ,60,40
+Kacang kuda/ kacang tanah (rebus) ,1 senduk ,50,160
+Kacang panggang ,2 sudu makan ,50,40
+Kacang panjang goreng ,1 senduk ,60,55
+Kailan goreng ,1 senduk ,60,40
+Kailan ikan masin ,1 senduk ,60,80
+Kailan masak sos tiram ,1 senduk ,60,40
+Kangkung goreng ,1 senduk ,60,50
+Kari sayur ,1 senduk ,60,60
+Keladi masak asam rebus ,1 mangkuk kecil ,100,60
+Keledek goreng ,2 keping ,40,170
+Keledek/ keladi goreng ,3 keping ,90,175
+Kerabu pucuk paku ,1 senduk ,50,30
+Kerabu pucuk paku/ taugeh ,1 senduk ,60,40
+Kerabu suhun ,1 senduk ,80,65
+Kerabu taugeh + lobak merah ,1 senduk ,60,60
+Kerabu ulam ,1 cawan ,60,20
+Kobis goreng ,1 senduk ,60,50
+Kobis masak lemak putih ,1 senduk ,70,135
+Labu kuning masak lemak ,1 senduk ,60,50
+Lontong dengan sayur lodeh ,1 mangkuk ,270,280
+Peria goreng telur ,1 senduk ,40,70
+Petola masak air ,1 senduk ,60,50
+Pucuk manis + labu kuning masak lemak ,1 senduk ,105,150
+Pucuk manis masak kuah lemak putih ,1 senduk ,90,100
+Pucuk paku masak lemak ,1 senduk ,40,140
+Rebung masak lemak ,1 senduk ,60,50
+Salad ,3 tangkai ,30,5
+Salad Arab ,1 senduk ,50,60
+Salad crabstick with honeydew ,1 senduk ,80,120
+Salad telur ,1 senduk ,50,110
+Salad telur ,1 senduk ,50,110
+Sawi chap choy goreng ,1 senduk ,60,50
+Sawi hijau goreng sos tiram ,1 senduk ,60,55
+Sawi Jepun goreng ,1 senduk ,60,50
+Sawi putih goreng ,1 senduk ,60,50
+Sawi putih goreng kuah sos tiram ,1 senduk ,60,55
+Sayur campur goreng ,1 senduk ,60,50
+Sayur goreng Jawa ,1 senduk ,50,70
+Sayur lodeh ,2 senduk ,90,125
+Sup cendawan ,1 mangkuk kecil ,150,75
+Sup sayur campur ,1 mangkuk kecil ,150,45
+Sup yong tau foo ,1 senduk ,50,50
+Taugeh ,1 senduk ,30,10
+Taugeh sos tiram ,1 senduk ,40,40
+Terung goreng berlada ,1 senduk ,70,70
+Timun & nenas ,1 cawan ,40,50
+Tomato ,1 biji ,20,5
+Ubi kayu goreng ,3 keping ,90,145
+Ulam ,1 cawan ,30,10
+"Urap (paku pakis, taugeh, kelapa parut) ",1 senduk ,40,45
+Sup tauhu Jepun ,1 senduk ,90,60
+Tauhu goreng ,1 keping ,40,70
+Tauhu kukus ,1 keping ,50,35
+Tauhu masak sos tiram ,1 ketul ,90,100
+Tauhu sambal ,1 keping ,70,105
+Tauhu sumbat ,2 keping ,100,140
+Tempe goreng ,1 keping ,70,255
+Tempe goreng cili ,1 senduk ,40,80
+Tempe goreng Jawa ,1 senduk ,40,100
+Agar-agar buah ,1 potong kecil ,30,20
+Aiskrim (perisa coklat) ,2 senduk ,70,305
+Aneka kuih talam ,1 ketul ,40,60
+Apam ,1 biji ,30,60
+Apam balik ,1 keping besar ,120,290
+Apam beras ,1 biji ,30,50
+Apam butter ,1 keping ,40,110
+Apam gula hangus ,1 biji ,50,160
+Apam manis ,1 keping ,100,70
+Apam pisang ,1 keping ,40,110
+Apam putih kukus + kelapa ,1 biji ,50,95
+Apam salut kelapa ,1 biji ,40,110
+Apple cinnamon crumble ,1 senduk ,50,160
+Assorted cake ,1 keping kecil ,20,100
+Baulu ,1 ketul ,10,40
+Bergedil kentang ,1 ketul ,50,110
+Bidaran ,1 keping ,70,230
+Bijirin sarapan ,1 cawan ,40,130
+Bingka jagung ,1 potong ,30,150
+Bingka pandan ,1 potong ,40,80
+Bingka roti ,1 potong ,70,80
+Bingka tepung beras ,1 potong ,40,75
+Bingka ubi kayu ,1 potong ,100,220
+Biskut Almond London ,1 keping ,5,30
+Biskut cornflakes ,2 keping ,15,80
+Biskut kraker ,1 keping ,10,40
+Biskut Marie ,3 keping ,20,100
+Biskut oat ,3 keping ,40,200
+Bread butter pudding with vanilla sauce ,1 senduk ,80,120
+Buah Melaka ,2 biji kecil ,30,60
+Bubur cha-cha ,1 mangkuk kecil ,120,180
+Bubur jagung ,2 senduk ,100,210
+Bubur kacang hijau ,1 mangkuk kecil ,230,240
+Bubur kacang merah ,1 mangkuk kecil ,230,101
+Bubur pulut hitam ,1 mangkuk kecil ,150,115
+Bun ikan bilis ,1 biji ,60,180
+Bun kacang ,1 biji ,60,190
+Bun kismis ,1 biji ,40,115
+Bun pandan kelapa ,1 biji ,50,165
+Burger daging ,1 set ,130,320
+Butter cookies ,3 keping ,30,130
+Buttered prawn ,5 ekor ,100,180
+Cakoi ,2 biji ,40,80
+Capati ,1 keping ,100,300
+Cek mek molek ,1 ketul ,30,60
+Cekodok pisang ,1 biji ,70,180
+Chee-pah ,1 biji ,50,150
+Cheese tart ,1 biji ,20,80
+Chicken boxing ,3 ketul ,50,120
+Chilled Longan with Jelly ,1 cawan ,150,80
+Chocolate eclair ,1 ketul ,20,100
+Cream puff ,1 biji ,50,170
+Cucumber & tomato raita ,1 senduk ,80,30
+Cucur badak ,1 biji ,30,80
+Cucur bawang ,3 biji ,50,80
+Cucur ikan bilis ,3 biji ,50,80
+Cucur jagung ,3 biji ,30,70
+Cucur lemak manis ,3 biji ,30,200
+Cucur manis ,3 biji ,30,90
+Cucur pisang (cekodok) ,3 biji ,50,120
+Cucur sayur ,3 biji ,50,80
+Cucur udang ,1 biji ,50,130
+Danish pastry ,1 ketul ,50,150
+Dodol ,1 potong ,20,70
+Dodol durian ,1 potong ,20,70
+Donat ,1 biji ,80,290
+Donat coklat ,1 biji ,80,330
+Donat pedas (disira dengan sambal) ,1 biji ,50,130
+Dosai ,1 keping ,80,150
+Emping ,1 keping ,20,70
+French toast ,1 keping ,50,150
+Fruit cocktail triffle pudding ,1 potong ,60,110
+Fruit tartlet ,1 biji ,60,160
+Halwa ,1 keping ,50,150
+Honeydew sago ,1 mangkuk kecil ,100,220
+Idli ,1 keping ,80,100
+Jagung rebus ,1 cawan kecil ,120,110
+Jem strawberi ,1 sudu makan ,30,80
+Karipap ayam ,1 biji ,40,140
+Karipap biasa inti keledek ,1 biji ,40,120
+Karipap biasa inti kentang ,1 biji ,40,130
+Karipap biasa inti sardin ,1 biji ,40,160
+Karipap daging ,1 biji ,40,140
+Karipap inti isi ikan ,1 biji ,40,170
+Karipap kentang ,1 biji ,40,130
+Karipap mini ,1 biji ,20,120
+Karipap pusing ,1 biji ,40,90
+Karipap pusing inti keledek ,1 biji ,40,130
+Karipap pusing inti kentang ,1 biji ,40,130
+Karipap sardin ,1 biji ,40,155
+Kastad jagung ,1 potong ,90,100
+Kasturi kacang ,1 biji ,70,170
+Kasui ,1 potong ,100,160
+Kek biasa ,1 potong ,23,100
+Kek buah ,1 potong ,40,130
+Kek cawan ,1 biji ,40,160
+Kek coklat ,1 potong ,40,120
+Kek coklat moist ,1 potong ,40,220
+Kek gulung berjem ,1 keping ,40,130
+Kek keju ,1 potong besar ,70,220
+Kek keju blueberry ,1 keping ,30,100
+Kek lapis strawberi (Apollo) ,1 potong ,20,85
+Kek mentega ,1 potong ,40,160
+Kek pisang ,1 potong ,30,100
+Kek span ,1 potong ,30,90
+Kek swiss roll ,1 potong ,10,40
+Kek swiss roll perasa coklat ,1 potong ,10,40
+Keladi goreng ,2 keping ,60,180
+Keledek goreng ,2 keping ,40,170
+Keledek/ keladi goreng ,3 keping ,90,175
+Kentang goreng (French fries) ,1 cawan kecil ,90,290
+Kentang goreng (wedges) ,4 keping ,40,135
+Kentang lecek ,1 senduk ,80,70
+Kerepek bawang ,3 keping ,12,60
+Kerepek pisang ,6 keping ,10,50
+Kerepek ubi kayu ,1 keping ,10,40
+Keria ,1 biji ,30,90
+Keropok ikan ,5 keping ,30,150
+Keropok lekor ,3 keping sederhana ,70,210
+Keropok udang ,� cawan ,20,85
+Ketayap ,1 keping ,70,150
+Ketupat nasi ,5 potong ,200,215
+Ketupat pulut ,1 biji ,45,130
+Koci pulut hitam ,1 biji ,80,160
+Kole kacang ,1 potong ,30,80
+Kole kacang ,1 potong ,30,80
+Kuah cili nasi ayam ,1 sudu makan ,20,10
+Kuih bakar ,1 potong ,40,80
+Kuih bakar (Kemboja) ,1 potong ,40,80
+Kuih bakul ,1 biji ,30,60
+Kuih bangkit ,1 biji ,3,15
+Kuih bangkit sagu ,1 biji ,4,20
+Kuih bom ,1 biji ,60,200
+Kuih buah rotan ,1 biji ,3,10
+Kuih cara berlauk ,2 keping ,60,80
+Kuih cara manis ,2 keping ,40,125
+Kuih kacang ,1 biji ,20,90
+Kuih kapit ,1 keping ,4,20
+Kuih karas ,1 keping ,10,50
+Kuih kastard jagung ,1 potong ,40,50
+Kuih kasturi ,1 biji ,70,170
+Kuih kasui ,1 potong ,40,60
+Kuih koci pulut hitam ,1 biji ,50,100
+Kuih koci pulut putih ,1 biji ,50,110
+Kuih lapis ,1 potong ,90,140
+Kuih lapis pelangi ,1 potong ,40,70
+Kuih lidah kucing ,1 keping ,10,50
+Kuih lompang ,1 biji ,90,120
+Kuih sagu ,1 potong ,90,130
+Kuih talam ubi kayu ,1 potong ,50,80
+Laddu ,1 keping ,70,310
+Lemang ,1 potong ,30,100
+Lempeng gulung sardin ,2 keping ,70,210
+Lempeng gulung sayur ,1 keping ,80,200
+Lempeng kosong ,3 keping ,80,260
+Lempeng pisang ,2 keping ,80,110
+Lepat labu ,1 keping ,85,180
+Lepat pisang ,1 biji ,90,180
+Lepat ubi ,1 biji ,90,190
+Lompang ,1 biji ,90,190
+Lopes pulut ,1 keping ,80,160
+Mini egg tart ,1 ketul ,30,85
+Mini pizza ,1 keping ,60,130
+Mini quiche ,1 ketul ,30,75
+Muffin coklat ,1 biji ,35,135
+Muffin coklat (Kenny Rogers Roaster) ,1 biji ,65,225
+Muffin pisang ,1 biji ,35,140
+Muffin pisang (Kenny Rogers Roaster) ,1 biji ,55,192
+Muffin vanilla ,1 biji ,35,145
+Muffin vanilla (Kenny Rogers Roaster) ,1 biji ,60,230
+Murtabak ,1 keping ,80,130
+Murtabak ayam ,1 keping ,80,130
+Murtabak mini ,1 keping ,40,60
+Mushroom soup ,1 mangkuk kecil ,150,60
+Nasi impit ,8 kiub ,50,80
+Nenas Bombay ,1 senduk ,45,40
+Nugget ayam ,1 keping ,20,60
+Nugget ayam + kentang goreng ,1 set ,110,350
+Oat calcium cracker ,1 paket ,22,115
+Otak-otak ,1 keping ,30,70
+Papadom ,3 keping ,10,20
+Pasembor ,1 set ,260,170
+Pau ayam ,1 biji ,90,210
+Pau goreng (Burger Malaysia) ,1 biji ,50,130
+Pau kacang merah ,1 biji ,80,220
+Pau kaya ,1 biji ,50,130
+Pau kelapa ,1 biji ,60,170
+Pau sardin ,1 biji ,50,120
+Pecal & kuah kacang ,1 senduk ,40,45
+Peneram ,1 keping ,60,280
+"Pengat keledek, gula merah ",1 mangkuk ,150,480
+Pengat labu + keledek ,1 senduk ,100,170
+Pengat labu kuning ,2 senduk ,100,185
+Pengat pisang ,1 mangkuk kecil ,110,200
+Pengat pisang nipah ,1 mangkuk kecil ,150,280
+Pie ayam ,1 biji ,40,100
+Pie tee ,1 biji ,30,90
+Pisang goreng ,3 keping ,70,130
+Piza sayur-sayuran ,1 keping ,80,200
+Plain biscuit ,3 keping ,30,120
+Popia basah ,1 biji ,40,70
+Popia basah ,1 biji ,40,80
+Popia goreng ,1 biji ,40,70
+Popia sayur ,1 biji ,40,75
+Popiah otak-otak goreng ,1 biji ,30,150
+Potato salad ,1 senduk ,45,65
+Potato wedges ,2 ketul ,40,95
+Puding jagung ,1 potong ,90,90
+Puding roti ,1 potong ,70,86
+Pulut berinti kelapa ,1 biji ,50,110
+Pulut berinti kelapa pedas ,1 biji ,50,110
+Pulut panggang ,1 biji ,80,180
+Pulut udang ,1 biji ,80,180
+Pumpkin oat calcium cracker ,1 paket ,22,115
+Puteri ayu ,1 biji ,30,50
+Putu bambu ,1 biji ,70,190
+Putu kacang ,1 biji ,20,70
+Putu mayam ,1 keping ,50,100
+Putu piring ,1 biji ,30,70
+Rempeyek ,1 keping ,20,120
+Rojak ,2 senduk ,100,230
+Rojak sayur + kuah kacang ,1 cawan ,100,90
+Roti (bun) ,1 biji ,40,140
+Roti bakar kaya & butter ,2 keping ,70,270
+Roti bakar mentega kacang ,2 keping ,70,230
+Roti bakar telur ,2 keping ,60,160
+Roti bijirin penuh ,2 keping ,60,140
+Roti canai ,1 keping ,100,320
+Roti jala ,3 keping ,55,80
+#NAME?,1 senduk ,40,80
+Roti putih ,2 keping ,60,160
+#NAME?,1 sudu makan ,11,25
+#NAME?,1 sudu teh ,6,45
+Roti roll ,1 keping ,28,70
+Roti sardin ,1 keping ,60,130
+Roti sardin celup telur (goreng) ,1 gulung ,60,125
+Roti sosej ,1 biji ,70,200
+Roti/Bun/Rolls ,1 biji ,30,110
+Salad ,3 tangkai ,30,5
+Salad & dressing ,1 senduk ,30,115
+Salad Arab ,1 senduk ,50,60
+Salad crabstick with honeydew ,1 senduk ,80,120
+Salad telur ,1 senduk ,50,110
+Samosa ,1 biji ,40,120
+Sandwic ayam ,1 keping ,30,80
+Sandwic ayam + salad ,1 keping ,30,100
+Sandwic keju + salad ,1 keping ,30,100
+Sandwic sardin ,1 keping ,30,80
+Sandwic sardin + salad ,1 keping ,30,90
+Sandwic telur ,1 keping ,30,70
+Sandwic telur + salad ,1 keping ,30,80
+Sandwic tuna ,1 keping ,30,70
+Sandwic tuna + salad ,1 keping ,30,90
+Sardin puff ,1 biji ,30,95
+Sardin roll ,1 biji ,40,80
+Seaweed oat calcium cracker ,1 paket ,22,110
+Seri ayu + kelapa ,1 biji ,20,35
+Seri muka ,1 potong ,100,190
+Sesame oat calcium cracker ,1 paket ,22,115
+Talam kacang merah ,1 potong ,50,80
+Talam keladi ,1 potong ,40,90
+Talam keledek ,1 potong ,40,110
+Talam seri kaya ,1 potong ,40,60
+Talam seri muka ,1 potong ,40,80
+Talam Suji ,1 potong ,30,65
+Talam ubi kayu ,1 potong ,50,70
+Tapai pulut ,1 bungkus ,80,130
+Tapai pulut ,1 bungkus ,30,50
+Tat nenas ,1 biji ,5,20
+Tepung bungkus ,1 biji ,40,110
+Tepung pelita ,1 biji ,70,100
+Tumpi ,1 keping ,10,50
+Ubi kayu goreng ,3 keping ,90,145
+Vadai (kacang dal kuning) ,1 keping ,40,140
+Wajik ,1 potong ,20,60
+Wholemeal biscuits ,3 keping ,33,120
+Yong Tau Foo ,1 set ,100,230
+Apple cinnamon crumble ,1 senduk ,50,160
+Bread butter pudding with vanilla sauce ,1 senduk ,80,120
+Brocolli & cauliflower goreng ,1 senduk ,60,20
+Butter cookies ,3 keping ,30,130
+Cheese tart ,1 biji ,20,80
+Chicken boxing ,3 ketul ,50,120
+Chicken carbonara with pasta ,2 senduk ,150,180
+Chilled Longan with Jelly ,1 cawan ,150,80
+Chilli prawn chinese style ,3 ekor ,60,120
+Chinese tea ,1 cawan ,200,0
+Coleslaw ,1 senduk ,75,110
+Coleslaw ,1 senduk ,75,110
+Cream of potatoes ,1 mangkuk kecil ,150,90
+Cream puff ,1 biji ,50,170
+Crispy Roasted Chicken with BBQ Sauce ,1 ketul ,90,170
+Cucumber & tomato raita ,1 senduk ,80,30
+Danish pastry ,1 ketul ,50,150
+Fish & chip ,1 set ,180,570
+French toast ,1 keping ,50,150
+Fried rice chinese style with silver anchovies ,2 senduk ,100,250
+Fruit cocktail triffle pudding ,1 potong ,60,110
+Fruit tartlet ,1 biji ,60,160
+Hash potato ,1 mangkuk kecil ,50,110
+Honeydew sago ,1 mangkuk kecil ,100,220
+Kentang goreng (French fries) ,1 cawan kecil ,90,290
+Kentang goreng (wedges) ,4 keping ,40,135
+Kentang lecek ,1 senduk ,80,70
+Makaroni ayam ,1 senduk ,100,150
+Makaroni bakar ,2 senduk ,90,150
+Makaroni goreng ,2 senduk ,90,300
+Mashed potato ,1 senduk ,80,70
+Mini egg tart ,1 ketul ,30,85
+Mini pizza ,1 keping ,60,130
+Mini quiche ,1 ketul ,30,75
+Mix fruit punch ,1 mangkuk kecil ,140,50
+Muffin coklat ,1 biji ,35,135
+Muffin coklat (Kenny Rogers Roaster) ,1 biji ,65,225
+Muffin pisang ,1 biji ,35,140
+Muffin pisang (Kenny Rogers Roaster) ,1 biji ,55,192
+Muffin vanilla ,1 biji ,35,145
+Muffin vanilla (Kenny Rogers Roaster) ,1 biji ,60,229
+Mushroom soup ,1 mangkuk kecil ,150,60
+Nugget ayam + kentang goreng ,1 set ,110,350
+Oat calcium cracker ,1 paket ,22,115
+Pan fried butter fish ,1 ketul ,90,190
+Piza sayur-sayuran ,1 keping ,80,200
+Potato salad ,1 senduk ,45,65
+Potato wedges ,2 ketul ,40,95
+Pumpkin oat calcium cracker ,1 paket ,22,115
+Roti bakar kaya & butter ,2 keping ,70,270
+Roti bakar mentega kacang ,2 keping ,70,230
+Roti bakar telur ,2 keping ,60,160
+Salad crabstick with honeydew ,1 senduk ,80,120
+Sandwic ayam + salad ,1 keping ,30,100
+Sandwic keju + salad ,1 keping ,30,100
+Sandwic sardin + salad ,1 keping ,30,90
+Sandwic telur + salad ,1 keping ,30,80
+Sandwic tuna + salad ,1 keping ,30,90
+Seaweed oat calcium cracker ,1 paket ,22,110
+Sesame oat calcium cracker ,1 paket ,22,115
+Sosej + roti bakar + scramble egg ,1 set ,160,310
+Sosej ayam ,1 ketul ,80,220
+Sosej lada hitam ,1 ketul ,50,110
+Spagethi dengan keju & sos daging ,1 mangkuk ,440,440
+Spagetti bolognese bebola daging + keju + daging,1 mangkuk ,225,390
+Spicy sesame beef ,1 senduk ,60,160
+Steamed red Talapia Fish Thai Style ,1 keping ,70,60
+Stir fried boneless chicken with cashew nuts & sesame seeds,1 ketul ,50,140
+Stir fried chicken with dry chilli ,1 ketul ,90,150
+Stir Fried Mantis Prawn with Thai Sauce ,2 ekor ,40,70
+Stir Fried Prawn with Butter and Curry Leaves ,1 ekor sederhana ,30,70
+Stir fry chicken with celery ,1 senduk ,60,125
+Telur ½ masak ,1 biji ,50,80
+Wholemeal biscuits ,3 keping ,33,120
+Yogurt perisa buah ,1 cawan ,150,400
+Yogurt rendah lemak ,1 cawan ,150,90
+Jem strawberi ,1 sudu makan ,30,80
+Kaya ,1 sudu makan ,30,80
+Marmalade ,1 sudu makan ,20,50
+Mayonis ,1 sudu makan ,10,60
+Mentega ,1 sudu teh ,10,80
+Kuah cili nasi ayam ,1 sudu makan ,20,10
+Kuah kacang ,1 sudu makan ,10,30
+Kuah santan ,2 sudu makan ,30,80
+Sambal belacan ,1 sudu teh ,10,10
+Sup kosong- Chicken Rice Shop ,1 mangkuk kecil ,150,10
+Air barli (kosong),1 gelas ,225,85
+Air barli (gula),1 gelas ,230,105
+Air kosong ,1 gelas ,250,0
+Air limau nipis (kosong),1 gelas ,250,20
+Air limau nipis (gula),1 gelas ,250,40
+Air soya ,1 gelas ,250,150
+Cendol ,1 mangkuk ,150,120
+Fruit cocktail triffle pudding ,1 potong ,60,110
+Horlicks bersusu* ,1 cawan ,200,170
+Horlicks O ,1 cawan ,200,140
+"Jus anggur, tanpa gula ",1 gelas ,250,250
+Jus buah (kosong),1 gelas ,250,60
+Jus buah (gula),1 gelas ,250,80
+"Jus epal, tanpa gula ",1 gelas ,250,120
+Jus lemon ,1 gelas ,250,20
+"Jus nenas, tanpa gula ",1 gelas ,250,130
+"Jus oren, tanpa gula ",1 gelas ,250,110
+Kopi bersusu* ,1 cawan ,200,130
+Kopi O ,1 cawan ,200,60
+Kordial anggur ,1 gelas ,250,140
+Kordial durian belanda ,1 gelas ,250,120
+Kordial laici ,1 gelas ,250,140
+Kordial oren ,1 gelas ,250,70
+Kordial sarsi ,1 gelas ,250,80
+Milo bersusu* ,1 cawan ,200,160
+Milo O (kosong),1 cawan ,200,75
+Milo O (gula),1cawan,200,95
+Minuman berkarbonat ,1 tin ,285,150
+Minuman bermalta ,1 gelas ,250,150
+Minuman coklat bersusu ,1 gelas ,250,170
+Minuman kola ,1 gelas ,250,100
+Mix fruit punch ,1 mangkuk kecil ,140,50
+Nescafe bersusu* ,1 cawan ,200,130
+Nescafe O ,1 cawan ,200,60
+Sirap bandung ,1 gelas ,250,160
+Sirap limau ,1 gelas ,250,90
+Sirap ros ,1 gelas ,250,85
+Sirap selasih ,1 gelas ,250,120
+Teh bersusu* ,1 cawan ,200,130
+Teh lemon (Ice lemon tea-commercial) ,1 gelas ,250,120
+Teh O/ Kopi O ,1 cawan ,200,20
+Teh O / Kopi O (kosong),1 cawan ,200,0
+Teh tarik ,1 cawan ,200,150
+Teh tarik kurang manis ,1 cawan ,200,110
+Teh/Kopi ,1 cawan ,200,150
+Teh/kopi (kurang manis),1 cawan,200,110
+Bayam goreng ,1 senduk ,45,50
+Bingka ubi mentega tanpa sumber haiwan ,1 ketul ,30,65
+Braised bitter gourd with tauchu ,1 senduk ,40,80
+Braised Vegetarian Chinese Cabbage with Three Musroom,1 senduk ,50,50
+Braised vegetarian shark’s fin soup with four treasures ,1 mangkuk kecil ,90,140
+Braised water chesnut soup ,1 senduk ,60,60
+Bubur cacar ,1 mangkuk kecil ,90,140
+Cauliflower in Masala sauce ,1 senduk ,40,17
+Cendawan pan fried ,1 senduk ,40,100
+Cendawan tumis air ,1 senduk ,45,30
+Chap chye tanpa sumber haiwan ,1 senduk ,60,50
+Chilled Longan with Jelly ,1 cawan ,200,80
+Chinese tea ,1 cawan ,200,0
+Crispy Vegetarian Roasted Chicken with BBQ Sauce ,1 keping ,50,140
+Cucumber & tomato raita ,1 senduk ,80,30
+Deep fried vegetarian spring roll ,1 keping ,50,130
+Flacky berry puff with yogurt cream ,1 biji kecil ,30,55
+Fragrant salt & pepper soya prawn ,1 senduk ,45,110
+Fried Rice Vegetarian Chinese Style ,2 senduk ,100,240
+Fried vegetarian mee hoon ,2 senduk ,120,140
+Fruit tartlets tanpa telur ,1 biji ,40,80
+Kacang panjang goreng telur ,1 senduk ,25,50
+Kangkung fried vegetarian chicken ,1 senduk ,50,140
+Labu kuning goreng ,1 senduk ,70,60
+Makaroni bakar vegetarian ,1 senduk ,80,130
+Mini egg tart ,1 biji ,30,80
+Mixed grilled vegetables on mini corn bread ,1 keping ,50,120
+Mixed vegetable with cashewnut ,1 senduk ,50,55
+Mushroom mini quiche ,1 biji ,25,65
+Mustard plant with soy bean curd ,1 senduk ,40,85
+Pan fried vegetarian fish with soy sauce ,3 piece ,30,180
+Popia sayur ,1 ketul ,45,75
+Putu mayam with brown sugar ,1 keping ,20,40
+Rasam (soup) ,1 mangkuk kecil ,150,160
+Salad vegetarian crabsticks with honey dew ,1 senduk ,80,110
+Sandwich sayur ,1 keping ,30,45
+Sayur goreng Jawa tanpa sumber haiwan ,1 senduk ,50,45
+Simmered dhal with cumin ,1 senduk ,50,70
+Soy (fucuk )sweet and sour ,1 senduk ,70,85
+Soy chicken kuzee ,1 senduk ,70,80
+Soy chicken masak kicap ,1 senduk ,65,85
+Soy chicken masak merah ,1 senduk ,60,85
+Soy fish pan fried ,1 senduk ,60,75
+Soy meat masak hitam ,1 senduk ,60,90
+Soy sotong balck pepper ,1 ketul ,44,110
+Spicy crispy spring roll vegetarian ,1 keping ,35,90
+Steam egg tiga rasa ,1 senduk ,50,90
+Steamed Basmati rice with dried fruits ,2 senduk ,100,175
+Steamed soya fish with mushroom ,1 senduk ,70,110
+Steamed Vegetarian Fish Thai Style ,1 senduk ,50,100
+Stewed bean root with mushroom & vegetables ,1 senduk ,40,70
+Stir fried mixed vegetables with fresh herbs ,1 senduk ,40,65
+Stir fried vegetarian chicken with dry chilli ,1 keping ,40,150
+Stir fried vegetarian mantis prawn ,1 ketul ,30,70
+Stir fried vegetarian prawn Szechuan style ,1 senduk ,55,50
+Stir Fried Vegetarian Prawn with Butter and Curry Leaves ,1 keping ,30,70
+Sup sayur & tauhu ,1 mangkuk kecil ,90,80
+Sup tauhu ,1 mangkuk kecil ,90,40
+Sweet & sour soy meat ,1 senduk ,90,110
+"Tauhu kukus , sos telur & cendawan hitam ",� ketul ,90,100
+Tauhu with mix vegetables ,1 senduk ,40,75
+Thai Style Soya prawn ,1 senduk ,40,60
+Tofu goreng ,1 ketul ,40,105
+Tofu Jepun sos telur ,1 senduk ,70,100
+Tofu Jepun sos tiram ,1 senduk ,60,95
+Tofu Seng Kong ,1 senduk ,60,70
+Tofu stim & sos tiram ,1 senduk ,70,110
+Tofu Szechuan ,1 ketul ,40,90
+Vadai (masala vadai & black lentil vadai) ,1 keping ,30,95
+Vegetable mix (Ma Po) ,1 senduk ,40,50
+Vegetarian angsa goreng ,1 ketul ,50,110
+Vegetarian chicken curry ,3 ketul ,40,130
+Vegetarian chicken with plum sauce ,3 keping ,40,200
+Vegetarian ikan kukus halia ,2 senduk ,80,160
+Vegetarian kari kambing ,3 ketul ,45,135
+Vegetarian kurma ,1 senduk ,50,95
+Vegetarian mushroom soup (clear soup) ,1 mangkuk kecil ,150,35
+Vegetarian pasta ,1 senduk ,112,125
+Vegetarian pizza ,1 keping ,53,90
+Vegetarian samosa ,1 biji ,25,50
+Vegetarian sandwich ,3 keping ,90,80
