@@ -14,9 +14,12 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import android.os.StrictMode
+
 
 class KaloriFragment : Fragment() {
 
@@ -25,6 +28,12 @@ class KaloriFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        StrictMode.setThreadPolicy(
+
+            StrictMode.ThreadPolicy.Builder()
+                .permitAll()
+                .build()
+        )
 
         val view =
             inflater.inflate(
@@ -156,10 +165,13 @@ class KaloriFragment : Fragment() {
 
         try {
 
+            val url =
+                URL(
+                    "https://docs.google.com/spreadsheets/d/1eQtvknyaQJNjwr8AIM5eRk7H_BA1D95gGx5fTM1Etmc/export?format=csv"
+                )
+
             val inputStream =
-                requireContext()
-                    .assets
-                    .open("bank_kalori_makanan.csv")
+                url.openStream()
 
             val reader =
                 BufferedReader(
