@@ -499,13 +499,13 @@ class KaloriFragment : Fragment() {
 
                     currentWeight,
 
-                    breakfastTotal.toString() + " kcal",
+                    "%.0f kcal".format(breakfastTotal),
 
-                    lunchTotal.toString() + " kcal",
+                    "%.0f kcal".format(lunchTotal),
 
-                    dinnerTotal.toString() + " kcal",
+                    "%.0f kcal".format(dinnerTotal),
 
-                    grandTotal.toString() + " kcal",
+                    "%.0f kcal".format(grandTotal),
 
                     currentBmr,
 
@@ -1221,19 +1221,31 @@ class KaloriFragment : Fragment() {
                     "0 kcal"
                 ) ?: "0 kcal"
 
+            val breakfastFormatted =
+                "%.0f".format(breakfastTotal)
+
+            val lunchFormatted =
+                "%.0f".format(lunchTotal)
+
+            val dinnerFormatted =
+                "%.0f".format(dinnerTotal)
+
+            val grandFormatted =
+                "%.0f".format(grandTotal)
+
             val reportData = ReportData(
 
                 selectedDate,
 
                 currentWeight,
 
-                breakfastTotal.toString() + " kcal",
+                "$breakfastFormatted kcal",
 
-                lunchTotal.toString() + " kcal",
+                "$lunchFormatted kcal",
 
-                dinnerTotal.toString() + " kcal",
+                "$dinnerFormatted kcal",
 
-                grandTotal.toString() + " kcal",
+                "$grandFormatted kcal",
 
                 currentBmr,
 

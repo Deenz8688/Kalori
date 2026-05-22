@@ -197,47 +197,8 @@ class ReportFragment : Fragment() {
             LinearLayoutManager(
                 requireContext()
             )
-
+        loadFilteredReports("Hari Ini")
         
-        
-        val sharedPref = requireActivity()
-            .getSharedPreferences(
-                "UserProfile",
-                android.content.Context.MODE_PRIVATE
-            )
-
-        val weight =
-            sharedPref.getString(
-                "weight",
-                "0"
-            ) + " kg"
-
-        val bmr =
-            sharedPref.getString(
-                "bmr",
-                "0 kcal"
-            )
-
-        val tdee =
-            sharedPref.getString(
-                "tdee",
-                "0 kcal"
-            )
-
-        val reportList =
-            ReportManager.getReports(
-                requireContext()
-            )
-
-        val reportAdapter =
-            ReportAdapter(reportList)
-
-        recyclerReport.adapter =
-            reportAdapter
-
-        recyclerReport.adapter =
-            reportAdapter
-
         return view
     }
 }
