@@ -23,6 +23,12 @@ import android.os.StrictMode
 
 class KaloriFragment : Fragment() {
 
+    companion object {
+
+        var cachedFoodList =
+            mutableListOf<Food>()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -161,8 +167,11 @@ class KaloriFragment : Fragment() {
         // ================= FOOD LIST =================
 
         val foodList =
-            mutableListOf<Food>()
+            cachedFoodList
 
+        if (cachedFoodList.isEmpty()) {
+
+        
         try {
 
             val url =
@@ -219,6 +228,8 @@ class KaloriFragment : Fragment() {
         } catch (e: Exception) {
 
             e.printStackTrace()
+        }
+
         }
 
         // ================= AUTOCOMPLETE =================
@@ -294,7 +305,7 @@ class KaloriFragment : Fragment() {
         ): LinearLayout {
 
             val card =
-                LinearLayout(requireContext())
+                LinearLayout(requireActivity())
 
             card.orientation =
                 LinearLayout.VERTICAL
@@ -326,7 +337,7 @@ class KaloriFragment : Fragment() {
             card.layoutParams = params
 
             val txtMeal =
-                TextView(requireContext())
+                TextView(requireActivity())
 
             txtMeal.text = title
 
@@ -337,7 +348,7 @@ class KaloriFragment : Fragment() {
             )
 
             val txtFood =
-                TextView(requireContext())
+                TextView(requireActivity())
 
             txtFood.text = foods
 
@@ -348,7 +359,7 @@ class KaloriFragment : Fragment() {
             )
 
             val txtCalories =
-                TextView(requireContext())
+                TextView(requireActivity())
 
             txtCalories.text =
                 "Jumlah Kalori: %.0f kcal"
@@ -361,7 +372,7 @@ class KaloriFragment : Fragment() {
             )
 
             val btnDelete =
-                Button(requireContext())
+                Button(requireActivity())
 
             btnDelete.text =
                 "❌ Buang"
@@ -375,6 +386,7 @@ class KaloriFragment : Fragment() {
             )
 
             btnDelete.setOnClickListener {
+                
 
                 val selectedDate =
                     edtDate.text.toString()
@@ -456,6 +468,54 @@ class KaloriFragment : Fragment() {
                 )
 
                 editor.apply()
+
+                val profilePref = requireActivity()
+                    .getSharedPreferences(
+                        "UserProfile",
+                        Context.MODE_PRIVATE
+                    )
+
+                val currentWeight =
+                    profilePref.getString(
+                        "weight",
+                        "0"
+                    ) + " kg"
+
+                val currentBmr =
+                    profilePref.getString(
+                        "bmr",
+                        "0 kcal"
+                    ) ?: "0 kcal"
+
+                val currentTdee =
+                    profilePref.getString(
+                        "tdee",
+                        "0 kcal"
+                    ) ?: "0 kcal"
+
+                val reportData = ReportData(
+
+                    selectedDate,
+
+                    currentWeight,
+
+                    breakfastTotal.toString() + " kcal",
+
+                    lunchTotal.toString() + " kcal",
+
+                    dinnerTotal.toString() + " kcal",
+
+                    grandTotal.toString() + " kcal",
+
+                    currentBmr,
+
+                    currentTdee
+                )
+
+                ReportManager.saveReport(
+                    requireContext(),
+                    reportData
+                )
 
                 txtTotalCalories.text =
                     "Jumlah Kalori: %.0f kcal"
@@ -627,6 +687,8 @@ class KaloriFragment : Fragment() {
         // ================= AUTO RESET DAY =================
 
         fun refreshCurrentDate() {
+
+            if (!isAdded) return
 
             val todayDate =
                 dateFormat.format(
@@ -1134,7 +1196,56 @@ class KaloriFragment : Fragment() {
             edtBreakfastAmount.setText("")
 
             edtBreakfastFood.requestFocus()
+
+            val profilePref = requireActivity()
+                .getSharedPreferences(
+                    "UserProfile",
+                    android.content.Context.MODE_PRIVATE
+                )
+
+            val currentWeight =
+                profilePref.getString(
+                    "weight",
+                    "0"
+                ) + " kg"
+
+            val currentBmr =
+                profilePref.getString(
+                    "bmr",
+                    "0 kcal"
+                ) ?: "0 kcal"
+
+            val currentTdee =
+                profilePref.getString(
+                    "tdee",
+                    "0 kcal"
+                ) ?: "0 kcal"
+
+            val reportData = ReportData(
+
+                selectedDate,
+
+                currentWeight,
+
+                breakfastTotal.toString() + " kcal",
+
+                lunchTotal.toString() + " kcal",
+
+                dinnerTotal.toString() + " kcal",
+
+                grandTotal.toString() + " kcal",
+
+                currentBmr,
+
+                currentTdee
+            )
+
+            ReportManager.saveReport(
+                requireContext(),
+                reportData
+            )
         }
+        
 
         // ================= AUTO REFRESH =================
 

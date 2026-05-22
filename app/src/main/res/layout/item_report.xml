@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginBottom="12dp"
+
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="#E8F5E9">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- TARIKH -->
+
+        <TextView
+            android:id="@+id/txtReportDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="20/05/2026"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"/>
+
+        <!-- BERAT -->
+
+        <TextView
+            android:id="@+id/txtReportWeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Berat: 61.3kg"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#EF3BFF"
+            android:layout_marginTop="4dp"/>
+
+        <!-- SARAPAN -->
+
+        <TextView
+            android:id="@+id/txtBreakfast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sarapan: 300 kcal"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="8dp"/>
+
+        <!-- TENGAH HARI -->
+
+        <TextView
+            android:id="@+id/txtLunch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tengah Hari: 600 kcal"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"/>
+
+        <!-- MALAM -->
+
+        <TextView
+            android:id="@+id/txtDinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Malam: 500 kcal"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"/>
+
+        <!-- TOTAL -->
+
+        <TextView
+            android:id="@+id/txtTotalCalories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jumlah: 1400 kcal"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:textColor="#F44336"
+            android:layout_marginTop="8dp"/>
+
+        <!-- BMR -->
+
+        <TextView
+            android:id="@+id/txtBmr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BMR: 1600 kcal"
+            android:textSize="14sp"
+            android:textColor="#3F51B5"
+            android:textStyle="bold"
+            android:layout_marginTop="4dp"/>
+
+        <!-- TDEE -->
+
+        <TextView
+            android:id="@+id/txtTdee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TDEE: 2100 kcal"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#4CAF50"/>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
