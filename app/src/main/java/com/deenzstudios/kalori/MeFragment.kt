@@ -1,5 +1,6 @@
 package com.deenzstudios.kalori
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,14 +21,26 @@ class MeFragment : Fragment() {
 
         pickImageLauncher = registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.GetContent()) { uri ->
             uri?.let {
+                // 1. Simpan string URI ke variable lokal awak
                 imageUriString = it.toString()
 
-                // Ambil balik view gambar dari fragment untuk dipaparkan terus pada borang
+                try {
+                    // 2. 🔥 UBAT UTAMA: Minta kebenaran kekal dari OS Android guna 'it' (iaitu URI gambar)
+                    val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    requireContext().contentResolver.takePersistableUriPermission(it, takeFlags)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+                // 3. Ambil view gambar dari fragment untuk dipaparkan terus pada borang
                 val imgFormProfile = view?.findViewById<com.google.android.material.imageview.ShapeableImageView>(R.id.imgFormProfile)
+
+                // 4. Setkan gambar pada komponen UI borang guna 'it'
                 imgFormProfile?.setImageURI(it)
             }
         }
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -234,9 +247,18 @@ class MeFragment : Fragment() {
 
         if (savedImageUriString != null) {
             val imageUri = Uri.parse(savedImageUriString)
-            // Paparkan pada kedua-dua tempat (Borang dan Kad Paparan)
-            imgFormProfile.setImageURI(imageUri)
-            imgProfileView.setImageURI(imageUri)
+
+            try {
+                // 🟢 Cuba paparkan pada kedua-dua tempat (Borang dan Kad Paparan)
+                imgFormProfile.setImageURI(imageUri)
+                imgProfileView.setImageURI(imageUri)
+            } catch (e: SecurityException) {
+                // 🔴 Kalau Android sekat kebenaran akses fail lama, dia masuk sini (App TIDAK AKAN crash!)
+                // Sistem akan gantikan dengan gambar robot hijau standard sementara
+                imgFormProfile.setImageResource(R.drawable.ic_launcher_foreground)
+                imgProfileView.setImageResource(R.drawable.ic_launcher_foreground)
+                e.printStackTrace()
+            }
         }
 
         // ================= AKSI BUTANG EDIT PROFILE =================
