@@ -1,9 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.Kalori" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
     <style name="Theme.Kalori" parent="Base.Theme.Kalori" />
+
+    <style name="ShapeAppearance.MaterialComponents.SmallComponent" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+
 </resources>

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,8 +10,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- ================= TAJUK ================= -->
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -21,258 +18,269 @@
             android:textStyle="bold"
             android:textColor="#000000" />
 
-        <!-- ================= FORM ADD MAKANAN ================= -->
-
         <LinearLayout
+            android:id="@+id/layoutWarningProfile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#FFFFFF"
-            android:padding="16dp"
-            android:layout_marginTop="20dp">
-
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tambah Makanan"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="#000000" />
-
-            <!-- TARIKH -->
+            android:gravity="center"
+            android:padding="24dp"
+            android:layout_marginTop="20dp"
+            android:background="#FFEBEE"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tarikh"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginTop="20dp" />
+                android:text="Profil Belum Lengkap!"
+                android:textColor="#D32F2F"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/edtDate"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="8dp"
-                android:focusable="false"
-                android:clickable="true"
-                android:hint="Pilih tarikh"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:background="@android:drawable/editbox_background"
-                android:padding="12dp" />
-
-            
-
-
-
-            <!-- SPINNER -->
-
-            <Spinner
-                android:id="@+id/spinnerMeal"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="16dp" />
-
-            <!-- CARI MAKANAN -->
-
-            <AutoCompleteTextView
-                android:id="@+id/edtBreakfastFood"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="16dp"
-                android:hint="Cari makanan..."
-                android:background="@android:drawable/editbox_background"
-                android:padding="12dp" />
-
-            <!-- PILIHAN -->
-
-            <RadioGroup
-                android:id="@+id/radioGroupBreakfast"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="16dp">
-
-                <RadioButton
-                    android:id="@+id/radioBreakfastGram"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Gram"
-                    android:checked="true" />
-
-                <RadioButton
-                    android:id="@+id/radioBreakfastServing"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Hidangan"
-                    android:layout_marginStart="20dp" />
-
-            </RadioGroup>
-
-            <!-- INPUT -->
-
-            <AutoCompleteTextView
-                android:id="@+id/edtBreakfastAmount"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="12dp"
-                android:hint="Masukkan gram"
-                android:inputType="numberDecimal"
-                android:background="@android:drawable/editbox_background"
-                android:padding="12dp" />
-
-            <!-- BUTTON TAMBAH -->
+                android:text="Sila isi maklumat fizikal anda di bahagian profil terlebih dahulu untuk menggunakan fungsi kira kalori harian."
+                android:textColor="#555555"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:layout_marginTop="8dp" />
 
             <Button
-                android:id="@+id/btnAddBreakfast"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="Tambah Hidangan"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:backgroundTint="#FFC107"
+                android:id="@+id/btnGoToProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PERGI KE PROFIL"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#D32F2F"/>
+        </LinearLayout>
 
-                android:layout_marginTop="16dp" />
+        <LinearLayout
+            android:id="@+id/layoutUtamaKalori"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
 
             <LinearLayout
-                android:id="@+id/layoutTempList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="16dp"/>
+                android:background="#FFFFFF"
+                android:padding="16dp"
+                android:layout_marginTop="20dp">
 
-            <!-- BUTTON SIMPAN -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tambah Makanan"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000" />
 
-            <Button
-                android:id="@+id/btnSaveMeal"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tarikh"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000"
+                    android:layout_marginTop="20dp" />
+
+                <EditText
+                    android:id="@+id/edtDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="8dp"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:hint="Pilih tarikh"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:background="@android:drawable/editbox_background"
+                    android:padding="12dp" />
+
+                <Spinner
+                    android:id="@+id/spinnerMeal"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="16dp" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/edtBreakfastFood"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="16dp"
+                    android:hint="Cari makanan..."
+                    android:background="@android:drawable/editbox_background"
+                    android:padding="12dp" />
+
+                <RadioGroup
+                    android:id="@+id/radioGroupBreakfast"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="16dp">
+
+                    <RadioButton
+                        android:id="@+id/radioBreakfastGram"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Gram"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/radioBreakfastServing"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hidangan"
+                        android:layout_marginStart="20dp" />
+
+                </RadioGroup>
+
+                <AutoCompleteTextView
+                    android:id="@+id/edtBreakfastAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="12dp"
+                    android:hint="Masukkan gram"
+                    android:inputType="numberDecimal"
+                    android:background="@android:drawable/editbox_background"
+                    android:padding="12dp" />
+
+                <Button
+                    android:id="@+id/btnAddBreakfast"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="Tambah Hidangan"
+                    android:textStyle="bold"
+                    android:textColor="#000000"
+                    android:backgroundTint="#FFC107"
+                    android:layout_marginTop="16dp" />
+
+                <LinearLayout
+                    android:id="@+id/layoutTempList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="16dp"/>
+
+                <Button
+                    android:id="@+id/btnSaveMeal"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="Simpan Menu"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#4CAF50"
+                    android:layout_marginTop="12dp" />
+
+                <TextView
+                    android:id="@+id/txtBreakfastCalories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kalori: 0 kcal"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#4CAF50"
+                    android:layout_marginTop="16dp" />
+
+                <TextView
+                    android:id="@+id/txtBreakfastTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Jumlah Semasa: 0 kcal"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF5722"
+                    android:layout_marginTop="12dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutSavedMeals"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="Simpan Menu"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#4CAF50"
-                android:layout_marginTop="12dp" />
-
-            <!-- KALORI -->
-
-            <TextView
-                android:id="@+id/txtBreakfastCalories"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Kalori: 0 kcal"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#4CAF50"
-                android:layout_marginTop="16dp" />
+                android:orientation="vertical"
+                android:layout_marginTop="20dp">
 
-            <!-- TOTAL -->
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/txtBreakfastTotal"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Jumlah Semasa: 0 kcal"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#FF5722"
-                android:layout_marginTop="12dp" />
+                android:orientation="vertical"
+                android:background="#E8F5E9"
+                android:padding="20dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="40dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📊 Ringkasan Harian"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/txtSummaryDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="20/05/2026"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:textColor="#000000"
+                    android:layout_marginTop="20dp" />
+
+                <TextView
+                    android:id="@+id/txtTotalCalories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Jumlah Kalori: 0 kcal"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF5722"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp" />
+
+                <TextView
+                    android:id="@+id/txtTdee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TDEE: 0 kcal"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#4CAF50"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="12dp" />
+
+                <TextView
+                    android:id="@+id/txtBmr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BMR: 0 kcal"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#2196F3"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="12dp" />
+
+                <TextView
+                    android:id="@+id/txtBalance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Baki Kalori: 0 kcal"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#E91E63"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp" />
+
+            </LinearLayout>
 
         </LinearLayout>
-
-        <!-- ================= CARD MENU DISIMPAN ================= -->
-
-        <LinearLayout
-            android:id="@+id/layoutSavedMeals"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="20dp">
-
-            <!-- CARD AKAN MUNCUL SINI -->
-
-        </LinearLayout>
-
-        <!-- ================= RINGKASAN ================= -->
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="#E8F5E9"
-            android:padding="20dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="40dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="📊 Ringkasan Harian"
-                android:textSize="26sp"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:textColor="#000000" />
-
-            <TextView
-                android:id="@+id/txtSummaryDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="20/05/2026"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:textColor="#000000"
-                android:layout_marginTop="20dp" />
-
-            <TextView
-                android:id="@+id/txtTotalCalories"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Jumlah Kalori: 0 kcal"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="#FF5722"
-                android:layout_gravity="center"
-                android:layout_marginTop="20dp" />
-
-            <TextView
-                android:id="@+id/txtTdee"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TDEE: 0 kcal"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="#4CAF50"
-                android:layout_gravity="center"
-                android:layout_marginTop="12dp" />
-
-            <TextView
-                android:id="@+id/txtBmr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="BMR: 0 kcal"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="#2196F3"
-                android:layout_gravity="center"
-                android:layout_marginTop="12dp" />
-
-            <TextView
-                android:id="@+id/txtBalance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Baki Kalori: 0 kcal"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="#E91E63"
-                android:layout_gravity="center"
-                android:layout_marginTop="16dp" />
-
-        </LinearLayout>
-
     </LinearLayout>
-
 </ScrollView>

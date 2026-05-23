@@ -1,255 +1,428 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F8F9FA">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF">
+        android:paddingBottom="40dp">
 
-        <!-- FORM LAYOUT -->
         <LinearLayout
             android:id="@+id/formLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:padding="24dp"
+            android:visibility="visible"
             app:layout_constraintTop_toTopOf="parent">
 
-            <!-- Tajuk -->
             <TextView
                 android:id="@+id/txtTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Profile"
+                android:text="Profil Saya"
                 android:textSize="28sp"
                 android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginTop="60dp"
+                android:textColor="#1A1A1A"
+                android:layout_marginTop="20dp"
                 android:layout_gravity="center"/>
 
-            <!-- Nama -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sila lengkapkan maklumat fizikal anda untuk pengiraan kalori yang tepat."
+                android:textSize="14sp"
+                android:textColor="#757575"
+                android:gravity="center"
+                android:layout_marginTop="8dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="24dp"/>
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imgFormProfile"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:scaleType="centerCrop"
+                android:background="@android:drawable/ic_menu_gallery"
+                app:strokeWidth="4dp"
+                app:strokeColor="#FFFFFF"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.SmallComponent"
+                android:clickable="true"
+                android:focusable="true"/>
+
             <EditText
                 android:id="@+id/edtName"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_marginTop="40dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
                 android:hint="Masukkan Nama"
-                android:padding="15dp"
-                android:textColor="#000000"
-                android:background="@android:drawable/edit_text"/>
+                android:padding="16dp"
+                android:textColor="#1A1A1A"
+                android:textSize="16sp"
+                android:background="@android:drawable/edit_text"
+                android:layout_marginBottom="16dp"/>
 
-            <!-- Berat -->
             <EditText
                 android:id="@+id/edtWeight"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
                 android:hint="Masukkan Berat (kg)"
-                android:padding="15dp"
+                android:padding="16dp"
                 android:inputType="numberDecimal"
-                android:textColor="#000000"
-                android:background="@android:drawable/edit_text"/>
+                android:textColor="#1A1A1A"
+                android:textSize="16sp"
+                android:background="@android:drawable/edit_text"
+                android:layout_marginBottom="16dp"/>
 
-            <!-- Tinggi -->
             <EditText
                 android:id="@+id/edtHeight"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
                 android:hint="Masukkan Tinggi (cm)"
-                android:padding="15dp"
+                android:padding="16dp"
                 android:inputType="numberDecimal"
-                android:textColor="#000000"
-                android:background="@android:drawable/edit_text"/>
+                android:textColor="#1A1A1A"
+                android:textSize="16sp"
+                android:background="@android:drawable/edit_text"
+                android:layout_marginBottom="16dp"/>
 
-            <!-- Umur -->
             <EditText
                 android:id="@+id/edtAge"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
                 android:hint="Masukkan Umur"
-                android:padding="15dp"
+                android:padding="16dp"
                 android:inputType="number"
-                android:textColor="#000000"
-                android:background="@android:drawable/edit_text"/>
+                android:textColor="#1A1A1A"
+                android:textSize="16sp"
+                android:background="@android:drawable/edit_text"
+                android:layout_marginBottom="20dp"/>
 
-            <!-- Jantina -->
-            <RadioGroup
-                android:id="@+id/radioGroupGender"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Pilih Jantina"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#1A1A1A"
+                android:layout_marginBottom="8dp" />
+
+            <RadioGroup
+                android:id="@+id/radioGroupGender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="20dp"
-                android:layout_gravity="center">
+                android:gravity="center"
+                android:layout_marginBottom="20dp">
 
                 <RadioButton
                     android:id="@+id/radioMale"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Lelaki"
-                    android:textColor="#000000"/>
+                    android:textSize="16sp"
+                    android:textColor="#1A1A1A"/>
 
                 <RadioButton
                     android:id="@+id/radioFemale"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Perempuan"
-                    android:textColor="#000000"/>
+                    android:textSize="16sp"
+                    android:textColor="#1A1A1A"/>
             </RadioGroup>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tahap Aktiviti"
-                android:textSize="18sp"
+                android:text="Tahap Aktiviti Harian"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="24dp"/>
-            <!-- Aktiviti -->
+                android:textColor="#1A1A1A"
+                android:layout_marginBottom="8dp"/>
+
             <Spinner
                 android:id="@+id/spinnerActivity"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:background="@android:drawable/editbox_background"/>
+                android:background="@android:drawable/editbox_background"
+                android:layout_marginBottom="32dp"/>
 
-            <!-- Button Save -->
             <Button
                 android:id="@+id/btnCalculate"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="24dp"
+                android:layout_height="56dp"
                 android:backgroundTint="#4CAF50"
-                android:text="SAVE PROFILE"
-                android:textColor="#000000"
-                android:textStyle="bold" />
-
+                android:text="SIMPAN PROFIL"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="12dp" />
 
         </LinearLayout>
 
-        <!-- PROFILE LAYOUT -->
         <LinearLayout
             android:id="@+id/profileLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp"
-            android:background="#E8F5E9"
+            android:padding="16dp"
             android:visibility="gone"
-            android:layout_margin="24dp"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/txtProfileName"
-                android:layout_width="wrap_content"
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nama"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="#000000"/>
+                android:layout_margin="8dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp">
 
-            <TextView
-                android:id="@+id/txtProfileGender"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Jantina"
-                android:textSize="20sp"
-                android:textColor="#000000"
-                android:layout_marginTop="10dp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#E8F5E9"
+                    android:padding="24dp"
+                    android:gravity="center">
 
-            <TextView
-                android:id="@+id/txtProfileAge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Umur"
-                android:textSize="20sp"
-                android:textColor="#000000"
-                android:layout_marginTop="10dp"/>
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/imgProfileView"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_marginBottom="12dp"
+                        android:scaleType="centerCrop"
+                        android:background="@android:drawable/ic_menu_gallery"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.SmallComponent" />
 
-            <TextView
-                android:id="@+id/txtProfileWeight"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Berat"
-                android:textSize="20sp"
-                android:textColor="#000000"
-                android:layout_marginTop="10dp"/>
+                    <TextView
+                        android:id="@+id/txtProfileName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nama Pengguna"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="#1A1A1A"
+                        android:gravity="center"/>
 
-            <TextView
-                android:id="@+id/txtProfileHeight"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tinggi"
-                android:textSize="20sp"
-                android:textColor="#000000"
-                android:layout_marginTop="10dp"/>
+                    <TextView
+                        android:id="@+id/txtProfileActivity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tahap Aktiviti: Sederhana"
+                        android:textSize="14sp"
+                        android:textColor="#555555"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-            <TextView
-                android:id="@+id/txtProfileActivity"
-                android:layout_width="wrap_content"
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Aktiviti"
-                android:textSize="20sp"
-                android:textColor="#000000"
-                android:layout_marginTop="10dp"/>
+                android:layout_margin="8dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
 
-            <TextView
-                android:id="@+id/txtProfileBMI"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="BMI"
-                android:textSize="20sp"
-                android:textColor="#000000"
-                android:layout_marginTop="10dp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-            <TextView
-                android:id="@+id/txtProfileBMR"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="BMR"
-                android:textSize="20sp"
-                android:textColor="#000000"
-                android:layout_marginTop="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Maklumat Fizikal"
+                        android:textStyle="bold"
+                        android:textColor="#1A1A1A"
+                        android:textSize="16sp"
+                        android:layout_marginBottom="12dp"/>
 
-            <TextView
-                android:id="@+id/txtProfileTDEE"
-                android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="2"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:id="@+id/txtProfileGender"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Jantina: Lelaki"
+                            android:textSize="15sp"
+                            android:textColor="#424242"/>
+
+                        <TextView
+                            android:id="@+id/txtProfileAge"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Umur: 38 Tahun"
+                            android:textSize="15sp"
+                            android:textColor="#424242"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <TextView
+                            android:id="@+id/txtProfileWeight"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Berat: 59.8 kg"
+                            android:textSize="15sp"
+                            android:textColor="#424242"/>
+
+                        <TextView
+                            android:id="@+id/txtProfileHeight"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Tinggi: 162.5 cm"
+                            android:textSize="15sp"
+                            android:textColor="#424242"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TDEE"
-                android:textSize="20sp"
-                android:textColor="#000000"
-                android:layout_marginTop="10dp"/>
+                android:layout_margin="8dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="3dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Metrik Kesihatan &amp; Tenaga"
+                        android:textStyle="bold"
+                        android:textColor="#1A1A1A"
+                        android:textSize="16sp"
+                        android:layout_marginBottom="16dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="14dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Indeks Jisim Badan (BMI):"
+                            android:textSize="15sp"
+                            android:textColor="#424242"/>
+
+                        <TextView
+                            android:id="@+id/txtProfileBMI"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="22.65 (NORMAL)"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#4CAF50"
+                            android:gravity="end"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"
+                        android:layout_marginBottom="14dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="14dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Kadar Metabolik Asas (BMR):"
+                            android:textSize="15sp"
+                            android:textColor="#424242"/>
+
+                        <TextView
+                            android:id="@+id/txtProfileBMR"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="1453 kcal"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#2196F3"
+                            android:gravity="end"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"
+                        android:layout_marginBottom="14dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="6dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Keperluan Kalori (TDEE):"
+                            android:textSize="15sp"
+                            android:textColor="#424242"/>
+
+                        <TextView
+                            android:id="@+id/txtProfileTDEE"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="2252 kcal"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="#FF9800"
+                            android:gravity="end"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
             <Button
                 android:id="@+id/btnEdit"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="EDIT PROFILE"
+                android:layout_height="56dp"
+                android:text="KEMAS KINI PROFIL"
                 android:textStyle="bold"
-                android:textColor="#000000"
+                android:textColor="#FFFFFF"
                 android:backgroundTint="#FFB74D"
-                android:layout_marginTop="20dp"/>
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                app:cornerRadius="12dp"/>
 
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </ScrollView>

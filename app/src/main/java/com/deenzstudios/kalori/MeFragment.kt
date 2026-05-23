@@ -6,8 +6,28 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import android.net.Uri
 
 class MeFragment : Fragment() {
+
+    // 1. Isytihar pemboleh ubah di atas sekali dalam kelas
+    private lateinit var pickImageLauncher: androidx.activity.result.ActivityResultLauncher<String>
+    private var imageUriString: String? = null
+
+    // 2. Wajib daftarkan launcher di dalam onCreate!
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        pickImageLauncher = registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.GetContent()) { uri ->
+            uri?.let {
+                imageUriString = it.toString()
+
+                // Ambil balik view gambar dari fragment untuk dipaparkan terus pada borang
+                val imgFormProfile = view?.findViewById<com.google.android.material.imageview.ShapeableImageView>(R.id.imgFormProfile)
+                imgFormProfile?.setImageURI(it)
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -17,6 +37,16 @@ class MeFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_me, container, false)
 
+        // 3. Cari ID komponen gambar profil dalam onCreateView
+        val imgFormProfile = view.findViewById<com.google.android.material.imageview.ShapeableImageView>(R.id.imgFormProfile)
+        val imgProfileView = view.findViewById<com.google.android.material.imageview.ShapeableImageView>(R.id.imgProfileView)
+
+        // 4. Aksi apabila pengguna KLIK pada gambar profil bulat di borang
+        imgFormProfile.setOnClickListener {
+            pickImageLauncher.launch("image/*")
+        }
+
+        // --- ID Komponen Asal ---
         val edtWeight = view.findViewById<EditText>(R.id.edtWeight)
         val edtName = view.findViewById<EditText>(R.id.edtName)
         val edtHeight = view.findViewById<EditText>(R.id.edtHeight)
@@ -27,8 +57,6 @@ class MeFragment : Fragment() {
         val radioFemale = view.findViewById<RadioButton>(R.id.radioFemale)
 
         val btnCalculate = view.findViewById<Button>(R.id.btnCalculate)
-
-
 
         val profileLayout = view.findViewById<LinearLayout>(R.id.profileLayout)
         val formLayout = view.findViewById<LinearLayout>(R.id.formLayout)
@@ -65,24 +93,21 @@ class MeFragment : Fragment() {
 
         spinnerActivity.adapter = adapter
 
+        // ================= AUTO LOAD DATA TEKS (Apabila Fragment Dibuka) =================
         val savedName = sharedPref.getString("name", null)
 
         if (savedName != null) {
-
             profileLayout.visibility = View.VISIBLE
             formLayout.visibility = View.GONE
 
-            txtProfileName.text = "Nama: " + sharedPref.getString("name", "")
+            // Memaparkan nama terus tanpa perkataan "Nama: "
+            txtProfileName.text = sharedPref.getString("name", "")?.uppercase()
+
             val savedBmi = sharedPref.getString("bmi", "")
             val savedStatus = sharedPref.getString("bmiStatus", "")
-            val savedColor = sharedPref.getInt(
-                "bmiColor",
-                android.graphics.Color.BLACK
-            )
+            val savedColor = sharedPref.getInt("bmiColor", android.graphics.Color.BLACK)
 
-            txtProfileBMI.text =
-                "BMI: $savedBmi ($savedStatus)"
-
+            txtProfileBMI.text = "BMI: $savedBmi ($savedStatus)"
             txtProfileBMI.setTextColor(savedColor)
             txtProfileBMR.text = "BMR: " + sharedPref.getString("bmr", "")
             txtProfileTDEE.text = "TDEE: " + sharedPref.getString("tdee", "")
@@ -93,7 +118,14 @@ class MeFragment : Fragment() {
             txtProfileActivity.text = "Aktiviti: " + sharedPref.getString("activity", "")
         }
 
+        // ================= AKSI BUTANG CALCULATE / SAVE PROFILE =================
         btnCalculate.setOnClickListener {
+            val editor = sharedPref.edit()
+
+            // 1. Simpan string lokasi gambar ke SharedPreferences
+            if (imageUriString != null) {
+                editor.putString("profile_image", imageUriString)
+            }
 
             val weight = edtWeight.text.toString().toDoubleOrNull()
             val height = edtHeight.text.toString().toDoubleOrNull()
@@ -106,28 +138,17 @@ class MeFragment : Fragment() {
                 val heightMeter = height / 100
                 val bmi = weight / (heightMeter * heightMeter)
 
-
                 // BMR ikut jantina
                 val bmr = if (radioMale.isChecked) {
-
-                    // Lelaki
                     88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)
-
                 } else if (radioFemale.isChecked) {
-
-                    // Perempuan
                     447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)
-
                 } else {
-
                     0.0
                 }
 
                 if (bmr > 0) {
-
-
                     val multiplier = when (spinnerActivity.selectedItem.toString()) {
-
                         "Tidak Aktif" -> 1.2
                         "Ringan" -> 1.375
                         "Sederhana" -> 1.55
@@ -137,17 +158,14 @@ class MeFragment : Fragment() {
 
                     val tdee = bmr * multiplier
 
-
-                    Toast.makeText(
-                        requireContext(),
-                        "Profile berjaya disimpan",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(requireContext(), "Profile berjaya disimpan", Toast.LENGTH_SHORT).show()
 
                     profileLayout.visibility = View.VISIBLE
                     formLayout.visibility = View.GONE
 
-                    txtProfileName.text = "Nama: $name"
+                    // 2. Papar nama terus dalam huruf besar sejurus selepas save
+                    txtProfileName.text = name.uppercase()
+
                     val gender = if (radioMale.isChecked) "Lelaki" else "Perempuan"
 
                     txtProfileWeight.text = "Berat: $weight kg"
@@ -155,50 +173,45 @@ class MeFragment : Fragment() {
                     txtProfileAge.text = "Umur: $age Tahun"
                     txtProfileGender.text = "Jantina: $gender"
                     txtProfileActivity.text = "Aktiviti: ${spinnerActivity.selectedItem}"
+
                     val bmiStatus: String
                     val bmiColor: Int
 
                     when {
-
                         bmi < 18.5 -> {
-
                             bmiStatus = "KURUS"
                             bmiColor = android.graphics.Color.RED
                         }
-
                         bmi < 25 -> {
-
                             bmiStatus = "NORMAL"
                             bmiColor = android.graphics.Color.parseColor("#4CAF50")
                         }
-
                         bmi < 30 -> {
-
                             bmiStatus = "BERLEBIHAN"
                             bmiColor = android.graphics.Color.YELLOW
                         }
-
                         bmi < 35 -> {
-
                             bmiStatus = "OBESITI 1"
                             bmiColor = android.graphics.Color.parseColor("#FF9800")
                         }
-
                         else -> {
-
                             bmiStatus = "OBESITI 2"
                             bmiColor = android.graphics.Color.parseColor("#B71C1C")
                         }
                     }
 
-                    txtProfileBMI.text =
-                        "BMI: %.2f".format(bmi) + " ($bmiStatus)"
-
+                    txtProfileBMI.text = "BMI: %.2f".format(bmi) + " ($bmiStatus)"
                     txtProfileBMI.setTextColor(bmiColor)
                     txtProfileBMR.text = "BMR: %.0f kcal".format(bmr)
                     txtProfileTDEE.text = "TDEE: %.0f kcal".format(tdee)
-                    sharedPref.edit()
-                        .putString("name", name)
+
+                    // 3. Kemas kini imej pada paparan profile secara real-time
+                    if (imageUriString != null) {
+                        imgProfileView.setImageURI(Uri.parse(imageUriString))
+                    }
+
+                    // Simpan semua data ke SharedPreferences secara kekal
+                    editor.putString("name", name)
                         .putString("bmi", "%.2f".format(bmi))
                         .putString("bmiStatus", bmiStatus)
                         .putInt("bmiColor", bmiColor)
@@ -209,15 +222,25 @@ class MeFragment : Fragment() {
                         .putString("age", age.toString())
                         .putString("gender", gender)
                         .putString("activity", spinnerActivity.selectedItem.toString())
-
                         .apply()
-                } else {
-
                 }
+            } else {
+                Toast.makeText(requireContext(), "Sila lengkapkan semua maklumat", Toast.LENGTH_SHORT).show()
             }
         }
-        btnEdit.setOnClickListener {
 
+        // ================= AUTO LOAD DATA GAMBAR (Apabila Fragment Dibuka) =================
+        val savedImageUriString = sharedPref.getString("profile_image", null)
+
+        if (savedImageUriString != null) {
+            val imageUri = Uri.parse(savedImageUriString)
+            // Paparkan pada kedua-dua tempat (Borang dan Kad Paparan)
+            imgFormProfile.setImageURI(imageUri)
+            imgProfileView.setImageURI(imageUri)
+        }
+
+        // ================= AKSI BUTANG EDIT PROFILE =================
+        btnEdit.setOnClickListener {
             profileLayout.visibility = View.GONE
             formLayout.visibility = View.VISIBLE
 
@@ -229,20 +252,13 @@ class MeFragment : Fragment() {
             val savedGender = sharedPref.getString("gender", "")
 
             if (savedGender == "Lelaki") {
-
                 radioMale.isChecked = true
-
             } else {
-
                 radioFemale.isChecked = true
             }
 
-            val savedActivity =
-                sharedPref.getString("activity", "Tidak Aktif")
-
-            val position =
-                activityLevels.indexOf(savedActivity)
-
+            val savedActivity = sharedPref.getString("activity", "Tidak Aktif")
+            val position = activityLevels.indexOf(savedActivity)
             spinnerActivity.setSelection(position)
         }
 

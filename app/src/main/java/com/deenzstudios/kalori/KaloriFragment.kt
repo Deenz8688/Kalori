@@ -19,6 +19,8 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import android.os.StrictMode
+import android.widget.LinearLayout
+import android.widget.Button
 
 
 class KaloriFragment : Fragment() {
@@ -48,9 +50,39 @@ class KaloriFragment : Fragment() {
                 false
             )
 
+        // Hubungkan komponen XML baru dengan Kotlin
+        val layoutWarningProfile = view.findViewById<LinearLayout>(R.id.layoutWarningProfile)
+        val layoutUtamaKalori = view.findViewById<LinearLayout>(R.id.layoutUtamaKalori)
+        val btnGoToProfile = view.findViewById<Button>(R.id.btnGoToProfile)
+
         // ================= VIEW =================
+        // Ambil data SharedPreferences daripada file "UserProfile"
+        val profilePref = requireContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+
+        // Baca nilai TDEE dan BMR yang tersimpan (jika tiada, dia akan pulangkan "0 kcal")
+        val currentTdee = profilePref.getString("tdee", "0 kcal") ?: "0 kcal"
+        val currentBmr = profilePref.getString("bmr", "0 kcal") ?: "0 kcal"
+
+        // ================= JALANKAN SEKATAN WAJIB PROFIL =================
+        if (currentTdee == "0 kcal" || currentBmr == "0 kcal" || currentTdee.isEmpty()) {
+
+            // Jika profil kosong, tunjuk amaran merah & sorokkan fungsi kalori utama
+            layoutWarningProfile.visibility = View.VISIBLE
+            layoutUtamaKalori.visibility = View.GONE
+
+            // Fungsi butang untuk paksa tukar tab ke halaman profil (MeFragment)
+            btnGoToProfile.setOnClickListener {
+                val bottomNav = requireActivity().findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavigationView)
+                bottomNav.selectedItemId = R.id.nav_Me // Mengubah tab secara automatik
+            }
+        } else {
+            // Jika profil dah lengkap, sorok amaran & buka kunci paparan kalori macam biasa
+            layoutWarningProfile.visibility = View.GONE
+            layoutUtamaKalori.visibility = View.VISIBLE
+        }
 
         val edtDate =
+
             view.findViewById<EditText>(
                 R.id.edtDate
             )
