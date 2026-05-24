@@ -9,6 +9,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import android.net.Uri
 
+
 class MeFragment : Fragment() {
 
     // 1. Isytihar pemboleh ubah di atas sekali dalam kelas
@@ -85,6 +86,28 @@ class MeFragment : Fragment() {
 
         val btnEdit = view.findViewById<Button>(R.id.btnEdit)
 
+        val txtAccountStatus =
+            view.findViewById<TextView>(
+                R.id.txtAccountStatus
+            )
+
+        val btnLoginAccount =
+            view.findViewById<Button>(
+                R.id.btnLoginAccount
+            )
+
+        
+
+        val btnLogout =
+            view.findViewById<Button>(
+                R.id.btnLogout
+            )
+
+        val btnQuickLogin =
+            view.findViewById<Button>(
+                R.id.btnQuickLogin
+            )
+
         val sharedPref = requireActivity().getSharedPreferences(
             "UserProfile",
             android.content.Context.MODE_PRIVATE
@@ -105,6 +128,51 @@ class MeFragment : Fragment() {
         )
 
         spinnerActivity.adapter = adapter
+
+        val loginPref =
+            requireActivity().getSharedPreferences(
+                "LoginSession",
+                android.content.Context.MODE_PRIVATE
+            )
+
+        val isLoggedIn =
+            loginPref.getBoolean(
+                "isLoggedIn",
+                false
+            )
+
+        val userEmail =
+            loginPref.getString(
+                "userEmail",
+                ""
+            )
+
+        if (isLoggedIn) {
+
+            txtAccountStatus.text =
+                "Log Masuk Sebagai:\n$userEmail"
+
+            btnLoginAccount.visibility =
+                View.GONE
+
+
+
+            btnLogout.visibility =
+                View.VISIBLE
+
+        } else {
+
+            txtAccountStatus.text =
+                "Anda menggunakan mod tetamu"
+
+            btnLoginAccount.visibility =
+                View.VISIBLE
+
+            
+
+            btnLogout.visibility =
+                View.GONE
+        }
 
         // ================= AUTO LOAD DATA TEKS (Apabila Fragment Dibuka) =================
         val savedName = sharedPref.getString("name", null)
@@ -171,15 +239,120 @@ class MeFragment : Fragment() {
 
                     val tdee = bmr * multiplier
 
+                    val gender =
+                        if (radioMale.isChecked)
+                            "Lelaki"
+                        else
+                            "Perempuan"
+
                     Toast.makeText(requireContext(), "Profile berjaya disimpan", Toast.LENGTH_SHORT).show()
 
+
+                    val loginPref =
+                        requireActivity().getSharedPreferences(
+                            "LoginSession",
+                            android.content.Context.MODE_PRIVATE
+                        )
+
+                    val isLoggedIn =
+                        loginPref.getBoolean(
+                            "isLoggedIn",
+                            false
+                        )
+
+                    if (isLoggedIn) {
+
+                        val userId =
+                            loginPref.getString(
+                                "userId",
+                                ""
+                            ) ?: ""
+
+                        Thread {
+
+                            try {
+
+                                val url =
+                                    java.net.URL(
+                                        "https://specmb.org/kalori_api/save_profile.php"
+                                    )
+
+                                val postData =
+                                    "user_id=" +
+                                            java.net.URLEncoder.encode(userId, "UTF-8") +
+
+                                            "&full_name=" +
+                                            java.net.URLEncoder.encode(name, "UTF-8") +
+
+                                            "&profile_image=" +
+                                            java.net.URLEncoder.encode(imageUriString ?: "", "UTF-8") +
+
+                                            "&activity_level=" +
+                                            java.net.URLEncoder.encode(
+                                                spinnerActivity.selectedItem.toString(),
+                                                "UTF-8"
+                                            ) +
+
+                                            "&gender=" +
+                                            java.net.URLEncoder.encode(gender, "UTF-8") +
+
+                                            "&age=" +
+                                            java.net.URLEncoder.encode(age.toString(), "UTF-8") +
+
+                                            "&weight=" +
+                                            java.net.URLEncoder.encode(weight.toString(), "UTF-8") +
+
+                                            "&height=" +
+                                            java.net.URLEncoder.encode(height.toString(), "UTF-8") +
+
+                                            "&bmi=" +
+                                            java.net.URLEncoder.encode(
+                                                "%.2f".format(bmi),
+                                                "UTF-8"
+                                            ) +
+
+                                            "&bmr=" +
+                                            java.net.URLEncoder.encode(
+                                                "%.0f".format(bmr),
+                                                "UTF-8"
+                                            ) +
+
+                                            "&tdee=" +
+                                            java.net.URLEncoder.encode(
+                                                "%.0f".format(tdee),
+                                                "UTF-8"
+                                            )
+
+                                val conn =
+                                    url.openConnection()
+                                            as java.net.HttpURLConnection
+
+                                conn.requestMethod = "POST"
+
+                                conn.doOutput = true
+
+                                conn.outputStream.write(
+                                    postData.toByteArray()
+                                )
+
+                                conn.inputStream.bufferedReader()
+                                    .readText()
+
+                            } catch (e: Exception) {
+
+                                e.printStackTrace()
+                            }
+
+                        }.start()
+                    }
+                    
                     profileLayout.visibility = View.VISIBLE
                     formLayout.visibility = View.GONE
 
                     // 2. Papar nama terus dalam huruf besar sejurus selepas save
                     txtProfileName.text = name.uppercase()
 
-                    val gender = if (radioMale.isChecked) "Lelaki" else "Perempuan"
+                    
 
                     txtProfileWeight.text = "Berat: $weight kg"
                     txtProfileHeight.text = "Tinggi: $height cm"
@@ -283,7 +456,48 @@ class MeFragment : Fragment() {
             val position = activityLevels.indexOf(savedActivity)
             spinnerActivity.setSelection(position)
         }
+        btnLoginAccount.setOnClickListener {
 
+            startActivity(
+                Intent(
+                    requireContext(),
+                    LoginActivity::class.java
+                )
+            )
+        }
+
+        
+
+        btnLogout.setOnClickListener {
+
+            loginPref.edit().clear().apply()
+
+            Toast.makeText(
+                requireContext(),
+                "Berjaya Log Out",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            startActivity(
+                Intent(
+                    requireContext(),
+                    LoginActivity::class.java
+                )
+            )
+
+            requireActivity().finish()
+        }
+
+        btnQuickLogin.setOnClickListener {
+
+            startActivity(
+                Intent(
+                    requireContext(),
+                    LoginActivity::class.java
+                )
+            )
+        }
+        
         return view
     }
 }
