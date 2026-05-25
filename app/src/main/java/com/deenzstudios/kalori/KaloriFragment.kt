@@ -527,8 +527,20 @@ class KaloriFragment : Fragment() {
 
                     connection.doOutput = true
 
+                    val loginPref =
+                        requireActivity().getSharedPreferences(
+                            "LoginSession",
+                            Context.MODE_PRIVATE
+                        )
+
+                    val userId =
+                        loginPref.getString(
+                            "userId",
+                            ""
+                        ) ?: ""
+                    
                     val postData =
-                        "user_id=2" +
+                        "user_id=$userId" +
                                 "&meal_type=$mealWithoutEmoji" +
                                 "&food_date=$mysqlDate"
 
@@ -735,6 +747,8 @@ class KaloriFragment : Fragment() {
             edtDate.text.toString()
         )
 
+
+
         fun loadCloudFoods(userId: String) {
 
             try {
@@ -752,6 +766,34 @@ class KaloriFragment : Fragment() {
 
                 val jsonArray =
                     org.json.JSONArray(response)
+
+                // ================= CLEAR OLD CLOUD DATA =================
+
+                val allKeys =
+                    sharedPref.all.keys
+
+                for (key in allKeys) {
+
+                    if (
+                        key.contains("_breakfast") ||
+                        key.contains("_lunch") ||
+                        key.contains("_dinner") ||
+                        key.contains("_totalCalories") ||
+                        key.contains("_balance")
+                    ) {
+
+                        editor.remove(key)
+                    }
+                }
+
+                editor.apply()
+
+                // RESET TOTAL
+                breakfastTotal = 0.0
+                lunchTotal = 0.0
+                dinnerTotal = 0.0
+
+                // ================= RESTORE CLOUD =================
 
                 for (i in 0 until jsonArray.length()) {
 
@@ -776,149 +818,154 @@ class KaloriFragment : Fragment() {
                     val foodDate =
                         "${parts[2]}/${parts[1]}/${parts[0]}"
 
-                    val foodText =
-                        "• $foodName = ${calories.toInt()} kcal"
-
                     when (mealType) {
 
                         "Sarapan", "🍳 Sarapan" -> {
 
-                            val oldText =
-                                sharedPref.getString(
-                                    "${foodDate}_breakfast_text",
-                                    ""
-                                ) ?: ""
-
-                            val oldTotal =
-                                sharedPref.getFloat(
-                                    "${foodDate}_breakfast_total",
-                                    0f
-                                )
-
-                            val newText =
-
-                                if (oldText.isNotEmpty()) {
-
-                                    oldText + "\n" + foodText
-
-                                } else {
-
-                                    foodText
-                                }
+                            breakfastTotal =
+                                calories.toDouble()
 
                             editor.putString(
                                 "${foodDate}_breakfast_text",
-                                newText
+                                foodName
                             )
 
                             editor.putFloat(
                                 "${foodDate}_breakfast_total",
-                                oldTotal + calories
+                                calories
                             )
                         }
 
                         "Tengah Hari", "🍛 Tengah Hari" -> {
 
-                            val oldText =
-                                sharedPref.getString(
-                                    "${foodDate}_lunch_text",
-                                    ""
-                                ) ?: ""
-
-                            val oldTotal =
-                                sharedPref.getFloat(
-                                    "${foodDate}_lunch_total",
-                                    0f
-                                )
-
-                            val newText =
-
-                                if (oldText.isNotEmpty()) {
-
-                                    oldText + "\n" + foodText
-
-                                } else {
-
-                                    foodText
-                                }
+                            lunchTotal =
+                                calories.toDouble()
 
                             editor.putString(
                                 "${foodDate}_lunch_text",
-                                newText
+                                foodName
                             )
 
                             editor.putFloat(
                                 "${foodDate}_lunch_total",
-                                oldTotal + calories
+                                calories
                             )
                         }
 
                         "Makan Malam", "🌙 Makan Malam" -> {
 
-                            val oldText =
-                                sharedPref.getString(
-                                    "${foodDate}_dinner_text",
-                                    ""
-                                ) ?: ""
-
-                            val oldTotal =
-                                sharedPref.getFloat(
-                                    "${foodDate}_dinner_total",
-                                    0f
-                                )
-
-                            val newText =
-
-                                if (oldText.isNotEmpty()) {
-
-                                    oldText + "\n" + foodText
-
-                                } else {
-
-                                    foodText
-                                }
+                            dinnerTotal =
+                                calories.toDouble()
 
                             editor.putString(
                                 "${foodDate}_dinner_text",
-                                newText
+                                foodName
                             )
 
                             editor.putFloat(
                                 "${foodDate}_dinner_total",
-                                oldTotal + calories
+                                calories
                             )
                         }
                     }
 
-                    val breakfast =
-                        sharedPref.getFloat(
-                            "${foodDate}_breakfast_total",
-                            0f
-                        )
-
-                    val lunch =
-                        sharedPref.getFloat(
-                            "${foodDate}_lunch_total",
-                            0f
-                        )
-
-                    val dinner =
-                        sharedPref.getFloat(
-                            "${foodDate}_dinner_total",
-                            0f
-                        )
-
                     val grandTotal =
-                        breakfast + lunch + dinner
+
+                        breakfastTotal +
+                                lunchTotal +
+                                dinnerTotal
+
+                    val tdeeValue =
+                        savedTdee
+                            .replace("kcal", "")
+                            .trim()
+                            .toDoubleOrNull()
+                            ?: 0.0
+
+                    val balance =
+                        tdeeValue - grandTotal
 
                     editor.putFloat(
                         "${foodDate}_totalCalories",
-                        grandTotal
+                        grandTotal.toFloat()
+                    )
+
+                    editor.putFloat(
+                        "${foodDate}_balance",
+                        balance.toFloat()
+                    )
+
+                    txtTotalCalories.text =
+                        "Jumlah Kalori: %.0f kcal"
+                            .format(grandTotal)
+
+                    txtBalance.text =
+                        "Baki Kalori: %.0f kcal"
+                            .format(balance)
+
+                    val profilePref =
+                        requireActivity()
+                            .getSharedPreferences(
+                                "UserProfile",
+                                Context.MODE_PRIVATE
+                            )
+
+                    val currentWeight =
+                        profilePref.getString(
+                            "weight",
+                            "0"
+                        ) + " kg"
+
+                    val currentBmr =
+                        profilePref.getString(
+                            "bmr",
+                            "0 kcal"
+                        ) ?: "0 kcal"
+
+                    val currentTdee =
+                        profilePref.getString(
+                            "tdee",
+                            "0 kcal"
+                        ) ?: "0 kcal"
+
+                    val breakfastFormatted =
+                        "%.0f".format(breakfastTotal)
+
+                    val lunchFormatted =
+                        "%.0f".format(lunchTotal)
+
+                    val dinnerFormatted =
+                        "%.0f".format(dinnerTotal)
+
+                    val grandFormatted =
+                        "%.0f".format(grandTotal)
+
+                    val reportData = ReportData(
+
+                        foodDate,
+
+                        currentWeight,
+
+                        "$breakfastFormatted kcal",
+
+                        "$lunchFormatted kcal",
+
+                        "$dinnerFormatted kcal",
+
+                        "$grandFormatted kcal",
+
+                        currentBmr,
+
+                        currentTdee
+                    )
+
+                    ReportManager.saveReport(
+                        requireContext(),
+                        reportData
                     )
                 }
 
                 editor.apply()
-
 
                 loadDataByDate(
                     edtDate.text.toString()
@@ -928,6 +975,23 @@ class KaloriFragment : Fragment() {
 
                 e.printStackTrace()
             }
+        }
+
+        val loginPref =
+            requireActivity().getSharedPreferences(
+                "LoginSession",
+                Context.MODE_PRIVATE
+            )
+
+        val userId =
+            loginPref.getString(
+                "userId",
+                ""
+            ) ?: ""
+
+        if (userId.isNotEmpty()) {
+
+            loadCloudFoods(userId)
         }
         // ================= DATE PICKER =================
 
@@ -1464,6 +1528,18 @@ class KaloriFragment : Fragment() {
 
             try {
 
+                val loginPref =
+                    requireActivity().getSharedPreferences(
+                        "LoginSession",
+                        Context.MODE_PRIVATE
+                    )
+
+                val userId =
+                    loginPref.getString(
+                        "userId",
+                        ""
+                    ) ?: ""
+                
                 val mealWithoutEmoji = when(selectedMeal) {
 
                     "🍳 Sarapan" -> "Sarapan"
@@ -1490,7 +1566,7 @@ class KaloriFragment : Fragment() {
                     "${dateParts[2]}-${dateParts[1]}-${dateParts[0]}"
 
                 val postData =
-                    "user_id=2" +
+                    "user_id=$userId" +
                             "&meal_type=$mealWithoutEmoji" +
                             "&food_name=$foodName" +
                             "&calories=${tempTotal.toInt()}" +
