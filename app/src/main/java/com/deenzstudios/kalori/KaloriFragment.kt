@@ -501,6 +501,55 @@ class KaloriFragment : Fragment() {
 
                 editor.apply()
 
+                try {
+
+                    val mealWithoutEmoji = when (title) {
+
+                        "🍳 Sarapan" -> "Sarapan"
+
+                        "🍛 Tengah Hari" -> "Tengah Hari"
+
+                        else -> "Makan Malam"
+                    }
+
+                    val dateParts =
+                        selectedDate.split("/")
+
+                    val mysqlDate =
+                        "${dateParts[2]}-${dateParts[1]}-${dateParts[0]}"
+
+                    val url = URL(
+                        "https://specmb.org/kalori_api/delete_food.php"
+                    )
+
+                    val connection =
+                        url.openConnection()
+
+                    connection.doOutput = true
+
+                    val postData =
+                        "user_id=2" +
+                                "&meal_type=$mealWithoutEmoji" +
+                                "&food_date=$mysqlDate"
+
+                    connection.getOutputStream()
+                        .write(postData.toByteArray())
+
+                    val response =
+                        connection.getInputStream()
+                            .bufferedReader()
+                            .readText()
+
+                    android.util.Log.d(
+                        "DELETE_FOOD",
+                        response
+                    )
+
+                } catch (e: Exception) {
+
+                    e.printStackTrace()
+                }
+
                 val profilePref = requireActivity()
                     .getSharedPreferences(
                         "UserProfile",
@@ -548,6 +597,8 @@ class KaloriFragment : Fragment() {
                     requireContext(),
                     reportData
                 )
+
+
 
                 txtTotalCalories.text =
                     "Jumlah Kalori: %.0f kcal"
@@ -684,6 +735,200 @@ class KaloriFragment : Fragment() {
             edtDate.text.toString()
         )
 
+        fun loadCloudFoods(userId: String) {
+
+            try {
+
+                val url = URL(
+                    "https://specmb.org/kalori_api/get_all_foods.php?user_id=$userId"
+                )
+
+                val response = url.readText()
+
+                android.util.Log.d(
+                    "CLOUD_DATA",
+                    response
+                )
+
+                val jsonArray =
+                    org.json.JSONArray(response)
+
+                for (i in 0 until jsonArray.length()) {
+
+                    val obj =
+                        jsonArray.getJSONObject(i)
+
+                    val mealType =
+                        obj.getString("meal_type").trim()
+
+                    val foodName =
+                        obj.getString("food_name")
+
+                    val calories =
+                        obj.getString("calories").toFloat()
+
+                    val rawDate =
+                        obj.getString("food_date")
+
+                    val parts =
+                        rawDate.split("-")
+
+                    val foodDate =
+                        "${parts[2]}/${parts[1]}/${parts[0]}"
+
+                    val foodText =
+                        "• $foodName = ${calories.toInt()} kcal"
+
+                    when (mealType) {
+
+                        "Sarapan", "🍳 Sarapan" -> {
+
+                            val oldText =
+                                sharedPref.getString(
+                                    "${foodDate}_breakfast_text",
+                                    ""
+                                ) ?: ""
+
+                            val oldTotal =
+                                sharedPref.getFloat(
+                                    "${foodDate}_breakfast_total",
+                                    0f
+                                )
+
+                            val newText =
+
+                                if (oldText.isNotEmpty()) {
+
+                                    oldText + "\n" + foodText
+
+                                } else {
+
+                                    foodText
+                                }
+
+                            editor.putString(
+                                "${foodDate}_breakfast_text",
+                                newText
+                            )
+
+                            editor.putFloat(
+                                "${foodDate}_breakfast_total",
+                                oldTotal + calories
+                            )
+                        }
+
+                        "Tengah Hari", "🍛 Tengah Hari" -> {
+
+                            val oldText =
+                                sharedPref.getString(
+                                    "${foodDate}_lunch_text",
+                                    ""
+                                ) ?: ""
+
+                            val oldTotal =
+                                sharedPref.getFloat(
+                                    "${foodDate}_lunch_total",
+                                    0f
+                                )
+
+                            val newText =
+
+                                if (oldText.isNotEmpty()) {
+
+                                    oldText + "\n" + foodText
+
+                                } else {
+
+                                    foodText
+                                }
+
+                            editor.putString(
+                                "${foodDate}_lunch_text",
+                                newText
+                            )
+
+                            editor.putFloat(
+                                "${foodDate}_lunch_total",
+                                oldTotal + calories
+                            )
+                        }
+
+                        "Makan Malam", "🌙 Makan Malam" -> {
+
+                            val oldText =
+                                sharedPref.getString(
+                                    "${foodDate}_dinner_text",
+                                    ""
+                                ) ?: ""
+
+                            val oldTotal =
+                                sharedPref.getFloat(
+                                    "${foodDate}_dinner_total",
+                                    0f
+                                )
+
+                            val newText =
+
+                                if (oldText.isNotEmpty()) {
+
+                                    oldText + "\n" + foodText
+
+                                } else {
+
+                                    foodText
+                                }
+
+                            editor.putString(
+                                "${foodDate}_dinner_text",
+                                newText
+                            )
+
+                            editor.putFloat(
+                                "${foodDate}_dinner_total",
+                                oldTotal + calories
+                            )
+                        }
+                    }
+
+                    val breakfast =
+                        sharedPref.getFloat(
+                            "${foodDate}_breakfast_total",
+                            0f
+                        )
+
+                    val lunch =
+                        sharedPref.getFloat(
+                            "${foodDate}_lunch_total",
+                            0f
+                        )
+
+                    val dinner =
+                        sharedPref.getFloat(
+                            "${foodDate}_dinner_total",
+                            0f
+                        )
+
+                    val grandTotal =
+                        breakfast + lunch + dinner
+
+                    editor.putFloat(
+                        "${foodDate}_totalCalories",
+                        grandTotal
+                    )
+                }
+
+                editor.apply()
+
+
+                loadDataByDate(
+                    edtDate.text.toString()
+                )
+
+            } catch (e: Exception) {
+
+                e.printStackTrace()
+            }
+        }
         // ================= DATE PICKER =================
 
         edtDate.setOnClickListener {
@@ -707,6 +952,8 @@ class KaloriFragment : Fragment() {
                     loadDataByDate(
                         edtDate.text.toString()
                     )
+
+
                 },
 
                 calendar.get(Calendar.YEAR),
@@ -1019,8 +1266,12 @@ class KaloriFragment : Fragment() {
                 edtBreakfastAmount.setText("")
 
                 edtBreakfastFood.requestFocus()
+
+
             }
+
         }
+        
 
         // ================= SAVE =================
 
@@ -1201,6 +1452,8 @@ class KaloriFragment : Fragment() {
 
             editor.apply()
 
+            
+
             txtTotalCalories.text =
                 "Jumlah Kalori: %.0f kcal"
                     .format(grandTotal)
@@ -1208,6 +1461,58 @@ class KaloriFragment : Fragment() {
             txtBalance.text =
                 "Baki Kalori: %.0f kcal"
                     .format(balance)
+
+            try {
+
+                val mealWithoutEmoji = when(selectedMeal) {
+
+                    "🍳 Sarapan" -> "Sarapan"
+                    "🍛 Tengah Hari" -> "Tengah Hari"
+                    else -> "Makan Malam"
+                }
+
+                val foodName =
+                    tempMealList.joinToString(", ")
+
+                val url = URL(
+                    "https://specmb.org/kalori_api/save_food.php"
+                )
+
+                val connection =
+                    url.openConnection()
+
+                connection.doOutput = true
+
+                val dateParts =
+                    selectedDate.split("/")
+
+                val mysqlDate =
+                    "${dateParts[2]}-${dateParts[1]}-${dateParts[0]}"
+
+                val postData =
+                    "user_id=2" +
+                            "&meal_type=$mealWithoutEmoji" +
+                            "&food_name=$foodName" +
+                            "&calories=${tempTotal.toInt()}" +
+                            "&food_date=$mysqlDate"
+
+                connection.getOutputStream()
+                    .write(postData.toByteArray())
+
+                val response =
+                    connection.getInputStream()
+                        .bufferedReader()
+                        .readText()
+
+                android.util.Log.d(
+                    "SAVE_FOOD",
+                    response
+                )
+
+            } catch (e: Exception) {
+
+                e.printStackTrace()
+            }
 
             layoutSavedMeals.addView(card)
 
@@ -1288,6 +1593,7 @@ class KaloriFragment : Fragment() {
                 requireContext(),
                 reportData
             )
+            
         }
         
 
@@ -1310,6 +1616,8 @@ class KaloriFragment : Fragment() {
 
             60000
         )
+
+        
 
         return view
     }
