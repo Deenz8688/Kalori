@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5">
@@ -63,12 +64,14 @@
             android:visibility="visible">
 
             <LinearLayout
+                android:id="@+id/cardBorangMakanan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="#FFFFFF"
                 android:padding="16dp"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="20dp"
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -87,18 +90,45 @@
                     android:textColor="#000000"
                     android:layout_marginTop="20dp" />
 
-                <EditText
-                    android:id="@+id/edtDate"
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:layout_marginTop="8dp"
-                    android:focusable="false"
-                    android:clickable="true"
-                    android:hint="Pilih tarikh"
-                    android:textColor="#000000"
-                    android:textSize="18sp"
-                    android:background="@android:drawable/editbox_background"
-                    android:padding="12dp" />
+                    android:layout_marginTop="12dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="#FFFFFF">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📅"
+                            android:textSize="20sp" />
+
+                        <EditText
+                            android:id="@+id/edtDate"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="12dp"
+                            android:background="@android:color/transparent"
+                            android:focusable="false"
+                            android:clickable="true"
+                            android:hint="Pilih tarikh"
+                            android:textColor="#000000"
+                            android:textColorHint="#888888"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:gravity="center_vertical" />
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
                 <Spinner
                     android:id="@+id/spinnerMeal"
@@ -197,88 +227,106 @@
 
             </LinearLayout>
 
+
             <LinearLayout
-                android:id="@+id/layoutSavedMeals"
+                android:id="@+id/layoutHasilSimpanan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="20dp">
+                android:visibility="gone">
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#E8F5E9"
-                android:padding="20dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="40dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/layoutSavedMeals"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="📊 Ringkasan Harian"
-                    android:textSize="26sp"
-                    android:textStyle="bold"
-                    android:layout_gravity="center"
-                    android:textColor="#000000" />
+                    android:orientation="vertical"
+                    android:layout_marginTop="20dp">
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/txtSummaryDate"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="20/05/2026"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_gravity="center"
-                    android:textColor="#000000"
-                    android:layout_marginTop="20dp" />
+                    android:orientation="vertical"
+                    android:background="#E8F5E9"
+                    android:padding="20dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="40dp">
 
-                <TextView
-                    android:id="@+id/txtTotalCalories"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Jumlah Kalori: 0 kcal"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:textColor="#FF5722"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="20dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📊 Ringkasan Harian"
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        android:layout_gravity="center"
+                        android:textColor="#000000" />
 
-                <TextView
-                    android:id="@+id/txtTdee"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TDEE: 0 kcal"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:textColor="#4CAF50"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="12dp" />
+                    <TextView
+                        android:id="@+id/txtSummaryDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="20/05/2026"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_gravity="center"
+                        android:textColor="#000000"
+                        android:layout_marginTop="20dp" />
 
-                <TextView
-                    android:id="@+id/txtBmr"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="BMR: 0 kcal"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:textColor="#2196F3"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="12dp" />
+                    <TextView
+                        android:id="@+id/txtTotalCalories"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Jumlah Kalori: 0 kcal"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="#FF5722"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="20dp" />
 
-                <TextView
-                    android:id="@+id/txtBalance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Baki Kalori: 0 kcal"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:textColor="#E91E63"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="16dp" />
+                    <TextView
+                        android:id="@+id/txtTdee"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TDEE: 0 kcal"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="#4CAF50"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="12dp" />
 
+                    <TextView
+                        android:id="@+id/txtBmr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="BMR: 0 kcal"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="#2196F3"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="12dp" />
+
+                    <TextView
+                        android:id="@+id/txtBalance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Baki Kalori: 0 kcal"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="#E91E63"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="16dp" />
+
+                    <Button
+                        android:id="@+id/btnEditMeal"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:text="📝 EDIT MENU"
+                        android:textStyle="bold"
+                        android:textColor="#FFFFFF"
+                        android:backgroundTint="#2196F3"
+                        android:layout_marginTop="24dp" />
+
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>

@@ -1,5 +1,6 @@
 package com.deenzstudios.kalori
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,16 +15,12 @@ import android.widget.AdapterView
 class ReportFragment : Fragment() {
 
     private lateinit var spinnerReportFilter: Spinner
-
-    private lateinit var recyclerReport:
-            RecyclerView
+    private lateinit var recyclerReport: RecyclerView
 
     override fun onCreateView(
-
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-
     ): View? {
 
         val view = inflater.inflate(
@@ -33,14 +30,9 @@ class ReportFragment : Fragment() {
         )
 
         // ================= SPINNER =================
-
-        spinnerReportFilter =
-            view.findViewById(
-                R.id.spinnerReportFilter
-            )
+        spinnerReportFilter = view.findViewById(R.id.spinnerReportFilter)
 
         val filterList = listOf(
-
             "Hari Ini",
             "Semalam",
             "Minggu Lepas",
@@ -48,157 +40,86 @@ class ReportFragment : Fragment() {
         )
 
         val adapter = ArrayAdapter(
-
             requireContext(),
             android.R.layout.simple_spinner_dropdown_item,
             filterList
         )
 
-        spinnerReportFilter.adapter =
-            adapter
+        spinnerReportFilter.adapter = adapter
 
-        fun loadFilteredReports(
-            filter: String
-        ) {
-
-            val allReports =
-                ReportManager.getReports(
-                    requireContext()
-                )
-
+        fun loadFilteredReports(filter: String) {
+            val allReports = ReportManager.getReports(requireContext())
             val filteredList = mutableListOf<ReportData>()
-
-            val today =
-                java.text.SimpleDateFormat(
-                    "dd/MM/yyyy",
-                    java.util.Locale.getDefault()
-                )
-
-            val calendar =
-                java.util.Calendar.getInstance()
+            val today = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+            val calendar = java.util.Calendar.getInstance()
 
             when (filter) {
-
                 "Hari Ini" -> {
-
-                    val todayDate =
-                        today.format(calendar.time)
-
+                    val todayDate = today.format(calendar.time)
                     filteredList.addAll(
-
-                        allReports.filter {
-
-                            it.date == todayDate
-                        }
+                        allReports.filter { it.date == todayDate }
                     )
                 }
 
                 "Semalam" -> {
-
-                    calendar.add(
-                        java.util.Calendar.DAY_OF_MONTH,
-                        -1
-                    )
-
-                    val yesterday =
-                        today.format(calendar.time)
-
+                    calendar.add(java.util.Calendar.DAY_OF_MONTH, -1)
+                    val yesterday = today.format(calendar.time)
                     filteredList.addAll(
-
-                        allReports.filter {
-
-                            it.date == yesterday
-                        }
+                        allReports.filter { it.date == yesterday }
                     )
                 }
 
                 "Minggu Lepas" -> {
-
-                    calendar.add(
-                        java.util.Calendar.DAY_OF_MONTH,
-                        -7
-                    )
-
-                    val weekAgo =
-                        calendar.timeInMillis
+                    val currentMillis = calendar.timeInMillis
+                    calendar.add(java.util.Calendar.DAY_OF_MONTH, -7)
+                    val weekAgo = calendar.timeInMillis
 
                     filteredList.addAll(
-
                         allReports.filter {
-
-                            val reportDate =
-                                today.parse(it.date)
-
-                            reportDate != null &&
-                                    reportDate.time >= weekAgo
+                            val reportDate = today.parse(it.date)
+                            reportDate != null && reportDate.time >= weekAgo && reportDate.time <= currentMillis
                         }
                     )
                 }
 
                 "Bulan Lepas" -> {
-
-                    calendar.add(
-                        java.util.Calendar.MONTH,
-                        -1
-                    )
-
-                    val monthAgo =
-                        calendar.timeInMillis
+                    val currentMillis = calendar.timeInMillis
+                    calendar.add(java.util.Calendar.MONTH, -1)
+                    val monthAgo = calendar.timeInMillis
 
                     filteredList.addAll(
-
                         allReports.filter {
-
-                            val reportDate =
-                                today.parse(it.date)
-
-                            reportDate != null &&
-                                    reportDate.time >= monthAgo
+                            val reportDate = today.parse(it.date)
+                            reportDate != null && reportDate.time >= monthAgo && reportDate.time <= currentMillis
                         }
                     )
                 }
             }
 
-            recyclerReport.adapter =
-                ReportAdapter(filteredList)
+            recyclerReport.adapter = ReportAdapter(filteredList)
         }
-        spinnerReportFilter.onItemSelectedListener =
 
-            object : AdapterView.OnItemSelectedListener {
-
-                override fun onItemSelected(
-
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-
-                ) {
-
-                    loadFilteredReports(
-                        filterList[position]
-                    )
-                }
-
-                override fun onNothingSelected(
-                    parent: AdapterView<*>?
-                ) {
-                }
+        spinnerReportFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                loadFilteredReports(filterList[position])
             }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
 
         // ================= RECYCLER VIEW =================
+        recyclerReport = view.findViewById(R.id.recyclerReport)
+        recyclerReport.layoutManager = LinearLayoutManager(requireContext())
 
-        recyclerReport =
-            view.findViewById(
-                R.id.recyclerReport
-            )
-
-        recyclerReport.layoutManager =
-            LinearLayoutManager(
-                requireContext()
-            )
         loadFilteredReports("Hari Ini")
-        
+
+        // ================= 🔥 HUBUNGKAN BUTANG GRAF BARU =================
+        val btnGoToGraph = view.findViewById<View>(R.id.btnGoToGraph)
+        btnGoToGraph.setOnClickListener {
+            // Logik buka skrin GraphActivity
+            val intent = Intent(requireContext(), GraphActivity::class.java)
+            startActivity(intent)
+        }
+
         return view
     }
 }

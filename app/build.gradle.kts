@@ -47,5 +47,5 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.github.chrisbanes:PhotoView:2.3.0")
-    
+    implementation("com.github.philjay:mpandroidchart:v3.1.0")
 }
