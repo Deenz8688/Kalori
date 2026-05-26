@@ -24,7 +24,6 @@ import android.widget.Button
 import kotlin.math.roundToInt
 import android.graphics.Typeface
 
-
 class KaloriFragment : Fragment() {
 
     companion object {
@@ -49,7 +48,7 @@ class KaloriFragment : Fragment() {
         val layoutUtamaKalori = view.findViewById<LinearLayout>(R.id.layoutUtamaKalori)
         val btnGoToProfile = view.findViewById<Button>(R.id.btnGoToProfile)
 
-        // 🔥 HUBUNGKAN LAYOUT KONTROLLER BARU
+        // HUBUNGKAN LAYOUT KONTROLLER BARU
         val cardBorangMakanan = view.findViewById<LinearLayout>(R.id.cardBorangMakanan)
         val layoutHasilSimpanan = view.findViewById<LinearLayout>(R.id.layoutHasilSimpanan)
         val btnEditMeal = view.findViewById<Button>(R.id.btnEditMeal)
@@ -157,15 +156,13 @@ class KaloriFragment : Fragment() {
         var lunchCard: View? = null
         var dinnerCard: View? = null
 
-
-        // ================= CREATE CARD (VERSI BETUL - NO CRASH) =================
+        // ================= CREATE CARD =================
         fun createCard(
             title: String,
             foods: String?,
             total: Double
-        ): View { // 👈 Tukar jenis pulangan kat sini dari LinearLayout jadi View
+        ): View {
 
-            // 1. Induk Kad (CardView)
             val cardView = androidx.cardview.widget.CardView(requireActivity())
 
             val cardParams = LinearLayout.LayoutParams(
@@ -179,36 +176,30 @@ class KaloriFragment : Fragment() {
             cardView.cardElevation = 8f
             cardView.setCardBackgroundColor(Color.WHITE)
 
-            // 2. Kontainer Dalam Kad
             val innerLayout = LinearLayout(requireActivity())
             innerLayout.orientation = LinearLayout.VERTICAL
             innerLayout.setPadding(45, 40, 45, 40)
             cardView.addView(innerLayout)
 
-            // 3. Teks Tajuk Hidangan
             val txtMeal = TextView(requireActivity())
             txtMeal.text = title
             txtMeal.textSize = 20f
             txtMeal.setTypeface(null, android.graphics.Typeface.BOLD)
             txtMeal.setTextColor(Color.parseColor("#212121"))
 
-            // 4. Teks Senarai Makanan (Setiap menu satu baris, susunan tegak)
             val txtFood = TextView(requireActivity())
             txtFood.text = foods
             txtFood.textSize = 14f
-            txtFood.setTextColor(Color.parseColor("#555555")) // Warna kelabu charcoal yang lebih premium
-            txtFood.setLineSpacing(10f, 1f) // Ditambah jarak antar baris makanan (10f) supaya senang dibaca satu-satu
+            txtFood.setTextColor(Color.parseColor("#555555"))
+            txtFood.setLineSpacing(10f, 1f)
 
             val foodParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
-            foodParams.setMargins(0, 20, 0, 24) // Jarak margin atas (20) dan bawah (24) sebelum masuk ke row kalori
+            foodParams.setMargins(0, 20, 0, 24)
             txtFood.layoutParams = foodParams
 
-            
-
-            // 5. Kontainer Bawah
             val bottomLayout = LinearLayout(requireActivity())
             bottomLayout.orientation = LinearLayout.HORIZONTAL
             bottomLayout.gravity = android.view.Gravity.CENTER_VERTICAL
@@ -219,7 +210,6 @@ class KaloriFragment : Fragment() {
             )
             bottomLayout.layoutParams = bottomParams
 
-            // 6. Teks Jumlah Kalori
             val txtCalories = TextView(requireActivity())
             txtCalories.text = "%.0f kcal".format(total)
             txtCalories.textSize = 18f
@@ -233,7 +223,6 @@ class KaloriFragment : Fragment() {
             )
             txtCalories.layoutParams = calParams
 
-            // 7. Butang "Buang" (Versi Rounded Comel)
             val btnDelete = Button(requireActivity())
             btnDelete.text = "🗑️ Buang"
             btnDelete.textSize = 12f
@@ -251,10 +240,10 @@ class KaloriFragment : Fragment() {
             shape.cornerRadius = 20f
             btnDelete.background = shape
 
-            // 8. Logik Klik Butang Buang
+            // LOGIK KLIK BUTANG BUANG MAKANAN
             btnDelete.setOnClickListener {
                 val selectedDate = edtDate.text.toString()
-                layoutSavedMeals.removeView(cardView) // Buang cardView terus dari skrin
+                layoutSavedMeals.removeView(cardView)
 
                 when (title) {
                     "🍳 Sarapan" -> {
@@ -308,10 +297,27 @@ class KaloriFragment : Fragment() {
                     e.printStackTrace()
                 }
 
-                val profilePref2 = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
-                val currentWeight = profilePref2.getString("weight", "0") + " kg"
-                val currentBmr2 = profilePref2.getString("bmr", "0 kcal") ?: "0 kcal"
-                val currentTdee2 = profilePref2.getString("tdee", "0 kcal") ?: "0 kcal"
+                // --- Kunci Sejarah Kelmarin, Tapi Hari Ini Ikut Profile ---
+                val todayDateStr2 = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()).format(java.util.Calendar.getInstance().time)
+                val existingReports2 = ReportManager.getReports(requireContext())
+                val oldReportForThisDate2 = existingReports2.find { it.date == selectedDate }
+
+                val currentWeight = if (selectedDate == todayDateStr2) {
+                    // 🔥 JIKA HARI INI: Sentiasa paksa ambil yang paling baru dari Profile!
+                    val profilePref2 = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+                    profilePref2.getString("weight", "0") + " kg"
+                } else {
+                    // 🔒 JIKA TARIKH LEPAS: Kunci berat asal
+                    if (oldReportForThisDate2 != null) oldReportForThisDate2.weight else {
+                        val profilePref2 = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+                        profilePref2.getString("weight", "0") + " kg"
+                    }
+                }
+// ---------------------------------------------------------
+
+                val profilePrefDefault = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+                val currentBmr2 = profilePrefDefault.getString("bmr", "0 kcal") ?: "0 kcal"
+                val currentTdee2 = profilePrefDefault.getString("tdee", "0 kcal") ?: "0 kcal"
 
                 val reportData = ReportData(
                     selectedDate, currentWeight,
@@ -329,7 +335,6 @@ class KaloriFragment : Fragment() {
                 }
             }
 
-            // 9. Cantumkan semua komponen
             bottomLayout.addView(txtCalories)
             bottomLayout.addView(btnDelete)
 
@@ -337,7 +342,7 @@ class KaloriFragment : Fragment() {
             innerLayout.addView(txtFood)
             innerLayout.addView(bottomLayout)
 
-            return cardView // 👈 Pulangkan sebagai View biasa tanpa sebarang casting paksaan
+            return cardView
         }
 
         // ================= LOAD DATA LOCAL =================
@@ -386,7 +391,6 @@ class KaloriFragment : Fragment() {
             txtTotalCalories.text = "Jumlah Kalori: %.0f kcal".format(totalCalories)
             txtBalance.text = "Baki Kalori: %.0f kcal".format(balance)
 
-            // 🔥 LOGIK VISIBILITY SELEPAS LOAD TARIKH
             if (hasData) {
                 cardBorangMakanan.visibility = View.GONE
                 layoutHasilSimpanan.visibility = View.VISIBLE
@@ -427,7 +431,6 @@ class KaloriFragment : Fragment() {
                     val parts = rawDate.split("-")
                     val foodDate = "${parts[2]}/${parts[1]}/${parts[0]}"
 
-                    // 🔥 LOGIK BARU: Tukar tanda koma dari MySQL kepada baris baharu (\n) supaya tersusun tegak
                     val formattedFoodName = foodName.split(",").joinToString("\n") { "• ${it.trim()}" }
 
                     when (mealType) {
@@ -469,10 +472,20 @@ class KaloriFragment : Fragment() {
                     txtTotalCalories.text = "Jumlah Kalori: %.0f kcal".format(grandTotal)
                     txtBalance.text = "Baki Kalori: %.0f kcal".format(balance)
 
-                    val profilePref3 = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
-                    val currentWeight = profilePref3.getString("weight", "0") + " kg"
-                    val currentBmr3 = profilePref3.getString("bmr", "0 kcal") ?: "0 kcal"
-                    val currentTdee3 = profilePref3.getString("tdee", "0 kcal") ?: "0 kcal"
+                    // 🔥 PERBAIKAN TEMPAT 2 (profilePref3): Logik Kunci Sejarah dlm Cloud Restore
+                    val existingReports = ReportManager.getReports(requireContext())
+                    val oldReportForThisDate = existingReports.find { it.date == foodDate }
+
+                    val currentWeight = if (oldReportForThisDate != null) {
+                        oldReportForThisDate.weight
+                    } else {
+                        val profilePref3 = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+                        profilePref3.getString("weight", "0") + " kg"
+                    }
+
+                    val profilePrefDefault3 = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+                    val currentBmr3 = profilePrefDefault3.getString("bmr", "0 kcal") ?: "0 kcal"
+                    val currentTdee3 = profilePrefDefault3.getString("tdee", "0 kcal") ?: "0 kcal"
 
                     val reportData = ReportData(
                         foodDate, currentWeight,
@@ -637,7 +650,6 @@ class KaloriFragment : Fragment() {
             } ?: ""
 
             val combinedText = if (oldText.isNotEmpty()) {
-                // Pastikan menu lama dan menu baru dijarakkan dengan baris baharu secara bersih
                 oldText + "\n" + tempMealList.joinToString("\n")
             } else {
                 tempMealList.joinToString("\n")
@@ -725,10 +737,27 @@ class KaloriFragment : Fragment() {
             edtBreakfastAmount.setText("")
             edtBreakfastFood.requestFocus()
 
-            val profilePref4 = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
-            val currentWeight = profilePref4.getString("weight", "0") + " kg"
-            val currentBmr4 = profilePref4.getString("bmr", "0 kcal") ?: "0 kcal"
-            val currentTdee4 = profilePref4.getString("tdee", "0 kcal") ?: "0 kcal"
+            // --- Kunci Sejarah Kelmarin, Tapi Hari Ini Ikut Profile ---
+            val todayDateStr = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()).format(java.util.Calendar.getInstance().time)
+            val existingReports = ReportManager.getReports(requireContext())
+            val oldReportForThisDate = existingReports.find { it.date == selectedDate }
+
+            val currentWeight = if (selectedDate == todayDateStr) {
+                // 🔥 JIKA HARI INI: Sentiasa paksa ambil yang paling baru dari Profile!
+                val profilePref4 = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+                profilePref4.getString("weight", "0") + " kg"
+            } else {
+                // 🔒 JIKA TARIKH LEPAS: Kunci berat asal, jangan bagi tindih
+                if (oldReportForThisDate != null) oldReportForThisDate.weight else {
+                    val profilePref4 = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+                    profilePref4.getString("weight", "0") + " kg"
+                }
+            }
+// ---------------------------------------------------------
+
+            val profilePrefDefault4 = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+            val currentBmr4 = profilePrefDefault4.getString("bmr", "0 kcal") ?: "0 kcal"
+            val currentTdee4 = profilePrefDefault4.getString("tdee", "0 kcal") ?: "0 kcal"
 
             val reportData = ReportData(
                 selectedDate, currentWeight,
@@ -737,14 +766,12 @@ class KaloriFragment : Fragment() {
             )
             ReportManager.saveReport(requireContext(), reportData)
 
-            // 🔥 TUKAR PANDANGAN SELEPAS BERJAYA SIMPAN DATA
             cardBorangMakanan.visibility = View.GONE
             layoutHasilSimpanan.visibility = View.VISIBLE
         }
 
-        // ================= 🔥 BUTTON EDIT MEAL CLICK LOGIC =================
+        // ================= BUTTON EDIT MEAL CLICK LOGIC =================
         btnEditMeal.setOnClickListener {
-            // Sembunyikan kad simpanan, paparkan semula borang
             cardBorangMakanan.visibility = View.VISIBLE
             layoutHasilSimpanan.visibility = View.GONE
         }
@@ -760,6 +787,9 @@ class KaloriFragment : Fragment() {
             60000
         )
 
+
+
         return view
     }
+    
 }

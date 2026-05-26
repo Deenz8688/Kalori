@@ -1,5 +1,6 @@
 package com.deenzstudios.kalori
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -122,4 +123,51 @@ class ReportFragment : Fragment() {
 
         return view
     }
+    override fun onResume() {
+        super.onResume()
+
+        val context = requireContext()
+        // Pastikan nama ID spinnerReportFilter ini sebiji ikut XML fragment_report awak
+        val viewFilter = view?.findViewById<Spinner>(R.id.spinnerReportFilter)
+
+        if (viewFilter != null) {
+            // ⭐ 1. KEMASKINI DATABASE DULU SEBELUM REFRESH SKRIN DISPLAY
+            val todayDateStr = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()).format(java.util.Calendar.getInstance().time)
+            val allReports = ReportManager.getReports(context)
+
+            // Cari rekod hari ini dlm fail data laporan
+            val todayReport = allReports.find { it.date == todayDateStr }
+
+            if (todayReport != null) {
+                // Sedut berat terkini yang baru diubah dlm profile tadi
+                val profilePref = context.getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+                val freshWeight = profilePref.getString("weight", "0") + " kg"
+                val freshBmr = profilePref.getString("bmr", "0 kcal") ?: "0 kcal"
+                val freshTdee = profilePref.getString("tdee", "0 kcal") ?: "0 kcal"
+
+                // Cipta data laporan segar untuk hari ini dengan kandungan kalori makanan asal yang sedia ada
+                val updatedReport = ReportData(
+                    todayReport.date,
+                    freshWeight, // 🔥 Tindih berat lama dengan berat profil baru!
+                    todayReport.breakfast,
+                    todayReport.lunch,
+                    todayReport.dinner,
+                    todayReport.total,
+                    freshBmr,
+                    freshTdee
+                )
+
+                // Paksa ReportManager tulis data segar ni masuk ke fail memori phone secara kekal
+                ReportManager.saveReport(context, updatedReport)
+            }
+
+            // ⭐ 2. SIMULASI SENTUHAN SPINNER UNTUK REFRESH PAPARAN KAD DI SKRIN UI
+            val currentFilter = viewFilter.selectedItem.toString()
+            viewFilter.postDelayed({
+                val position = (viewFilter.adapter as? ArrayAdapter<String>)?.getPosition(currentFilter) ?: 0
+                viewFilter.onItemSelectedListener?.onItemSelected(viewFilter, viewFilter.selectedView, position, position.toLong())
+            }, 200)
+        }
+    }
+    
 }
