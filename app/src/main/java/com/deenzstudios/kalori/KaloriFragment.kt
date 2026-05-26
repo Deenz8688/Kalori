@@ -26,9 +26,7 @@ import android.graphics.Typeface
 
 class KaloriFragment : Fragment() {
 
-    companion object {
-        var cachedFoodList = mutableListOf<Food>()
-    }
+    
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -100,40 +98,90 @@ class KaloriFragment : Fragment() {
         txtBmr.text = "BMR: $savedBmr"
 
         // ================= FOOD LIST =================
-        val foodList = cachedFoodList
+        val foodList = mutableListOf<Food>()
 
-        if (cachedFoodList.isEmpty()) {
-            try {
-                val url = URL("https://docs.google.com/spreadsheets/d/1eQtvknyaQJNjwr8AIM5eRk7H_BA1D95gGx5fTM1Etmc/export?format=csv")
-                val inputStream = url.openStream()
-                val reader = BufferedReader(InputStreamReader(inputStream))
-                reader.readLine()
-                var line: String?
+        
+        // ================= AUTOCOMPLETE =================
+        edtBreakfastFood.threshold = 1
 
-                while (reader.readLine().also { line = it } != null) {
-                    val row = line!!.split(",")
-                    if (row.size >= 4) {
-                        foodList.add(
-                            Food(
-                                row[0].trim(),
-                                row[1].trim(),
-                                row[2].trim().toDoubleOrNull() ?: 0.0,
-                                row[3].trim().toDoubleOrNull() ?: 0.0
-                            )
+        edtBreakfastFood.addTextChangedListener(object : TextWatcher {
+
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {}
+
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int
+            ) {
+
+                val searchText = s.toString().trim()
+
+                if (searchText.length >= 1) {
+
+                    try {
+
+                        val url = URL(
+                            "https://specmb.org/kalori_api/search_food.php?q=$searchText"
                         )
+
+                        val response = url.readText()
+
+                        val jsonArray =
+                            org.json.JSONArray(response)
+
+                        foodList.clear()
+
+                        val foodNames =
+                            mutableListOf<String>()
+
+                        for (i in 0 until jsonArray.length()) {
+
+                            val obj =
+                                jsonArray.getJSONObject(i)
+
+                            val food = Food(
+
+                                obj.getString("Makanan"),
+
+                                obj.getString("Hidangan"),
+
+                                obj.getDouble("Berat"),
+
+                                obj.getDouble("Kalori")
+                            )
+
+                            foodList.add(food)
+
+                            foodNames.add(food.name)
+                        }
+
+                        val adapter = ArrayAdapter(
+                            requireContext(),
+                            android.R.layout.simple_dropdown_item_1line,
+                            foodNames
+                        )
+
+                        edtBreakfastFood.setAdapter(adapter)
+
+                        adapter.notifyDataSetChanged()
+
+                        edtBreakfastFood.showDropDown()
+
+                    } catch (e: Exception) {
+
+                        e.printStackTrace()
                     }
                 }
-                reader.close()
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
-        }
 
-        // ================= AUTOCOMPLETE =================
-        val foodNames = foodList.map { it.name }
-        val foodAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, foodNames)
-        edtBreakfastFood.setAdapter(foodAdapter)
-        edtBreakfastFood.threshold = 1
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
         // ================= SPINNER =================
         val mealList = listOf("🍳 Sarapan", "🍛 Tengah Hari", "🌙 Makan Malam")
