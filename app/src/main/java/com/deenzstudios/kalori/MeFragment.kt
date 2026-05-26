@@ -374,15 +374,15 @@ class MeFragment : Fragment() {
                         }
                         bmi < 30 -> {
                             bmiStatus = "BERLEBIHAN"
-                            bmiColor = android.graphics.Color.YELLOW
+                            bmiColor = android.graphics.Color.parseColor("#F0583A")
                         }
                         bmi < 35 -> {
                             bmiStatus = "OBESITI 1"
-                            bmiColor = android.graphics.Color.parseColor("#FF9800")
+                            bmiColor = android.graphics.Color.parseColor("#E60E0E")
                         }
                         else -> {
                             bmiStatus = "OBESITI 2"
-                            bmiColor = android.graphics.Color.parseColor("#B71C1C")
+                            bmiColor = android.graphics.Color.parseColor("#AB0F0F")
                         }
                     }
 
