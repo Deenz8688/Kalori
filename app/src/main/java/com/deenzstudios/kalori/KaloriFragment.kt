@@ -12,8 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -22,7 +20,7 @@ import android.os.StrictMode
 import android.widget.LinearLayout
 import android.widget.Button
 import kotlin.math.roundToInt
-import android.graphics.Typeface
+
 
 class KaloriFragment : Fragment() {
 
@@ -153,7 +151,9 @@ class KaloriFragment : Fragment() {
 
                                 obj.getDouble("Berat"),
 
-                                obj.getDouble("Kalori")
+                                obj.getDouble("Kalori"),
+
+                                obj.getString("Unit")
                             )
 
                             foodList.add(food)
@@ -650,7 +650,10 @@ class KaloriFragment : Fragment() {
                 val txtItem = TextView(requireContext())
                 txtItem.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
 
-                val unit = if (radioBreakfastGram.isChecked) "${amount}g" else foundFood.serving
+                val unit = if (radioBreakfastGram.isChecked)
+                    "${amount}${foundFood.unit}"
+                else
+                    foundFood.serving
                 val itemText = "• ${foundFood.name} ($unit) = %.0f kcal".format(calories)
 
                 txtItem.text = itemText
