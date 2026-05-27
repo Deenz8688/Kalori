@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/txtPopupTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tambah Hidangan"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#000000" />
+
+    <AutoCompleteTextView
+        android:id="@+id/edtBreakfastFood"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:hint="Cari makanan..."
+        android:background="@android:drawable/editbox_background"
+        android:padding="12dp"
+        android:textSize="14sp"/>
+
+    <RadioGroup
+        android:id="@+id/radioGroupBreakfast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp">
+
+        <RadioButton
+            android:id="@+id/radioBreakfastGram"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gram/ml"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/radioBreakfastServing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hidangan"
+            android:layout_marginStart="20dp" />
+    </RadioGroup>
+
+    <AutoCompleteTextView
+        android:id="@+id/edtBreakfastAmount"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="12dp"
+        android:hint="Masukkan gram/ml"
+        android:inputType="numberDecimal"
+        android:background="@android:drawable/editbox_background"
+        android:padding="12dp"
+        android:textSize="14sp"/>
+
+    <Button
+        android:id="@+id/btnAddBreakfast"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Tambah Ke Senarai Menu"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:backgroundTint="#FFC107"
+        android:layout_marginTop="14dp" />
+    <Button
+        android:id="@+id/btnDeleteMeal"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="🗑️ Kosongkan semua menu"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#EF5350"
+        android:layout_marginTop="8dp" />
+
+    <LinearLayout
+        android:id="@+id/layoutTempList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="12dp"/>
+
+    <TextView
+        android:id="@+id/txtBreakfastCalories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Kalori: 0 kcal"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#4CAF50"
+        android:layout_marginTop="12dp" />
+
+    <TextView
+        android:id="@+id/txtBreakfastTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jumlah Semasa: 0 kcal"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#FF5722"
+        android:layout_marginTop="4dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/btnCancelPopup"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Tutup"
+            android:textColor="#555555"
+            android:backgroundTint="#E0E0E0"
+            android:layout_marginEnd="6dp"/>
+
+        <Button
+            android:id="@+id/btnSaveMeal"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Simpan Menu"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#4CAF50"
+            android:layout_marginStart="6dp" />
+    </LinearLayout>
+</LinearLayout>
