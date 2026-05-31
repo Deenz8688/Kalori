@@ -96,7 +96,7 @@ class MeFragment : Fragment() {
                 R.id.btnLoginAccount
             )
 
-        
+
 
         val btnLogout =
             view.findViewById<Button>(
@@ -168,7 +168,7 @@ class MeFragment : Fragment() {
             btnLoginAccount.visibility =
                 View.VISIBLE
 
-            
+
 
             btnLogout.visibility =
                 View.GONE
@@ -345,14 +345,14 @@ class MeFragment : Fragment() {
 
                         }.start()
                     }
-                    
+
                     profileLayout.visibility = View.VISIBLE
                     formLayout.visibility = View.GONE
 
                     // 2. Papar nama terus dalam huruf besar sejurus selepas save
                     txtProfileName.text = name.uppercase()
 
-                    
+
 
                     txtProfileWeight.text = "Berat: $weight kg"
                     txtProfileHeight.text = "Tinggi: $height cm"
@@ -466,7 +466,7 @@ class MeFragment : Fragment() {
             )
         }
 
-        
+
 
         btnLogout.setOnClickListener {
 
@@ -497,7 +497,7 @@ class MeFragment : Fragment() {
                 )
             )
         }
-        
+
         return view
     }
 }
