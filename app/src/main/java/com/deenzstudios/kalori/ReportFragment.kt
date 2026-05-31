@@ -57,46 +57,41 @@ class ReportFragment : Fragment() {
             when (filter) {
                 "Hari Ini" -> {
                     val todayDate = today.format(calendar.time)
-                    filteredList.addAll(
-                        allReports.filter { it.date == todayDate }
-                    )
+                    filteredList.addAll(allReports.filter { it.date == todayDate })
                 }
-
                 "Semalam" -> {
                     calendar.add(java.util.Calendar.DAY_OF_MONTH, -1)
                     val yesterday = today.format(calendar.time)
-                    filteredList.addAll(
-                        allReports.filter { it.date == yesterday }
-                    )
+                    filteredList.addAll(allReports.filter { it.date == yesterday })
                 }
-
                 "Minggu Lepas" -> {
                     val currentMillis = calendar.timeInMillis
                     calendar.add(java.util.Calendar.DAY_OF_MONTH, -7)
                     val weekAgo = calendar.timeInMillis
-
-                    filteredList.addAll(
-                        allReports.filter {
-                            val reportDate = today.parse(it.date)
-                            reportDate != null && reportDate.time >= weekAgo && reportDate.time <= currentMillis
-                        }
-                    )
+                    filteredList.addAll(allReports.filter {
+                        val reportDate = today.parse(it.date)
+                        reportDate != null && reportDate.time >= weekAgo && reportDate.time <= currentMillis
+                    })
                 }
-
                 "Bulan Lepas" -> {
                     val currentMillis = calendar.timeInMillis
                     calendar.add(java.util.Calendar.MONTH, -1)
                     val monthAgo = calendar.timeInMillis
-
-                    filteredList.addAll(
-                        allReports.filter {
-                            val reportDate = today.parse(it.date)
-                            reportDate != null && reportDate.time >= monthAgo && reportDate.time <= currentMillis
-                        }
-                    )
+                    filteredList.addAll(allReports.filter {
+                        val reportDate = today.parse(it.date)
+                        reportDate != null && reportDate.time >= monthAgo && reportDate.time <= currentMillis
+                    })
                 }
             }
 
+            // ================= 🔥 LANGKAH SUSUN TARIKH BARU DI ATAS =================
+            // Kod ni akan bedah string tarikh, tukar jadi objek Date, dan susun terbalik (paling baru di atas)
+            filteredList.sortByDescending {
+                today.parse(it.date)
+            }
+            // =======================================================================
+
+            // Hantar list yang dah siap disusun rapi ke adapter
             recyclerReport.adapter = ReportAdapter(filteredList)
         }
 
