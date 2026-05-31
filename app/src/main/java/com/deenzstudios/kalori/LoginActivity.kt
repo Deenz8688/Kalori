@@ -400,7 +400,7 @@ class LoginActivity : AppCompatActivity() {
                                 }
 
                             }.start()
-                            
+
                             Toast.makeText(
                                 this,
                                 "Login Berjaya",
@@ -455,6 +455,12 @@ class LoginActivity : AppCompatActivity() {
             )
 
             finish()
+        }
+        // ================= 🔥 LUPA PASSWORD (BUKA SKRIN BARU) =================
+        val txtForgotPassword = findViewById<TextView>(R.id.txtForgotPassword)
+        txtForgotPassword.setOnClickListener {
+            val intent = Intent(this, ForgotPasswordActivity::class.java)
+            startActivity(intent)
         }
     }
 }
