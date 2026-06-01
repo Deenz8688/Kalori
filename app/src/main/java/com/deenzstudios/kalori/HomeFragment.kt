@@ -8,6 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
+import com.yandex.mobile.ads.banner.BannerAdView
+import com.yandex.mobile.ads.banner.BannerAdSize
+import com.yandex.mobile.ads.common.AdRequest
+import android.widget.FrameLayout
+
 
 
 class HomeFragment : Fragment() {
@@ -25,6 +30,22 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         viewPager = view.findViewById(R.id.viewPager)
+
+        val bannerContainer = view.findViewById<FrameLayout>(R.id.bannerContainer)
+
+        val bannerAd = BannerAdView(requireContext())
+
+        bannerAd.setAdUnitId("R-M-19366932-2")
+
+        bannerAd.setAdSize(
+            BannerAdSize.stickySize(requireContext(), 320)
+        )
+
+        bannerContainer.addView(bannerAd)
+
+        bannerAd.loadAd(
+            AdRequest.Builder().build()
+        )
 
         val images = listOf(
             R.drawable.poster1,
