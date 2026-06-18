@@ -10,7 +10,7 @@ import org.json.JSONObject
 object GeminiHelper {
 
     // 🔥 Pastikan API Key sejati awak kekal dlm ni bro
-    private const val API_KEY = "AIzaSyBTQ81aFYqYTxau0V1WuBmgOY1lzxoWdOE"
+    private const val API_KEY = ""
 
     // 🚀 TUKAR KEPADA MODEL GEMINI 2.5 FLASH (Kalis Traffic Sesak 503)
     private const val GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$API_KEY"
