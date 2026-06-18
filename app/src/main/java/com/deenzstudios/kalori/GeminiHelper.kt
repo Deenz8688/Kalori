@@ -9,26 +9,19 @@ import org.json.JSONObject
 
 object GeminiHelper {
 
+    // 🔥 Pastikan API Key sejati awak kekal dlm ni bro
     private val apiKey: String = BuildConfig.API_KEY
 
-    // 🔥 GUNA gemini-1.5-flash (lebih stabil)
-    private val geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey"
-
-    init {
-        android.util.Log.d("GEMINI_DEBUG", "API Key length: ${apiKey.length}")
-        android.util.Log.d("GEMINI_DEBUG", "URL: $geminiUrl")
-    }
+    // 🚀 TUKAR KEPADA MODEL GEMINI 2.5 FLASH (Kalis Traffic Sesak 503)
+    private val geminiurl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$apiKey"
 
     suspend fun dapatkanKaloriDariAI(inputMenuUser: String): Food? = withContext(Dispatchers.IO) {
         try {
-            // ✅ GUNA geminiUrl (bukan GEMINI_URL)
-            val url = URL(geminiUrl)
+            val url = URL(geminiurl)
             val connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "POST"
             connection.setRequestProperty("Content-Type", "application/json")
             connection.doOutput = true
-            connection.connectTimeout = 15000
-            connection.readTimeout = 15000
 
             val arahanPrompt = """
                 Anda adalah pakar nutrisi dan database kalori makanan global. Kira kalori total dengan tepat berdasarkan menu dan kuantiti dari mana-mana jenis hidangan di dunia yang diberikan oleh user.
@@ -61,12 +54,8 @@ object GeminiHelper {
             writer.close()
 
             val responseCode = connection.responseCode
-            android.util.Log.d("GEMINI_DEBUG", "Response code: $responseCode")
-
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 val responseText = connection.inputStream.bufferedReader().readText()
-                android.util.Log.d("GEMINI_DEBUG", "Response: $responseText")
-
                 val jsonResponse = JSONObject(responseText)
 
                 val candidates = jsonResponse.optJSONArray("candidates")
@@ -93,11 +82,10 @@ object GeminiHelper {
                 )
             } else {
                 val errorText = connection.errorStream?.bufferedReader()?.readText()
-                android.util.Log.e("GEMINI_ERROR", "HTTP $responseCode: $errorText")
+                android.util.Log.e("GEMINI_ERROR", "Server Ralat: $responseCode -> Mesej: $errorText")
                 return@withContext null
             }
         } catch (e: Exception) {
-            android.util.Log.e("GEMINI_ERROR", "Exception: ${e.message}")
             e.printStackTrace()
             return@withContext null
         }
