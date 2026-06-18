@@ -332,8 +332,7 @@ class KaloriFragment : Fragment() {
             val radioBreakfastGram = dialogView.findViewById<RadioButton>(R.id.radioBreakfastGram)
             val radioBreakfastServing =
                 dialogView.findViewById<RadioButton>(R.id.radioBreakfastServing)
-            val edtBreakfastAmount =
-                dialogView.findViewById<AutoCompleteTextView>(R.id.edtBreakfastAmount)
+            val edtBreakfastAmount = dialogView.findViewById<EditText>(R.id.edtBreakfastAmount)
             val btnAddBreakfast = dialogView.findViewById<Button>(R.id.btnAddBreakfast)
             val layoutTempList = dialogView.findViewById<LinearLayout>(R.id.layoutTempList)
             val txtBreakfastCalories = dialogView.findViewById<TextView>(R.id.txtBreakfastCalories)
@@ -433,8 +432,9 @@ class KaloriFragment : Fragment() {
 
             radioBreakfastGram.setOnClickListener {
                 edtBreakfastAmount.setText("")
-                edtBreakfastAmount.hint = "Masukkan gram (cth: 250)"
-                edtBreakfastAmount.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+                edtBreakfastAmount.hint = "cth: 250g / 250ml"
+                edtBreakfastAmount.inputType = InputType.TYPE_CLASS_TEXT  // 🔥 Tukar ke teks
+
             }
 
             radioBreakfastServing.setOnClickListener {
@@ -455,8 +455,14 @@ class KaloriFragment : Fragment() {
                 }
 
                 if (amountText.isEmpty()) {
-                    Toast.makeText(requireContext(), "Sila masukkan kuantiti (gram atau hidangan)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Sila masukkan kuantiti (cth: 250g / 1 pinggan)", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
+                }
+
+                // 🔥 Fungsi ekstrak nombor
+                fun extractNumber(text: String): Double {
+                    val regex = Regex("\\d+(\\.\\d+)?")
+                    return regex.find(text)?.value?.toDoubleOrNull() ?: 1.0
                 }
 
                 // 🔍 LANGKAH 1: CUBA CARI DALAM DATABASE DULU (foodList)
@@ -464,17 +470,14 @@ class KaloriFragment : Fragment() {
 
                 if (foundInDb != null) {
                     // ✅ JUMPA DALAM DATABASE → GUNA DATA DATABASE (CEPAT & PERCUMA)
+                    val finalAmount = extractNumber(amountText)  // 🔥 Guna fungsi
                     var calories = 0.0
-                    val finalAmount = if (radioBreakfastGram.isChecked) {
-                        amountText.toDoubleOrNull() ?: 1.0
-                    } else {
-                        val regex = Regex("\\d+(\\.\\d+)?")
-                        regex.find(amountText)?.value?.toDoubleOrNull() ?: 1.0
-                    }
 
                     if (radioBreakfastGram.isChecked) {
+                        // Gram mode: guna gram dari database
                         calories = (finalAmount / foundInDb.gram) * foundInDb.calories
                     } else {
+                        // Hidangan mode: darab dengan hidangan
                         calories = foundInDb.calories * finalAmount
                     }
 
@@ -485,11 +488,8 @@ class KaloriFragment : Fragment() {
                     val txtItem = TextView(requireContext())
                     txtItem.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
 
-                    val displayUnit = if (radioBreakfastGram.isChecked) {
-                        "${finalAmount.toInt()}g"
-                    } else {
-                        amountText
-                    }
+                    // 🔥 Papar teks asal (termasuk unit)
+                    val displayUnit = amountText
                     val itemText = "• ${foundInDb.name} ($displayUnit) = %.0f kcal".format(calories)
 
                     txtItem.text = itemText
@@ -526,11 +526,8 @@ class KaloriFragment : Fragment() {
 
                 } else {
                     // ❌ TAK JUMPA DALAM DATABASE → GUNA GEMINI AI (FALLBACK)
-                    val fullPromptQuery = if (radioBreakfastGram.isChecked) {
-                        "$searchText sebanyak ${amountText}g"
-                    } else {
-                        "$searchText sebanyak $amountText"
-                    }
+                    // 🔥 Gunakan amountText penuh (termasuk unit) untuk AI
+                    val fullPromptQuery = "$searchText sebanyak $amountText"
 
                     txtBreakfastCalories.text = "⏳ AI sedang mengira..."
 
@@ -539,14 +536,8 @@ class KaloriFragment : Fragment() {
 
                         withContext(kotlinx.coroutines.Dispatchers.Main) {
                             if (foundFood != null) {
+                                val finalAmount = extractNumber(amountText)
                                 var calories = foundFood.calories
-
-                                val finalAmount = if (radioBreakfastGram.isChecked) {
-                                    amountText.toDoubleOrNull() ?: 1.0
-                                } else {
-                                    val regex = Regex("\\d+(\\.\\d+)?")
-                                    regex.find(amountText)?.value?.toDoubleOrNull() ?: 1.0
-                                }
 
                                 if (radioBreakfastGram.isChecked) {
                                     if (foundFood.gram > 0) {
@@ -565,11 +556,7 @@ class KaloriFragment : Fragment() {
                                 val txtItem = TextView(requireContext())
                                 txtItem.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
 
-                                val displayUnit = if (radioBreakfastGram.isChecked) {
-                                    "${finalAmount.toInt()}g"
-                                } else {
-                                    amountText
-                                }
+                                val displayUnit = amountText
                                 val itemText = "• ${foundFood.name} ($displayUnit) = %.0f kcal".format(calories)
 
                                 txtItem.text = itemText

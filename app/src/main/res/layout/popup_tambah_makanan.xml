@@ -47,13 +47,13 @@
             android:layout_marginStart="20dp" />
     </RadioGroup>
 
-    <AutoCompleteTextView
+    <EditText
         android:id="@+id/edtBreakfastAmount"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="12dp"
-        android:hint="Masukkan gram/ml"
-        android:inputType="numberDecimal"
+        android:hint="cth: 250g / 250ml"
+        android:inputType="text"
         android:background="@android:drawable/editbox_background"
         android:padding="12dp"
         android:textSize="14sp"/>
