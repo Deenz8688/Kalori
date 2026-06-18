@@ -22,6 +22,7 @@ android {
         versionName = "1.0"
 
         // 🔥 CARA PALING KUKUH BACA API KEY DARI local.properties
+        // 🔥 BACA FAIL local.properties SECARA LANGSUNG
         val localProperties = Properties()
         val localPropertiesFile = rootProject.file("local.properties")
         if (localPropertiesFile.exists()) {
@@ -29,7 +30,7 @@ android {
         }
         val apiKey: String = localProperties.getProperty("API_KEY", "")
 
-        // 🔥 Masukkan ke BuildConfig
+        // 🔥 MASUKKAN KE BuildConfig
         buildConfigField("String", "API_KEY", "\"$apiKey\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

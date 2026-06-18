@@ -9,15 +9,16 @@ import org.json.JSONObject
 
 object GeminiHelper {
 
-    // 🔥 Pastikan API Key sejati awak kekal dlm ni bro
-    private const val API_KEY = "AIzaSyBTQ81aFYqYTxau0V1WuBmgOY1lzxoWdOE"
+    // 🔥 API Key dari local.properties (SELAMAT!)
+    private val apiKey: String = BuildConfig.API_KEY
 
-    // 🚀 TUKAR KEPADA MODEL GEMINI 2.5 FLASH (Kalis Traffic Sesak 503)
-    private const val GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$API_KEY"
+    // 🚀 URL Gemini (guna variable geminiUrl — huruf kecil)
+    private val geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$apiKey"
 
     suspend fun dapatkanKaloriDariAI(inputMenuUser: String): Food? = withContext(Dispatchers.IO) {
         try {
-            val url = URL(GEMINI_URL)
+            // ✅ GUNA geminiUrl (bukan GEMINI_URL)
+            val url = URL(geminiUrl)
             val connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "POST"
             connection.setRequestProperty("Content-Type", "application/json")
