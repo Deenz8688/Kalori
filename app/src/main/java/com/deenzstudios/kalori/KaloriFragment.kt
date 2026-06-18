@@ -20,6 +20,9 @@ import java.util.Locale
 import android.os.StrictMode
 import android.widget.LinearLayout
 import android.widget.Button
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
 class KaloriFragment : Fragment() {
@@ -428,43 +431,51 @@ class KaloriFragment : Fragment() {
                 override fun afterTextChanged(s: Editable?) {}
             })
 
-            // 6. LOGIK BILA BUTTON RADIO GRAM DIKLIK
             radioBreakfastGram.setOnClickListener {
                 edtBreakfastAmount.setText("")
-                edtBreakfastAmount.hint = "Masukkan gram"
-                edtBreakfastAmount.inputType =
-                    InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+                edtBreakfastAmount.hint = "Masukkan gram (cth: 250)"
+                edtBreakfastAmount.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
             }
 
-            // 7. LOGIK BILA BUTTON RADIO HIDANGAN DIKLIK
             radioBreakfastServing.setOnClickListener {
-                val searchText = edtBreakfastFood.text.toString().trim()
-                val foundFood = foodList.find { it.name.equals(searchText, ignoreCase = true) }
-                if (foundFood != null) {
-                    val servingAdapter = ArrayAdapter(
-                        requireContext(),
-                        android.R.layout.simple_dropdown_item_1line,
-                        listOf(foundFood.serving)
-                    )
-                    edtBreakfastAmount.setAdapter(servingAdapter)
-                    edtBreakfastAmount.setText(foundFood.serving)
-                    edtBreakfastAmount.inputType = 0
-                }
+                edtBreakfastAmount.setText("")
+                // 🔥 Tukar hint supaya user tahu mereka boleh taip sebutan hidangan secara manual
+                edtBreakfastAmount.hint = "Masukkan hidangan (cth: 2 mangkuk / 1 pinggan)"
+                // 🔥 Tukar jadi TYPE_CLASS_TEXT supaya kotak input boleh terima huruf/tulisan!
+                edtBreakfastAmount.inputType = InputType.TYPE_CLASS_TEXT
             }
-            // 8. LOGIK BUTANG TAMBAH MAKANAN KE SENARAI TEMPORARY POPUP
+            // ================= 🔥 BUTANG TAMBAH MAKANAN (HYBRID: DATABASE → AI) =================
             btnAddBreakfast.setOnClickListener {
                 val searchText = edtBreakfastFood.text.toString().trim()
-                var amount = 0.0
-                val foundFood = foodList.find { it.name.equals(searchText, ignoreCase = true) }
+                val amountText = edtBreakfastAmount.text.toString().trim()
 
-                if (foundFood != null) {
+                if (searchText.isEmpty()) {
+                    Toast.makeText(requireContext(), "Sila masukkan nama makanan", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                if (amountText.isEmpty()) {
+                    Toast.makeText(requireContext(), "Sila masukkan kuantiti (gram atau hidangan)", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                // 🔍 LANGKAH 1: CUBA CARI DALAM DATABASE DULU (foodList)
+                val foundInDb = foodList.find { it.name.equals(searchText, ignoreCase = true) }
+
+                if (foundInDb != null) {
+                    // ✅ JUMPA DALAM DATABASE → GUNA DATA DATABASE (CEPAT & PERCUMA)
                     var calories = 0.0
-                    if (radioBreakfastGram.isChecked) {
-                        amount = edtBreakfastAmount.text.toString().toDoubleOrNull() ?: 0.0
-                        calories = (amount / foundFood.gram) * foundFood.calories
+                    val finalAmount = if (radioBreakfastGram.isChecked) {
+                        amountText.toDoubleOrNull() ?: 1.0
                     } else {
-                        amount = 1.0
-                        calories = foundFood.calories
+                        val regex = Regex("\\d+(\\.\\d+)?")
+                        regex.find(amountText)?.value?.toDoubleOrNull() ?: 1.0
+                    }
+
+                    if (radioBreakfastGram.isChecked) {
+                        calories = (finalAmount / foundInDb.gram) * foundInDb.calories
+                    } else {
+                        calories = foundInDb.calories * finalAmount
                     }
 
                     tempTotal += calories
@@ -474,8 +485,12 @@ class KaloriFragment : Fragment() {
                     val txtItem = TextView(requireContext())
                     txtItem.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
 
-                    val unit = if (radioBreakfastGram.isChecked) "${amount}${foundFood.unit}" else foundFood.serving
-                    val itemText = "• ${foundFood.name} ($unit) = %.0f kcal".format(calories)
+                    val displayUnit = if (radioBreakfastGram.isChecked) {
+                        "${finalAmount.toInt()}g"
+                    } else {
+                        amountText
+                    }
+                    val itemText = "• ${foundInDb.name} ($displayUnit) = %.0f kcal".format(calories)
 
                     txtItem.text = itemText
                     txtItem.textSize = 14f
@@ -503,9 +518,98 @@ class KaloriFragment : Fragment() {
 
                     txtBreakfastCalories.text = "Kalori: %.0f kcal".format(calories)
                     txtBreakfastTotal.text = "Jumlah Semasa: %.0f kcal".format(tempTotal)
+
+                    // Kosongkan ruangan
+                    edtBreakfastFood.setText("")
+                    edtBreakfastAmount.setText("")
+                    edtBreakfastFood.requestFocus()
+
+                } else {
+                    // ❌ TAK JUMPA DALAM DATABASE → GUNA GEMINI AI (FALLBACK)
+                    val fullPromptQuery = if (radioBreakfastGram.isChecked) {
+                        "$searchText sebanyak ${amountText}g"
+                    } else {
+                        "$searchText sebanyak $amountText"
+                    }
+
+                    txtBreakfastCalories.text = "⏳ AI sedang mengira..."
+
+                    lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                        val foundFood = GeminiHelper.dapatkanKaloriDariAI(fullPromptQuery)
+
+                        withContext(kotlinx.coroutines.Dispatchers.Main) {
+                            if (foundFood != null) {
+                                var calories = foundFood.calories
+
+                                val finalAmount = if (radioBreakfastGram.isChecked) {
+                                    amountText.toDoubleOrNull() ?: 1.0
+                                } else {
+                                    val regex = Regex("\\d+(\\.\\d+)?")
+                                    regex.find(amountText)?.value?.toDoubleOrNull() ?: 1.0
+                                }
+
+                                if (radioBreakfastGram.isChecked) {
+                                    if (foundFood.gram > 0) {
+                                        calories = (finalAmount / foundFood.gram) * foundFood.calories
+                                    } else {
+                                        calories = (finalAmount / 100) * foundFood.calories
+                                    }
+                                } else {
+                                    calories = foundFood.calories * finalAmount
+                                }
+
+                                tempTotal += calories
+                                val itemLayout = LinearLayout(requireContext())
+                                itemLayout.orientation = LinearLayout.HORIZONTAL
+
+                                val txtItem = TextView(requireContext())
+                                txtItem.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+
+                                val displayUnit = if (radioBreakfastGram.isChecked) {
+                                    "${finalAmount.toInt()}g"
+                                } else {
+                                    amountText
+                                }
+                                val itemText = "• ${foundFood.name} ($displayUnit) = %.0f kcal".format(calories)
+
+                                txtItem.text = itemText
+                                txtItem.textSize = 14f
+                                txtItem.setTextColor(Color.BLACK)
+
+                                tempMealList.add(itemText)
+
+                                val btnDeleteItem = Button(requireContext())
+                                btnDeleteItem.text = "🗑️"
+                                btnDeleteItem.textSize = 12f
+                                btnDeleteItem.background = null
+                                btnDeleteItem.setBackgroundColor(Color.TRANSPARENT)
+
+                                val itemCalories = calories
+                                btnDeleteItem.setOnClickListener {
+                                    tempTotal -= itemCalories
+                                    tempMealList.remove(itemText)
+                                    layoutTempList.removeView(itemLayout)
+                                    txtBreakfastTotal.text = "Jumlah Semasa: %.0f kcal".format(tempTotal)
+                                }
+
+                                itemLayout.addView(txtItem)
+                                itemLayout.addView(btnDeleteItem)
+                                layoutTempList.addView(itemLayout)
+
+                                txtBreakfastCalories.text = "Kalori: %.0f kcal".format(calories)
+                                txtBreakfastTotal.text = "Jumlah Semasa: %.0f kcal".format(tempTotal)
+
+                                edtBreakfastFood.setText("")
+                                edtBreakfastAmount.setText("")
+                                edtBreakfastFood.requestFocus()
+                            } else {
+                                txtBreakfastCalories.text = "❌ Gagal mendapatkan data kalori"
+                                Toast.makeText(requireContext(), "Makanan tidak dikenali. Cuba taip lebih jelas.", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
                 }
             }
-
             // 9. LOGIK BUTANG TUTUP / BATAL POPUP
             btnCancelPopup.setOnClickListener {
                 alertDialog.dismiss() // Tutup popup tanpa save apa-apa

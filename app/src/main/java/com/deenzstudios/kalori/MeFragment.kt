@@ -8,16 +8,11 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import android.net.Uri
-import com.yandex.mobile.ads.common.AdRequestConfiguration
-import com.yandex.mobile.ads.common.AdRequestError
-import com.yandex.mobile.ads.interstitial.InterstitialAd
-import com.yandex.mobile.ads.interstitial.InterstitialAdLoader
-import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener
 
 
 class MeFragment : Fragment() {
 
-    private var interstitialAd: InterstitialAd? = null
+
 
     // 1. Isytihar pemboleh ubah di atas sekali dalam kelas
     private lateinit var pickImageLauncher: androidx.activity.result.ActivityResultLauncher<String>
@@ -252,7 +247,7 @@ class MeFragment : Fragment() {
                         else
                             "Perempuan"
 
-                    showYandexAd()
+
 
                     Toast.makeText(
                         requireContext(),
@@ -513,25 +508,5 @@ class MeFragment : Fragment() {
 
         return view
     }
-    private fun showYandexAd() {
 
-        val adLoader = InterstitialAdLoader(requireContext())
-
-        adLoader.setAdLoadListener(object : InterstitialAdLoadListener {
-
-            override fun onAdLoaded(ad: InterstitialAd) {
-                interstitialAd = ad
-                interstitialAd?.show(requireActivity())
-            }
-
-            override fun onAdFailedToLoad(error: AdRequestError) {
-            }
-        })
-
-        val adRequest = AdRequestConfiguration.Builder(
-            "R-M-19366932-1"
-        ).build()
-
-        adLoader.loadAd(adRequest)
-    }
 }
