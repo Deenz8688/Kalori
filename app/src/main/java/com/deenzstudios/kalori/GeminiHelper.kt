@@ -9,21 +9,15 @@ import org.json.JSONObject
 
 object GeminiHelper {
 
-    // 🔥 API Key dari local.properties (SELAMAT!)
-    private val apiKey: String = BuildConfig.API_KEY
+    // 🔥 Pastikan API Key sejati awak kekal dlm ni bro
+    private const val API_KEY = ""
 
-    init {
-        android.util.Log.d("API_KEY_DEBUG", "Panjang kunci: ${apiKey.length}")
-        android.util.Log.d("API_KEY_DEBUG", "5 aksara pertama: ${apiKey.take(5)}")
-    }
-
-    // 🚀 URL Gemini (guna variable geminiUrl — huruf kecil)
-    private val geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$apiKey"
+    // 🚀 TUKAR KEPADA MODEL GEMINI 2.5 FLASH (Kalis Traffic Sesak 503)
+    private const val GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$API_KEY"
 
     suspend fun dapatkanKaloriDariAI(inputMenuUser: String): Food? = withContext(Dispatchers.IO) {
         try {
-            // ✅ GUNA geminiUrl (bukan GEMINI_URL)
-            val url = URL(geminiUrl)
+            val url = URL(GEMINI_URL)
             val connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "POST"
             connection.setRequestProperty("Content-Type", "application/json")
@@ -92,7 +86,6 @@ object GeminiHelper {
                 return@withContext null
             }
         } catch (e: Exception) {
-            android.util.Log.e("GEMINI_ERROR", "Exception: ${e.message}")
             e.printStackTrace()
             return@withContext null
         }
