@@ -24,17 +24,9 @@ object GeminiHelper {
             connection.doOutput = true
 
             val arahanPrompt = """
-    Anda pakar nutrisi. Kira kalori untuk hidangan ini: "$inputMenuUser"
-    
-    Cara kira:
-    1. Kenal pasti makanan.
-    2. Anggarkan berat dalam gram berdasarkan hidangan:
-    3. Guna pengetahuan umum tentang kalori makanan (contoh: nasi 130 kcal/100g, ayam goreng 250 kcal/100g, sayur 50 kcal/100g, buah 60 kcal/100g).
-    4. Jika hidangan jenis "set" atau nama penuh (contoh: "nasi ayam set"), anggar kalori langsung.
-    5. Kira total kalori.
-    
-    Output JSON sahaja: {"name":"Nama Makanan","serving":"Kuantiti User","gram":0.0,"calories":0.0}
-""".trimIndent()
+            Kira kalori: "$inputMenuUser"
+            Output JSON: {"name":"Nama","serving":"Teks User","gram":0.0,"calories":0.0}
+            """.trimIndent()
 
             val jsonRequestBody = JSONObject().apply {
                 val contentsArray = org.json.JSONArray().apply {
@@ -73,7 +65,7 @@ object GeminiHelper {
 
                 return@withContext Food(
                     name = foodJson.optString("name", "Makanan"),
-                    serving = foodJson.optString("serving", "1 hidangan"),
+                    serving = foodJson.optString("serving", inputMenuUser),
                     gram = foodJson.optDouble("gram", 100.0),
                     calories = foodJson.optDouble("calories", 0.0),
                     unit = "g"

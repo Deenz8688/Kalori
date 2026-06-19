@@ -450,12 +450,20 @@ class KaloriFragment : Fragment() {
                 val amountText = edtBreakfastAmount.text.toString().trim()
 
                 if (searchText.isEmpty()) {
-                    Toast.makeText(requireContext(), "Sila masukkan nama makanan", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Sila masukkan nama makanan",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     return@setOnClickListener
                 }
 
                 if (amountText.isEmpty()) {
-                    Toast.makeText(requireContext(), "Sila masukkan kuantiti (cth: 250g / 1 pinggan)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Sila masukkan kuantiti (cth: 250g / 1 pinggan)",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     return@setOnClickListener
                 }
 
@@ -486,7 +494,8 @@ class KaloriFragment : Fragment() {
                     itemLayout.orientation = LinearLayout.HORIZONTAL
 
                     val txtItem = TextView(requireContext())
-                    txtItem.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                    txtItem.layoutParams =
+                        LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
 
                     // 🔥 Papar teks asal (termasuk unit)
                     val displayUnit = amountText
@@ -526,7 +535,6 @@ class KaloriFragment : Fragment() {
 
                 } else {
                     // ❌ TAK JUMPA DALAM DATABASE → GUNA GEMINI AI (FALLBACK)
-                    // 🔥 Gunakan amountText penuh (termasuk unit) untuk AI
                     val fullPromptQuery = "$searchText sebanyak $amountText"
 
                     txtBreakfastCalories.text = "⏳ AI sedang mengira..."
@@ -536,28 +544,23 @@ class KaloriFragment : Fragment() {
 
                         withContext(kotlinx.coroutines.Dispatchers.Main) {
                             if (foundFood != null) {
-                                val finalAmount = extractNumber(amountText)
-                                var calories = foundFood.calories
-
-                                if (radioBreakfastGram.isChecked) {
-                                    if (foundFood.gram > 0) {
-                                        calories = (finalAmount / foundFood.gram) * foundFood.calories
-                                    } else {
-                                        calories = (finalAmount / 100) * foundFood.calories
-                                    }
-                                } else {
-                                    calories = foundFood.calories * finalAmount
-                                }
+                                // 🔥 GUNA TERUS KALORI DARI AI (DAH KIRA UNTUK KESELURUHAN HIDANGAN)
+                                val calories = foundFood.calories
 
                                 tempTotal += calories
                                 val itemLayout = LinearLayout(requireContext())
                                 itemLayout.orientation = LinearLayout.HORIZONTAL
 
                                 val txtItem = TextView(requireContext())
-                                txtItem.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                                txtItem.layoutParams = LinearLayout.LayoutParams(
+                                    0,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                                    1f
+                                )
 
                                 val displayUnit = amountText
-                                val itemText = "• ${foundFood.name} ($displayUnit) = %.0f kcal".format(calories)
+                                val itemText =
+                                    "• ${foundFood.name} ($displayUnit) = %.0f kcal".format(calories)
 
                                 txtItem.text = itemText
                                 txtItem.textSize = 14f
@@ -576,7 +579,8 @@ class KaloriFragment : Fragment() {
                                     tempTotal -= itemCalories
                                     tempMealList.remove(itemText)
                                     layoutTempList.removeView(itemLayout)
-                                    txtBreakfastTotal.text = "Jumlah Semasa: %.0f kcal".format(tempTotal)
+                                    txtBreakfastTotal.text =
+                                        "Jumlah Semasa: %.0f kcal".format(tempTotal)
                                 }
 
                                 itemLayout.addView(txtItem)
@@ -584,14 +588,19 @@ class KaloriFragment : Fragment() {
                                 layoutTempList.addView(itemLayout)
 
                                 txtBreakfastCalories.text = "Kalori: %.0f kcal".format(calories)
-                                txtBreakfastTotal.text = "Jumlah Semasa: %.0f kcal".format(tempTotal)
+                                txtBreakfastTotal.text =
+                                    "Jumlah Semasa: %.0f kcal".format(tempTotal)
 
                                 edtBreakfastFood.setText("")
                                 edtBreakfastAmount.setText("")
                                 edtBreakfastFood.requestFocus()
                             } else {
                                 txtBreakfastCalories.text = "❌ Gagal mendapatkan data kalori"
-                                Toast.makeText(requireContext(), "Makanan tidak dikenali. Cuba taip lebih jelas.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Makanan tidak dikenali. Cuba taip lebih jelas.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                     }
