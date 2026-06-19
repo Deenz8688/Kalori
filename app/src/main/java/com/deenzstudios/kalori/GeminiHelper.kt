@@ -24,7 +24,7 @@ object GeminiHelper {
             connection.doOutput = true
 
             val arahanPrompt = """
-            Kira kalori: "$inputMenuUser"
+            Kira kalori tepat: "$inputMenuUser"
             Output JSON: {"name":"Nama","serving":"Teks User","gram":0.0,"calories":0.0}
             """.trimIndent()
 
