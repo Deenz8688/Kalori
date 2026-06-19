@@ -24,19 +24,17 @@ object GeminiHelper {
             connection.doOutput = true
 
             val arahanPrompt = """
-                Anda adalah pakar nutrisi dan database kalori makanan global. Kira kalori total dengan tepat berdasarkan menu dan kuantiti dari mana-mana jenis hidangan di dunia yang diberikan oleh user.
-                Input user: "$inputMenuUser"
-                
-                Arahan Penting:
-                1. Jika input mengandungi kuantiti hidangan bertulis (contoh: "2 mangkuk", "3 biji", "1 pinggan", "2 slices", "1 bowl"), anda mestilah mengira JUMLAH KESELURUHAN KALORI untuk gandaan kuantiti tersebut.
-                2. Sila kembalikan nama makanan yang kemas, saiz hidangan (serving) yang ditaip oleh user, anggaran total berat dlm gram, dan jumlah total kalori (calories).
-                3. Jika menu digabungkan dengan simbol seperti '+', anggap ia sebagai satu kombinasi makanan yang lengkap dan hitung kesemuanya sekali dlm satu JSON.
-                
-                Anda WAJIB membalas dalam bentuk JSON MENTAH SAHAJA tanpa teks hiasan, tanpa markdown, dan tanpa simbol ```json atau ```.
-                
-                Format JSON wajib tepat seperti ini:
-                {"name":"Nama Makanan","serving":"Kuantiti Hidangan User","gram":150.0,"calories":350.0}
-            """.trimIndent()
+    Anda pakar nutrisi. Kira kalori untuk hidangan ini: "$inputMenuUser"
+    
+    Cara kira:
+    1. Kenal pasti makanan.
+    2. Anggarkan berat dalam gram berdasarkan hidangan:
+    3. Guna pengetahuan umum tentang kalori makanan (contoh: nasi 130 kcal/100g, ayam goreng 250 kcal/100g, sayur 50 kcal/100g, buah 60 kcal/100g).
+    4. Jika hidangan jenis "set" atau nama penuh (contoh: "nasi ayam set"), anggar kalori langsung.
+    5. Kira total kalori.
+    
+    Output JSON sahaja: {"name":"Nama Makanan","serving":"Kuantiti User","gram":0.0,"calories":0.0}
+""".trimIndent()
 
             val jsonRequestBody = JSONObject().apply {
                 val contentsArray = org.json.JSONArray().apply {
