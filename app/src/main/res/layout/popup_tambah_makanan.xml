@@ -23,7 +23,8 @@
         android:hint="Cari makanan..."
         android:background="@android:drawable/editbox_background"
         android:padding="12dp"
-        android:textSize="14sp"/>
+        android:textSize="14sp"
+        android:inputType="textCapWords" />
 
     <RadioGroup
         android:id="@+id/radioGroupBreakfast"

@@ -439,10 +439,17 @@ class KaloriFragment : Fragment() {
 
             radioBreakfastServing.setOnClickListener {
                 edtBreakfastAmount.setText("")
-                // 🔥 Tukar hint supaya user tahu mereka boleh taip sebutan hidangan secara manual
                 edtBreakfastAmount.hint = "Masukkan hidangan (cth: 2 mangkuk / 1 pinggan)"
-                // 🔥 Tukar jadi TYPE_CLASS_TEXT supaya kotak input boleh terima huruf/tulisan!
                 edtBreakfastAmount.inputType = InputType.TYPE_CLASS_TEXT
+
+                // 🔥 AUTO-ISI HIDANGAN DARI DATABASE (JIKA ADA)
+                val currentFoodName = edtBreakfastFood.text.toString().trim()
+                if (currentFoodName.isNotEmpty()) {
+                    val foundFood = foodList.find { it.name.equals(currentFoodName, ignoreCase = true) }
+                    if (foundFood != null) {
+                        edtBreakfastAmount.setText(foundFood.serving)
+                    }
+                }
             }
             // ================= 🔥 BUTANG TAMBAH MAKANAN (HYBRID: DATABASE → AI) =================
             btnAddBreakfast.setOnClickListener {

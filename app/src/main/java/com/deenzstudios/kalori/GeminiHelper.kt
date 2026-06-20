@@ -36,6 +36,10 @@ object GeminiHelper {
                     put(JSONObject().put("parts", partsArray))
                 }
                 put("contents", contentsArray)
+                // 🔥 TAMBAH INI UNTUK SET TEMPERATURE = 0
+                put("generationConfig", JSONObject().apply {
+                    put("temperature", 0.0)
+                })
             }
 
             val writer = OutputStreamWriter(connection.outputStream)
