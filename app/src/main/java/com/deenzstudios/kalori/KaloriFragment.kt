@@ -78,10 +78,10 @@ class KaloriFragment : Fragment() {
             layoutWarningProfile.visibility = View.VISIBLE
             layoutUtamaKalori.visibility = View.GONE
 
-            btnGoToProfile.setOnClickListener {
-                val bottomNav = requireActivity().findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavigationView)
-                bottomNav.selectedItemId = R.id.nav_Me
-            }
+            //btnGoToProfile.setOnClickListener {
+                //val bottomNav = requireActivity().findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavigationView)
+                //bottomNav.selectedItemId = R.id.nav_Me
+            //}
         } else {
             layoutWarningProfile.visibility = View.GONE
             layoutUtamaKalori.visibility = View.VISIBLE

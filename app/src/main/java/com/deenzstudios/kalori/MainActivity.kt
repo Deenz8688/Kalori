@@ -10,11 +10,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import java.util.Calendar
 
-
 class MainActivity : AppCompatActivity() {
+
+    private var selectedTabId: Int = R.id.nav_home
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,34 +34,22 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        // Dapatkan semua button
+        val navHome = findViewById<LinearLayout>(R.id.nav_home)
+        val navKalori = findViewById<LinearLayout>(R.id.nav_kalori)
+        val navReport = findViewById<LinearLayout>(R.id.nav_report)
+        val navMe = findViewById<LinearLayout>(R.id.nav_me)
 
-        // Buka HomeFragment dulu sebagai default
-        replaceFragment(HomeFragment())
+        // Set click listener
+        navHome.setOnClickListener { selectTab(R.id.nav_home) }
+        navKalori.setOnClickListener { selectTab(R.id.nav_kalori) }
+        navReport.setOnClickListener { selectTab(R.id.nav_report) }
+        navMe.setOnClickListener { selectTab(R.id.nav_me) }
 
-        bottomNav.setOnItemSelectedListener {
-            when (it.itemId) {
-                R.id.nav_home -> {
-                    replaceFragment(HomeFragment())
-                    true
-                }
-                R.id.nav_kalori -> {
-                    replaceFragment(KaloriFragment())
-                    true
-                }
-                R.id.nav_report -> {
-                    replaceFragment(ReportFragment())
-                    true
-                }
-                R.id.nav_Me -> {
-                    replaceFragment(MeFragment())
-                    true
-                }
-                else -> true
-            }
-        }
+        // Default: pilih Home
+        selectTab(R.id.nav_home)
 
-        // ================= LANGKAH 2: Kotak Minta Izin Notifikasi =================
+        // ================= NOTIFIKASI =================
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             if (androidx.core.content.ContextCompat.checkSelfPermission(
                     this,
@@ -74,13 +64,46 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // ================= LANGKAH 3: Bina Saluran Notifikasi =================
         createNotificationChannel()
-
-        // 🔥 LANGKAH 7: PASANG JAM AUTOMATIK (Pagi, Tengah Hari, Malam)
         setupMealReminders()
+    }
 
-    } // <-- Penutup onCreate
+    private fun selectTab(tabId: Int) {
+        // Reset semua button
+        resetAllTabs()
+
+        // Set selected pada button yang diklik
+        selectedTabId = tabId
+
+        when (tabId) {
+            R.id.nav_home -> {
+                findViewById<LinearLayout>(R.id.nav_home).isSelected = true
+                replaceFragment(HomeFragment())
+            }
+            R.id.nav_kalori -> {
+                findViewById<LinearLayout>(R.id.nav_kalori).isSelected = true
+                replaceFragment(KaloriFragment())
+            }
+            R.id.nav_report -> {
+                findViewById<LinearLayout>(R.id.nav_report).isSelected = true
+                replaceFragment(ReportFragment())
+            }
+            R.id.nav_me -> {
+                findViewById<LinearLayout>(R.id.nav_me).isSelected = true
+                replaceFragment(MeFragment())
+            }
+        }
+    }
+
+    private fun resetAllTabs() {
+        val tabs = listOf(
+            R.id.nav_home, R.id.nav_kalori,
+            R.id.nav_report, R.id.nav_me
+        )
+        tabs.forEach { id ->
+            findViewById<LinearLayout>(id).isSelected = false
+        }
+    }
 
     private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
@@ -88,7 +111,7 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
-    // ================= LANGKAH 3 (FUNGSI): Kilang Saluran Notifikasi =================
+    // ================= NOTIFIKASI =================
     private fun createNotificationChannel() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             val name = "Notifikasi Waktu Makan"
@@ -100,20 +123,17 @@ class MainActivity : AppCompatActivity() {
             }
 
             val notificationManager: android.app.NotificationManager =
-                getSystemService(android.content.Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+                getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }
 
-    // 🔥 LANGKAH 7 (FUNGSI): Menguruskan Jam Alarm Di Latar Belakang
     private fun setupMealReminders() {
-
         setAlarm(1, 8, 0, "Selamat Pagi! 🍳", "Dah sarapan? pastikan makan makanan yang berkhasiat pagi ini, jangan lupa rekot menu sarapan anda")
         setAlarm(2, 13, 0, "Waktu Makan Tengah Hari! 🍽️", "Pastikan pilih menu yang seimbang untuk tengah hari ini")
         setAlarm(3, 19, 30, "Makan Malam Dah Tiba! 🌙", "Jangan makan terlalu banyak! pastikan kalori tidak melebihi had harian anda.")
     }
 
-    // Fungsi bantuan untuk kunci jam sistem telefon
     private fun setAlarm(requestCode: Int, hour: Int, minute: Int, title: String, message: String) {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -129,14 +149,12 @@ class MainActivity : AppCompatActivity() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // 📅 Tetapan jadual Calendar harian yang kalis ralat
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, hour)
             set(Calendar.MINUTE, minute)
             set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0) // 🔥 BARIS WAJIB: Kosongkan milisaat supaya perbandingan tepat!
+            set(Calendar.MILLISECOND, 0)
 
-            // Jika waktu sasaran dah terlepas untuk hari ni, baru bawa ke hari esok
             if (before(Calendar.getInstance())) {
                 add(Calendar.DATE, 1)
             }

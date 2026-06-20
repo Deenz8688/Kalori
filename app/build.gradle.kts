@@ -51,6 +51,8 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
+
+
     }
 }
 
@@ -67,4 +69,6 @@ dependencies {
     implementation("com.github.philjay:mpandroidchart:v3.1.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+    implementation("com.intuit.sdp:sdp-android:1.1.1")
+    implementation("com.intuit.ssp:ssp-android:1.1.1")
 }
