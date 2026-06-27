@@ -1,14 +1,15 @@
 package com.deenzstudios.kalori
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import android.widget.FrameLayout
 
 
 
@@ -38,6 +39,12 @@ class HomeFragment : Fragment() {
 
         autoSlide()
 
+        // 🆕 Butang Tip Kurus
+        val btnTipKurus = view.findViewById<TextView>(R.id.btnTipKurus)
+        btnTipKurus.setOnClickListener {
+            showTipsDialog()
+        }
+
         return view
     }
 
@@ -56,5 +63,24 @@ class HomeFragment : Fragment() {
         }
 
         handler.postDelayed(runnable, 3000)
+    }
+
+    private fun showTipsDialog() {
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_tips_kurus, null)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        val btnClose = dialogView.findViewById<android.widget.Button>(R.id.btnCloseDialog)
+        btnClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 }

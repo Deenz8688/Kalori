@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">Kalori</string>
+
+    <!-- Tip Kurus -->
+    <string name="btn_tip_kurus">💡 Tip Kurus</string>
+    <string name="dialog_tip_title">✨ Tip Penurunan Berat Badan</string>
+
+    <!-- 4 Tips Asas -->
+    <string name="tip_1">💧 Minum air kosong secukupnya — 2 hingga 3 liter sehari untuk tingkatkan metabolisme.</string>
+    <string name="tip_2">🚫 Kurangkan gula dan minuman manis. Gantikan dengan air kosong atau teh tanpa gula.</string>
+    <string name="tip_3">🥗 Makan lebih banyak sayur dan buah. Serat membantu anda kenyang lebih lama.</string>
+    <string name="tip_4">🍽️ Kawal saiz portion makanan. Guna pinggan lebih kecil untuk elak makan berlebihan.</string>
+
+    <!-- 4 Tips TDEE / BMR / Defisit -->
+    <string name="tip_5">🔥 Fahami TDEE anda! TDEE ialah jumlah kalori yang badan anda bakar setiap hari. Untuk kurus, makanlah kurang daripada TDEE — sasarkan defisit 300–500 kcal sehari untuk turun 0.5 kg seminggu.</string>
+    <string name="tip_6">⚡ Jangan makan bawah BMR! BMR ialah kalori minimum untuk organ anda berfungsi. Pastikan pengambilan harian sentiasa melebihi BMR — makan terlalu sedikit boleh melambatkan metabolisme.</string>
+    <string name="tip_7">📊 Pantau paparan TDEE | DIAMBIL | BAKI dalam tab Kalori. Pastikan BAKI sentiasa positif (hijau) — maknanya anda belum melebihi had TDEE untuk hari tersebut.</string>
+    <string name="tip_8">🎯 Konsisten itu kunci! Defisit 500 kcal × 7 hari = 3,500 kcal = ~0.5 kg lemak terbakar. Jangan putus asa kalau turun naik — timbang sekali seminggu pada waktu sama, dan rekod kemajuan anda.</string>
+
+    <string name="tip_close">Tutup</string>
 </resources>
