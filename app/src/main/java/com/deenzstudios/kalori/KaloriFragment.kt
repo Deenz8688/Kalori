@@ -40,7 +40,7 @@ class KaloriFragment : Fragment() {
         if (result.resultCode == android.app.Activity.RESULT_OK) {
             val data: Intent? = result.data
             val uri = data?.data
-            
+
             if (uri != null) {
                 // Kes 1: User pilih dari Galeri (Uri)
                 val inputStream = requireContext().contentResolver.openInputStream(uri)
@@ -59,14 +59,14 @@ class KaloriFragment : Fragment() {
         val galleryIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
             type = "image/*"
         }
-        
+
         // 2. Sediakan Intent Kamera
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        
+
         // 3. Gabungkan dalam System Chooser (Native Bottom Sheet)
         val chooser = Intent.createChooser(galleryIntent, "Pilih Sumber Makanan")
         chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cameraIntent))
-        
+
         try {
             universalLauncher.launch(chooser)
         } catch (e: Exception) {
@@ -93,9 +93,14 @@ class KaloriFragment : Fragment() {
     }
 
     private fun tunjukkanDialogPengesahanAI(food: Food) {
+        // Pecahkan info berat dan makro untuk paparan dialog sahaja
+        val parts = food.serving.split("|")
+        val beratSaja = parts[0].trim()
+        val makroSaja = if (parts.size > 1) parts[1].trim() else ""
+
         android.app.AlertDialog.Builder(requireContext())
             .setTitle("Hasil Imbasan AI")
-            .setMessage("Makanan: ${food.name}\nEstimasi: ${food.serving}\nKalori: ${food.calories.toInt()} kcal\n\nMasukkan ke $currentMealTypeForCamera?")
+            .setMessage("Makanan: ${food.name}\nAnggaran: $beratSaja\nKalori: ${food.calories.toInt()} kcal\n\nInfo Nutrisi:\n$makroSaja\n\nMasukkan ke $currentMealTypeForCamera?")
             .setPositiveButton("Ya, Masukkan") { _, _ ->
                 onAiFoodResult?.invoke(food)
             }
@@ -253,8 +258,14 @@ class KaloriFragment : Fragment() {
                 else -> "dinner"
             }
 
+            // 🔥 POTONG INFO MAKRO: Ambil berat saja supaya list tak "panjang2"
+            val beratSaja = food.serving.split("|")[0].trim()
+            
+            // 🚀 BERSIHKAN NAMA: Buang tanda ' (apostrophe) supaya tak pecahkan SQL MySQL Din
+            val cleanName = food.name.replace("'", "")
+            val itemText = "• $cleanName ($beratSaja) = %.0f kcal".format(food.calories)
+            
             val oldText = sharedPref.getString("${selectedDate}_${key}_text", "") ?: ""
-            val itemText = "• ${food.name} (${food.serving}) = %.0f kcal".format(food.calories)
             val combinedText = if (oldText.isNotEmpty()) oldText + "\n" + itemText else itemText
 
             val oldTotal = when (mealType) {
@@ -302,9 +313,10 @@ class KaloriFragment : Fragment() {
                     val mysqlDate = "${dateParts[2]}-${dateParts[1]}-${dateParts[0]}"
                     val currentWeight = sharedPref.getString("weight", "0") + " kg"
 
+                    // Gunakan itemText (format asal Din) supaya konsisten dalam database
                     val postData = "user_id=$userId2" +
                             "&meal_type=${URLEncoder.encode(mealName, "UTF-8")}" +
-                            "&food_name=${URLEncoder.encode(food.name, "UTF-8")}" +
+                            "&food_name=${URLEncoder.encode(itemText, "UTF-8")}" +
                             "&calories=${food.calories.toInt()}" +
                             "&food_date=$mysqlDate" +
                             "&weight=${URLEncoder.encode(currentWeight, "UTF-8")}" +
@@ -314,7 +326,11 @@ class KaloriFragment : Fragment() {
                     val conn = URL("https://specmb.org/kalori_api/save_food.php").openConnection()
                     conn.doOutput = true
                     conn.getOutputStream().write(postData.toByteArray())
-                    conn.inputStream.read()
+                    
+                    // Baca sampai habis supaya server sempat simpan (Ikut cara manual Din)
+                    val response = conn.getInputStream().bufferedReader().readText()
+                    android.util.Log.d("AI_SAVE", "Respon: $response")
+
                 } catch (e: Exception) { e.printStackTrace() }
             }
 
@@ -475,6 +491,23 @@ class KaloriFragment : Fragment() {
                 e.printStackTrace()
             }
         }
+
+        // ================= HUBUNGKAN BUTANG KAMERA DASHBOARD =================
+        view.findViewById<ImageView>(R.id.btnCameraSarapan).setOnClickListener {
+            currentMealTypeForCamera = "🍳 Sarapan"
+            bukaKamera()
+        }
+        view.findViewById<ImageView>(R.id.btnCameraTengahHari).setOnClickListener {
+            currentMealTypeForCamera = "🍛 Tengah Hari"
+            bukaKamera()
+        }
+        view.findViewById<ImageView>(R.id.btnCameraMalam).setOnClickListener {
+            currentMealTypeForCamera = "🌙 Makan Malam"
+            bukaKamera()
+        }
+
+        // Jalankan load data permulaan untuk tarikh hari ini
+        loadDataByDate(edtDate.text.toString())
 
         // 🚀 PANGGIL KOD DATABASE BILA USER LOG MASUK
         val loginPref = requireActivity().getSharedPreferences("LoginSession", Context.MODE_PRIVATE)
@@ -918,54 +951,58 @@ class KaloriFragment : Fragment() {
                 editor.apply()
 
                 // Hantar rekod ke pelayan MySQL cloud api dngan selamat
-                try {
-                    val loginPref2 = requireActivity().getSharedPreferences("LoginSession", Context.MODE_PRIVATE)
-                    val userId2 = loginPref2.getString("userId", "") ?: ""
+                lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                    try {
+                        val loginPref2 = requireActivity().getSharedPreferences("LoginSession", Context.MODE_PRIVATE)
+                        val userId2 = loginPref2.getString("userId", "") ?: ""
 
-                    val mealWithoutEmoji = when(mealType) {
-                        "Sarapan", "🍳 Sarapan" -> "Sarapan"
-                        "Tengah Hari", "🍛 Tengah Hari" -> "Tengah Hari"
-                        else -> "Makan Malam"
+                        val mealWithoutEmoji = when(mealType) {
+                            "Sarapan", "🍳 Sarapan" -> "Sarapan"
+                            "Tengah Hari", "🍛 Tengah Hari" -> "Tengah Hari"
+                            else -> "Makan Malam"
+                        }
+
+                        val foodName = tempMealList.joinToString(", ")
+                        val url = URL("https://specmb.org/kalori_api/save_food.php")
+                        val connection = url.openConnection()
+                        connection.doOutput = true
+
+                        val dateParts = selectedDate.split("/")
+                        val mysqlDate = "${dateParts[2]}-${dateParts[1]}-${dateParts[0]}"
+
+                        val currentWeight5 = sharedPref.getString("weight", "0") + " kg"
+                        val currentBmr5 = sharedPref.getString("bmr", "0 kcal") ?: "0 kcal"
+                        val currentTdee5 = sharedPref.getString("tdee", "0 kcal") ?: "0 kcal"
+
+                        val encodedMeal = URLEncoder.encode(mealWithoutEmoji, "UTF-8")
+                        val encodedFood = URLEncoder.encode(foodName, "UTF-8")
+                        val encodedWeight = URLEncoder.encode(currentWeight5, "UTF-8")
+                        val encodedBmr = URLEncoder.encode(currentBmr5, "UTF-8")
+                        val encodedTdee = URLEncoder.encode(currentTdee5, "UTF-8")
+
+                        val postData = "user_id=$userId2" +
+                                "&meal_type=$encodedMeal" +
+                                "&food_name=$encodedFood" +
+                                "&calories=${tempTotal.toInt()}" +
+                                "&food_date=$mysqlDate" +
+                                "&weight=$encodedWeight" +
+                                "&bmr=$encodedBmr" +
+                                "&tdee=$encodedTdee"
+
+                        connection.getOutputStream().write(postData.toByteArray())
+                        val response = connection.getInputStream().bufferedReader().readText()
+                        android.util.Log.d("SAVE_FOOD", "Respon MySQL: $response")
+
+                        // Panggil semula logik penyelarasan cloud jika data berjaya masuk ke pelayan web
+                        if (response.trim().contains("Food Saved") && userId2.isNotEmpty()) {
+                            requireActivity().runOnUiThread {
+                                loadCloudFoods(userId2)
+                            }
+                        }
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
-
-                    val foodName = tempMealList.joinToString(", ")
-                    val url = URL("https://specmb.org/kalori_api/save_food.php")
-                    val connection = url.openConnection()
-                    connection.doOutput = true
-
-                    val dateParts = selectedDate.split("/")
-                    val mysqlDate = "${dateParts[2]}-${dateParts[1]}-${dateParts[0]}"
-
-                    val currentWeight5 = sharedPref.getString("weight", "0") + " kg"
-                    val currentBmr5 = sharedPref.getString("bmr", "0 kcal") ?: "0 kcal"
-                    val currentTdee5 = sharedPref.getString("tdee", "0 kcal") ?: "0 kcal"
-
-                    val encodedMeal = URLEncoder.encode(mealWithoutEmoji, "UTF-8")
-                    val encodedFood = URLEncoder.encode(foodName, "UTF-8")
-                    val encodedWeight = URLEncoder.encode(currentWeight5, "UTF-8")
-                    val encodedBmr = URLEncoder.encode(currentBmr5, "UTF-8")
-                    val encodedTdee = URLEncoder.encode(currentTdee5, "UTF-8")
-
-                    val postData = "user_id=$userId2" +
-                            "&meal_type=$encodedMeal" +
-                            "&food_name=$encodedFood" +
-                            "&calories=${tempTotal.toInt()}" +
-                            "&food_date=$mysqlDate" +
-                            "&weight=$encodedWeight" +
-                            "&bmr=$encodedBmr" +
-                            "&tdee=$encodedTdee"
-
-                    connection.getOutputStream().write(postData.toByteArray())
-                    val response = connection.getInputStream().bufferedReader().readText()
-                    android.util.Log.d("SAVE_FOOD", "Respon MySQL: $response")
-
-                    // Panggil semula logik penyelarasan cloud jika data berjaya masuk ke pelayan web
-                    if (response.trim().contains("Food Saved") && userId2.isNotEmpty()) {
-                        loadCloudFoods(userId2)
-                    }
-
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
 
                 // Segarkan paparan data pada 3 kad utama di dashboard phone

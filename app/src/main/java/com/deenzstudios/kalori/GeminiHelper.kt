@@ -101,20 +101,15 @@ object GeminiHelper {
             val arahanPrompt = """
             Anda adalah Pakar Nutrisi Malaysia yang sangat teliti. Tugas anda adalah mengenalpasti menu dalam gambar dengan tepat.
             
-            Sila ikut langkah analisis ini:
-            1. Lihat tekstur protein: Adakah ia mempunyai urat daging ayam atau tekstur lembut ikan? Perhatikan bentuk tulang atau kulit.
-            2. Lihat bahan sampingan: Kari ikan biasanya mempunyai bendi/terung. Kari ayam biasanya mempunyai kentang.
-            3. Jika kuah terlalu pekat, buat anggaran paling logik berdasarkan bentuk potongan objek.
-            
             Berikan hasil dalam format JSON SAHAJA:
             {
               "name": "Nama Makanan Spesifik",
-              "serving": "Anggaran Berat (PROTEIN: 0g, KARBOHIDRAT: 0g, LEMAK: 0g)",
+              "serving": "Anggaran Berat | PROTEIN: 0g, KARBOHIDRAT: 0g, LEMAK: 0g",
               "gram": 0.0,
               "calories": 0.0
             }
             
-            PENTING: Gunakan ejaan penuh PROTEIN, KARBOHIDRAT, dan LEMAK dalam ruangan 'serving'.
+            PENTING: Masukkan info makro nutrisi dalam ruangan 'serving' selepas tanda '|'.
             """.trimIndent()
 
             val jsonRequestBody = JSONObject().apply {
