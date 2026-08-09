@@ -99,16 +99,22 @@ object GeminiHelper {
             val encodedImage = android.util.Base64.encodeToString(byteArrayOutputStream.toByteArray(), android.util.Base64.NO_WRAP)
 
             val arahanPrompt = """
-            Anda adalah Pakar Nutrisi dan Dietetik profesional. Tugas anda adalah mengenalpasti makanan/minuman dalam gambar ini dengan sangat tepat.
+            Anda adalah Pakar Nutrisi Malaysia yang sangat teliti. Tugas anda adalah mengenalpasti menu dalam gambar dengan tepat.
             
-            Arahan Khusus:
-            1. Kenalpasti nama makanan secara spesifik (terutamanya makanan Malaysia/Asia).
-            2. Analisis saiz hidangan dan anggaran berat dalam gram secara realistik berdasarkan visual.
-            3. Kira jumlah kalori (kcal) berdasarkan bahan-bahan yang kelihatan.
-            4. Hasilkan jawapan dalam format JSON SAHAJA tanpa sebarang teks penjelasan lain.
+            Sila ikut langkah analisis ini:
+            1. Lihat tekstur protein: Adakah ia mempunyai urat daging ayam atau tekstur lembut ikan? Perhatikan bentuk tulang atau kulit.
+            2. Lihat bahan sampingan: Kari ikan biasanya mempunyai bendi/terung. Kari ayam biasanya mempunyai kentang.
+            3. Jika kuah terlalu pekat, buat anggaran paling logik berdasarkan bentuk potongan objek.
             
-            Format Output JSON: 
-            {"name":"Nama Makanan","serving":"Anggaran Berat/Saiz (cth: 1 pinggan/250g)","gram":250.0,"calories":450.0}
+            Berikan hasil dalam format JSON SAHAJA:
+            {
+              "name": "Nama Makanan Spesifik",
+              "serving": "Anggaran Berat (PROTEIN: 0g, KARBOHIDRAT: 0g, LEMAK: 0g)",
+              "gram": 0.0,
+              "calories": 0.0
+            }
+            
+            PENTING: Gunakan ejaan penuh PROTEIN, KARBOHIDRAT, dan LEMAK dalam ruangan 'serving'.
             """.trimIndent()
 
             val jsonRequestBody = JSONObject().apply {
@@ -140,7 +146,7 @@ object GeminiHelper {
                 val jsonResponse = JSONObject(responseText)
                 val candidates = jsonResponse.optJSONArray("candidates") ?: return@withContext null
                 val rawAiText = candidates.getJSONObject(0).getJSONObject("content").getJSONArray("parts").getJSONObject(0).getString("text").trim()
-                
+
                 var cleanJson = rawAiText
                 if (cleanJson.contains("```")) {
                     cleanJson = cleanJson.replace("```json", "").replace("```", "").trim()

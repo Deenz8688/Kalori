@@ -14,6 +14,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.activity.result.contract.ActivityResultContracts
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.content.Intent
 import android.provider.MediaStore
 import java.net.URL
@@ -34,21 +35,42 @@ class KaloriFragment : Fragment() {
     private var currentMealTypeForCamera = ""
     private var onAiFoodResult: ((Food) -> Unit)? = null
 
-    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    // 🚀 Launcher Universal (Kamera & Galeri)
+    private val universalLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == android.app.Activity.RESULT_OK) {
-            val imageBitmap = result.data?.extras?.get("data") as? Bitmap
-            if (imageBitmap != null) {
-                prosesGambarAI(imageBitmap)
+            val data: Intent? = result.data
+            val uri = data?.data
+            
+            if (uri != null) {
+                // Kes 1: User pilih dari Galeri (Uri)
+                val inputStream = requireContext().contentResolver.openInputStream(uri)
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                bitmap?.let { prosesGambarAI(it) }
+            } else {
+                // Kes 2: User ambil gambar Kamera (Bitmap)
+                val imageBitmap = data?.extras?.get("data") as? Bitmap
+                imageBitmap?.let { prosesGambarAI(it) }
             }
         }
     }
 
     private fun bukaKamera() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        // 1. Sediakan Intent Galeri
+        val galleryIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = "image/*"
+        }
+        
+        // 2. Sediakan Intent Kamera
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        
+        // 3. Gabungkan dalam System Chooser (Native Bottom Sheet)
+        val chooser = Intent.createChooser(galleryIntent, "Pilih Sumber Makanan")
+        chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cameraIntent))
+        
         try {
-            cameraLauncher.launch(takePictureIntent)
+            universalLauncher.launch(chooser)
         } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Kamera gagal dibuka", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Gagal membuka kamera/galeri", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -279,7 +301,7 @@ class KaloriFragment : Fragment() {
                     val dateParts = selectedDate.split("/")
                     val mysqlDate = "${dateParts[2]}-${dateParts[1]}-${dateParts[0]}"
                     val currentWeight = sharedPref.getString("weight", "0") + " kg"
-                    
+
                     val postData = "user_id=$userId2" +
                             "&meal_type=${URLEncoder.encode(mealName, "UTF-8")}" +
                             "&food_name=${URLEncoder.encode(food.name, "UTF-8")}" +
