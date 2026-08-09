@@ -84,4 +84,81 @@ object GeminiHelper {
             return@withContext null
         }
     }
+
+    suspend fun analisisGambarMakananAI(bitmap: android.graphics.Bitmap): Food? = withContext(Dispatchers.IO) {
+        try {
+            val url = URL(geminiurl)
+            val connection = url.openConnection() as HttpURLConnection
+            connection.requestMethod = "POST"
+            connection.setRequestProperty("Content-Type", "application/json")
+            connection.doOutput = true
+
+            // Convert Bitmap to Base64 - Naikkan kualiti ke 80% untuk lebih detail
+            val byteArrayOutputStream = java.io.ByteArrayOutputStream()
+            bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream)
+            val encodedImage = android.util.Base64.encodeToString(byteArrayOutputStream.toByteArray(), android.util.Base64.NO_WRAP)
+
+            val arahanPrompt = """
+            Anda adalah Pakar Nutrisi dan Dietetik profesional. Tugas anda adalah mengenalpasti makanan/minuman dalam gambar ini dengan sangat tepat.
+            
+            Arahan Khusus:
+            1. Kenalpasti nama makanan secara spesifik (terutamanya makanan Malaysia/Asia).
+            2. Analisis saiz hidangan dan anggaran berat dalam gram secara realistik berdasarkan visual.
+            3. Kira jumlah kalori (kcal) berdasarkan bahan-bahan yang kelihatan.
+            4. Hasilkan jawapan dalam format JSON SAHAJA tanpa sebarang teks penjelasan lain.
+            
+            Format Output JSON: 
+            {"name":"Nama Makanan","serving":"Anggaran Berat/Saiz (cth: 1 pinggan/250g)","gram":250.0,"calories":450.0}
+            """.trimIndent()
+
+            val jsonRequestBody = JSONObject().apply {
+                val contentsArray = org.json.JSONArray().apply {
+                    val partsArray = org.json.JSONArray().apply {
+                        put(JSONObject().put("text", arahanPrompt))
+                        put(JSONObject().apply {
+                            put("inline_data", JSONObject().apply {
+                                put("mime_type", "image/jpeg")
+                                put("data", encodedImage)
+                            })
+                        })
+                    }
+                    put(JSONObject().put("parts", partsArray))
+                }
+                put("contents", contentsArray)
+                put("generationConfig", JSONObject().apply {
+                    put("temperature", 0.0)
+                })
+            }
+
+            val writer = OutputStreamWriter(connection.outputStream)
+            writer.write(jsonRequestBody.toString())
+            writer.flush()
+            writer.close()
+
+            if (connection.responseCode == HttpURLConnection.HTTP_OK) {
+                val responseText = connection.inputStream.bufferedReader().readText()
+                val jsonResponse = JSONObject(responseText)
+                val candidates = jsonResponse.optJSONArray("candidates") ?: return@withContext null
+                val rawAiText = candidates.getJSONObject(0).getJSONObject("content").getJSONArray("parts").getJSONObject(0).getString("text").trim()
+                
+                var cleanJson = rawAiText
+                if (cleanJson.contains("```")) {
+                    cleanJson = cleanJson.replace("```json", "").replace("```", "").trim()
+                }
+
+                val foodJson = JSONObject(cleanJson)
+                return@withContext Food(
+                    name = foodJson.optString("name", "Makanan"),
+                    serving = foodJson.optString("serving", "1 hidangan"),
+                    gram = foodJson.optDouble("gram", 100.0),
+                    calories = foodJson.optDouble("calories", 0.0),
+                    unit = "g"
+                )
+            }
+            return@withContext null
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return@withContext null
+        }
+    }
 }

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_tip_title"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#00695C" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="#E0E0E0" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tip_1"
+                android:textSize="14sp"
+                android:textColor="#37474F"
+                android:paddingVertical="6dp"
+                android:lineSpacingMultiplier="1.4" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tip_2"
+                android:textSize="14sp"
+                android:textColor="#37474F"
+                android:paddingVertical="6dp"
+                android:lineSpacingMultiplier="1.4" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tip_3"
+                android:textSize="14sp"
+                android:textColor="#37474F"
+                android:paddingVertical="6dp"
+                android:lineSpacingMultiplier="1.4" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tip_4"
+                android:textSize="14sp"
+                android:textColor="#37474F"
+                android:paddingVertical="6dp"
+                android:lineSpacingMultiplier="1.4" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tip_5"
+                android:textSize="14sp"
+                android:textColor="#37474F"
+                android:paddingVertical="6dp"
+                android:lineSpacingMultiplier="1.4" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tip_6"
+                android:textSize="14sp"
+                android:textColor="#37474F"
+                android:paddingVertical="6dp"
+                android:lineSpacingMultiplier="1.4" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tip_7"
+                android:textSize="14sp"
+                android:textColor="#37474F"
+                android:paddingVertical="6dp"
+                android:lineSpacingMultiplier="1.4" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tip_8"
+                android:textSize="14sp"
+                android:textColor="#37474F"
+                android:paddingVertical="6dp"
+                android:lineSpacingMultiplier="1.4" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btnCloseDialog"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/tip_close"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#00695C"
+        app:cornerRadius="12dp" />
+
+</LinearLayout>

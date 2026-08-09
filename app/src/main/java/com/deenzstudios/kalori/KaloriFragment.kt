@@ -12,6 +12,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.activity.result.contract.ActivityResultContracts
+import android.graphics.Bitmap
+import android.content.Intent
+import android.provider.MediaStore
 import java.net.URL
 import java.net.URLEncoder // 🔥 Ditambah untuk fungsi bungkusan URL Encode
 import java.text.SimpleDateFormat
@@ -26,6 +30,56 @@ import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
 class KaloriFragment : Fragment() {
+
+    private var currentMealTypeForCamera = ""
+    private var onAiFoodResult: ((Food) -> Unit)? = null
+
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            val imageBitmap = result.data?.extras?.get("data") as? Bitmap
+            if (imageBitmap != null) {
+                prosesGambarAI(imageBitmap)
+            }
+        }
+    }
+
+    private fun bukaKamera() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        try {
+            cameraLauncher.launch(takePictureIntent)
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "Kamera gagal dibuka", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun prosesGambarAI(bitmap: Bitmap) {
+        val loadingDialog = android.app.ProgressDialog(requireContext())
+        loadingDialog.setMessage("AI sedang menganalisis makanan...")
+        loadingDialog.setCancelable(false)
+        loadingDialog.show()
+
+        lifecycleScope.launch {
+            val food = GeminiHelper.analisisGambarMakananAI(bitmap)
+            loadingDialog.dismiss()
+
+            if (food != null) {
+                tunjukkanDialogPengesahanAI(food)
+            } else {
+                Toast.makeText(requireContext(), "AI gagal mengenali makanan.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun tunjukkanDialogPengesahanAI(food: Food) {
+        android.app.AlertDialog.Builder(requireContext())
+            .setTitle("Hasil Imbasan AI")
+            .setMessage("Makanan: ${food.name}\nEstimasi: ${food.serving}\nKalori: ${food.calories.toInt()} kcal\n\nMasukkan ke $currentMealTypeForCamera?")
+            .setPositiveButton("Ya, Masukkan") { _, _ ->
+                onAiFoodResult?.invoke(food)
+            }
+            .setNegativeButton("Batal", null)
+            .show()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -164,6 +218,100 @@ class KaloriFragment : Fragment() {
 
             txtTotalCalories.text = "%.0f kcal".format(totalCalories)
             txtBalance.text = "%.0f kcal".format(balance)
+        }
+
+        // ================= LOGIK TAMBAHAN: SIMPAN MAKANAN DARI AI =================
+        onAiFoodResult = { food ->
+            val selectedDate = edtDate.text.toString()
+            val mealType = currentMealTypeForCamera
+
+            val key = when (mealType) {
+                "Sarapan", "🍳 Sarapan" -> "breakfast"
+                "Tengah Hari", "🍛 Tengah Hari" -> "lunch"
+                else -> "dinner"
+            }
+
+            val oldText = sharedPref.getString("${selectedDate}_${key}_text", "") ?: ""
+            val itemText = "• ${food.name} (${food.serving}) = %.0f kcal".format(food.calories)
+            val combinedText = if (oldText.isNotEmpty()) oldText + "\n" + itemText else itemText
+
+            val oldTotal = when (mealType) {
+                "Sarapan", "🍳 Sarapan" -> breakfastTotal
+                "Tengah Hari", "🍛 Tengah Hari" -> lunchTotal
+                else -> dinnerTotal
+            }
+            val newTotal = oldTotal + food.calories
+
+            when (mealType) {
+                "Sarapan", "🍳 Sarapan" -> {
+                    breakfastTotal = newTotal
+                    editor.putString("${selectedDate}_breakfast_text", combinedText)
+                    editor.putFloat("${selectedDate}_breakfast_total", newTotal.toFloat())
+                }
+                "Tengah Hari", "🍛 Tengah Hari" -> {
+                    lunchTotal = newTotal
+                    editor.putString("${selectedDate}_lunch_text", combinedText)
+                    editor.putFloat("${selectedDate}_lunch_total", newTotal.toFloat())
+                }
+                "Makan Malam", "🌙 Makan Malam" -> {
+                    dinnerTotal = newTotal
+                    editor.putString("${selectedDate}_dinner_text", combinedText)
+                    editor.putFloat("${selectedDate}_dinner_total", newTotal.toFloat())
+                }
+            }
+
+            val grandTotal = breakfastTotal + lunchTotal + dinnerTotal
+            val tdeeValue = savedTdee.replace("kcal", "").trim().toDoubleOrNull() ?: 0.0
+            val balance = tdeeValue - grandTotal
+
+            editor.putFloat("${selectedDate}_totalCalories", grandTotal.toFloat())
+            editor.putFloat("${selectedDate}_balance", balance.toFloat())
+            editor.putString("${selectedDate}_tdee", savedTdee)
+            editor.putString("${selectedDate}_bmr", savedBmr)
+            editor.apply()
+
+            // Hantar ke MySQL
+            lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                try {
+                    val loginPref2 = requireActivity().getSharedPreferences("LoginSession", Context.MODE_PRIVATE)
+                    val userId2 = loginPref2.getString("userId", "") ?: ""
+                    val mealName = if(mealType.contains("Sarapan")) "Sarapan" else if(mealType.contains("Tengah")) "Tengah Hari" else "Makan Malam"
+                    val dateParts = selectedDate.split("/")
+                    val mysqlDate = "${dateParts[2]}-${dateParts[1]}-${dateParts[0]}"
+                    val currentWeight = sharedPref.getString("weight", "0") + " kg"
+                    
+                    val postData = "user_id=$userId2" +
+                            "&meal_type=${URLEncoder.encode(mealName, "UTF-8")}" +
+                            "&food_name=${URLEncoder.encode(food.name, "UTF-8")}" +
+                            "&calories=${food.calories.toInt()}" +
+                            "&food_date=$mysqlDate" +
+                            "&weight=${URLEncoder.encode(currentWeight, "UTF-8")}" +
+                            "&bmr=${URLEncoder.encode(savedBmr, "UTF-8")}" +
+                            "&tdee=${URLEncoder.encode(savedTdee, "UTF-8")}"
+
+                    val conn = URL("https://specmb.org/kalori_api/save_food.php").openConnection()
+                    conn.doOutput = true
+                    conn.getOutputStream().write(postData.toByteArray())
+                    conn.inputStream.read()
+                } catch (e: Exception) { e.printStackTrace() }
+            }
+
+            loadDataByDate(selectedDate)
+            Toast.makeText(requireContext(), "Berjaya ditambah!", Toast.LENGTH_SHORT).show()
+        }
+
+        // ================= HUBUNGKAN BUTANG KAMERA DASHBOARD =================
+        view.findViewById<ImageView>(R.id.btnCameraSarapan).setOnClickListener {
+            currentMealTypeForCamera = "🍳 Sarapan"
+            bukaKamera()
+        }
+        view.findViewById<ImageView>(R.id.btnCameraTengahHari).setOnClickListener {
+            currentMealTypeForCamera = "🍛 Tengah Hari"
+            bukaKamera()
+        }
+        view.findViewById<ImageView>(R.id.btnCameraMalam).setOnClickListener {
+            currentMealTypeForCamera = "🌙 Makan Malam"
+            bukaKamera()
         }
 
         // Jalankan load data permulaan untuk tarikh hari ini
