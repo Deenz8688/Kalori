@@ -140,16 +140,30 @@ class GraphActivity : AppCompatActivity() {
                 xAxis.spaceMin = 0.5f
                 xAxis.spaceMax = 0.5f
 
-                // SETING PAKSI Y (NOMBOR BULAT ASAL AWAK)
+                // SETING PAKSI Y (AUTO IKUT BERAT SEMASA)
                 lineChart.axisRight.isEnabled = false
                 val leftAxis = lineChart.axisLeft
                 leftAxis.setDrawGridLines(true)
                 leftAxis.gridColor = Color.parseColor("#E0E0E0")
                 leftAxis.granularity = 1f
                 leftAxis.isGranularityEnabled = true
-                leftAxis.axisMinimum = 55f
-                leftAxis.axisMaximum = 65f
-                leftAxis.setLabelCount(11, true)
+
+                // Kira julat ikut berat sebenar dalam data + sikit padding
+                val weights = entries.map { it.y }
+                val dataMin = weights.minOrNull() ?: 0f
+                val dataMax = weights.maxOrNull() ?: 0f
+                val range = (dataMax - dataMin).coerceAtLeast(1f)
+                val padding = (range * 0.2f).coerceAtLeast(1.5f)
+
+                val axisMin = kotlin.math.floor(dataMin - padding).coerceAtLeast(0f)
+                val axisMax = kotlin.math.ceil(dataMax + padding)
+
+                leftAxis.axisMinimum = axisMin
+                leftAxis.axisMaximum = axisMax
+
+                // Bilangan label supaya nilai kekal bulat & tak berulang
+                val span = (axisMax - axisMin).toInt().coerceAtLeast(1)
+                leftAxis.setLabelCount((span + 1).coerceAtMost(11), true)
                 leftAxis.valueFormatter = com.github.mikephil.charting.formatter.DefaultAxisValueFormatter(0)
 
                 // SETING AM
