@@ -132,17 +132,28 @@ class MainActivity : AppCompatActivity() {
     // ================= NOTIFIKASI =================
     private fun createNotificationChannel() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            val name = "Notifikasi Waktu Makan"
-            val descriptionText = "Saluran amaran untuk reminding waktu makan harian"
-            val importance = android.app.NotificationManager.IMPORTANCE_DEFAULT
-
-            val channel = android.app.NotificationChannel("waktu_makan_channel", name, importance).apply {
-                description = descriptionText
-            }
-
             val notificationManager: android.app.NotificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
-            notificationManager.createNotificationChannel(channel)
+
+            // Saluran notifikasi waktu makan (reminder biasa)
+            val mealChannel = android.app.NotificationChannel(
+                NotificationReceiver.CHANNEL_MEAL,
+                "Notifikasi Waktu Makan",
+                android.app.NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = "Saluran amaran untuk reminding waktu makan harian"
+            }
+            notificationManager.createNotificationChannel(mealChannel)
+
+            // Saluran amaran kalori berlebihan (priority tinggi -> heads-up)
+            val warningChannel = android.app.NotificationChannel(
+                NotificationReceiver.CHANNEL_WARNING,
+                "Amaran Kalori Berlebihan",
+                android.app.NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Amaran apabila pengambilan kalori melebihi sasaran TDEE harian"
+            }
+            notificationManager.createNotificationChannel(warningChannel)
         }
     }
 

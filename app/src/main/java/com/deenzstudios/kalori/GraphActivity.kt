@@ -170,6 +170,19 @@ class GraphActivity : AppCompatActivity() {
                 // SETING AM
                 lineChart.description.isEnabled = false
                 lineChart.legend.isEnabled = true
+
+                // ================= 🔥 LERET GRAF KE TEPI (SCROLL) =================
+                // Hadkan bilangan titik dipapar serentak (7 = seminggu). Bila data
+                // banyak (contoh sebulan/30 hari) pengguna boleh leret kiri/kanan
+                // supaya titik tak terlalu rapat.
+                lineChart.setVisibleXRangeMaximum(7f)
+                lineChart.setTouchEnabled(true)
+                lineChart.isDragEnabled = true
+                lineChart.setScaleEnabled(false)
+                lineChart.setPinchZoom(false)
+                lineChart.isDoubleTapToZoomEnabled = false
+                lineChart.setDragDecelerationEnabled(true)
+
                 lineChart.animateX(1000)
             } else {
                 lineChart.clear() // Bersihkan graf jika tiada data dlm julat tarikh tersebut

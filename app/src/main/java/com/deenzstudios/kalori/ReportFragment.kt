@@ -1,6 +1,5 @@
 package com.deenzstudios.kalori
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,7 +23,6 @@ import java.util.Locale
 class ReportFragment : Fragment() {
 
     private lateinit var txtReportTitle: TextView
-    private lateinit var btnGoToGraph: View
     private lateinit var recyclerReport: RecyclerView
 
     private lateinit var groupReportType: MaterialButtonToggleGroup
@@ -45,7 +43,6 @@ class ReportFragment : Fragment() {
         )
 
         txtReportTitle = view.findViewById(R.id.txtReportTitle)
-        btnGoToGraph = view.findViewById(R.id.btnGoToGraph)
 
         // ================= BUTANG TOGGLE (JENIS & TAPISAN) =================
         groupReportType = view.findViewById(R.id.groupReportType)
@@ -75,12 +72,6 @@ class ReportFragment : Fragment() {
         }
 
         loadData()
-
-        // ================= 🔥 HUBUNGKAN BUTANG GRAF =================
-        btnGoToGraph.setOnClickListener {
-            val intent = Intent(requireContext(), GraphActivity::class.java)
-            startActivity(intent)
-        }
 
         return view
     }
@@ -132,7 +123,6 @@ class ReportFragment : Fragment() {
         lifecycleScope.launch {
             if (type == "Air") {
                 txtReportTitle.text = "Laporan Air"
-                btnGoToGraph.visibility = View.GONE
 
                 val allWater = WaterRepository.getAll(requireContext())
                 val map = allWater.associateBy { it.date }
@@ -145,7 +135,6 @@ class ReportFragment : Fragment() {
                 recyclerReport.adapter = WaterReportAdapter(list, targetMl)
             } else {
                 txtReportTitle.text = "Laporan Kalori"
-                btnGoToGraph.visibility = View.VISIBLE
 
                 val allReports = ReportManager.getReports(requireContext())
                 val map = allReports.associateBy { it.date }

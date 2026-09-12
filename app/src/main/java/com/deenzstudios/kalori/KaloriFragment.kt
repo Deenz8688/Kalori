@@ -110,6 +110,24 @@ class KaloriFragment : Fragment() {
             .show()
     }
 
+    /**
+     * Hantar notifikasi amaran bila jumlah kalori hari ini melebihi sasaran TDEE.
+     * Sekali sehari sahaja (elak spam) dan hanya untuk tarikh hari ini.
+     */
+    private fun maybeNotifyOverTdee(date: String, consumedKcal: Double, tdeeKcal: Double) {
+        if (!isAdded || tdeeKcal <= 0.0 || consumedKcal <= tdeeKcal) return
+
+        val today = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            .format(Calendar.getInstance().time)
+        if (date != today) return // Jangan amaran untuk rekod tarikh lama
+
+        val prefs = requireContext().getSharedPreferences("NotiPrefs", Context.MODE_PRIVATE)
+        if (prefs.getString("last_over_tdee_date", null) == date) return // Dah bagi amaran hari ni
+
+        prefs.edit().putString("last_over_tdee_date", date).apply()
+        NotificationReceiver.sendOverTdeeWarning(requireContext(), consumedKcal, tdeeKcal)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -237,6 +255,9 @@ class KaloriFragment : Fragment() {
 
                 txtTotalCalories.text = "%.0f kcal".format(totalCalories)
                 txtBalance.text = "%.0f kcal".format(balance)
+
+                // ⚠️ AMARAN: kalau kalori melebihi TDEE, hantar notifikasi (sekali sehari)
+                maybeNotifyOverTdee(selectedDate, totalCalories, tdeeValue)
             }
         }
 

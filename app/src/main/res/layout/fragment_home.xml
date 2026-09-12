@@ -100,6 +100,30 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- ================= BUTANG GRAF PRESTASI ================= -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/btnHomeGraph"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#4CAF50">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="📈 Lihat Graf Prestasi"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </androidx.cardview.widget.CardView>
+
         <!-- ================= PECAHAN HIDANGAN ================= -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

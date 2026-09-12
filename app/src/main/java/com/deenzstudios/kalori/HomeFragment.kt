@@ -1,6 +1,7 @@
 package com.deenzstudios.kalori
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -36,6 +37,8 @@ class HomeFragment : Fragment() {
     private lateinit var txtHomeWaterPercent: TextView
     private lateinit var progressWater: ProgressBar
 
+    private lateinit var btnHomeGraph: View
+
     private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreateView(
@@ -58,6 +61,7 @@ class HomeFragment : Fragment() {
         txtHomeWater = view.findViewById(R.id.txtHomeWater)
         txtHomeWaterPercent = view.findViewById(R.id.txtHomeWaterPercent)
         progressWater = view.findViewById(R.id.progressWater)
+        btnHomeGraph = view.findViewById(R.id.btnHomeGraph)
 
         val images = listOf(
             R.drawable.poster1,
@@ -73,6 +77,11 @@ class HomeFragment : Fragment() {
         val btnTipKurus = view.findViewById<TextView>(R.id.btnTipKurus)
         btnTipKurus.setOnClickListener {
             showTipsDialog()
+        }
+
+        // 📈 Butang graf prestasi berat badan
+        btnHomeGraph.setOnClickListener {
+            startActivity(Intent(requireContext(), GraphActivity::class.java))
         }
 
         setGreeting()
