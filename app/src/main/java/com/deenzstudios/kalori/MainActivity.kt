@@ -12,6 +12,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import com.deenzstudios.kalori.data.FoodRepository
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
@@ -22,6 +25,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
+        // 🔥 SEED DATABASE MAKANAN (ROOM/SQLITE) SEKALI PADA FIRST LAUNCH
+        lifecycleScope.launch {
+            try {
+                FoodRepository.ensureSeeded(applicationContext)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -37,12 +49,14 @@ class MainActivity : AppCompatActivity() {
         // Dapatkan semua button
         val navHome = findViewById<LinearLayout>(R.id.nav_home)
         val navKalori = findViewById<LinearLayout>(R.id.nav_kalori)
+        val navAir = findViewById<LinearLayout>(R.id.nav_air)
         val navReport = findViewById<LinearLayout>(R.id.nav_report)
         val navMe = findViewById<LinearLayout>(R.id.nav_me)
 
         // Set click listener
         navHome.setOnClickListener { selectTab(R.id.nav_home) }
         navKalori.setOnClickListener { selectTab(R.id.nav_kalori) }
+        navAir.setOnClickListener { selectTab(R.id.nav_air) }
         navReport.setOnClickListener { selectTab(R.id.nav_report) }
         navMe.setOnClickListener { selectTab(R.id.nav_me) }
 
@@ -84,6 +98,10 @@ class MainActivity : AppCompatActivity() {
                 findViewById<LinearLayout>(R.id.nav_kalori).isSelected = true
                 replaceFragment(KaloriFragment())
             }
+            R.id.nav_air -> {
+                findViewById<LinearLayout>(R.id.nav_air).isSelected = true
+                replaceFragment(AirFragment())
+            }
             R.id.nav_report -> {
                 findViewById<LinearLayout>(R.id.nav_report).isSelected = true
                 replaceFragment(ReportFragment())
@@ -97,7 +115,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun resetAllTabs() {
         val tabs = listOf(
-            R.id.nav_home, R.id.nav_kalori,
+            R.id.nav_home, R.id.nav_kalori, R.id.nav_air,
             R.id.nav_report, R.id.nav_me
         )
         tabs.forEach { id ->

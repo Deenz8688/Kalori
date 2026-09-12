@@ -4,7 +4,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.21"
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -67,7 +67,11 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.github.chrisbanes:PhotoView:2.3.0")
     implementation("com.github.philjay:mpandroidchart:v3.1.0")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("com.intuit.sdp:sdp-android:1.1.1")
     implementation("com.intuit.ssp:ssp-android:1.1.1")
+
+    // 🔥 ROOM / SQLITE (OFFLINE-FIRST)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 }

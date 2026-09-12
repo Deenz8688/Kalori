@@ -15,7 +15,7 @@ class WelcomeActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
 
             startActivity(
-                Intent(this, LoginActivity::class.java)
+                Intent(this, MainActivity::class.java)
             )
 
             finish()

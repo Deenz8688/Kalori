@@ -1,161 +1,77 @@
 package com.deenzstudios.kalori
 
 import android.content.Context
+import com.deenzstudios.kalori.data.ReportEntity
+import com.deenzstudios.kalori.data.ReportRepository
 import org.json.JSONArray
-import org.json.JSONObject
 
+/**
+ * Pembalut nipis di atas [ReportRepository] (Room/SQLite) — OFFLINE.
+ * Kekalkan API lama supaya pemanggil tak banyak berubah, tetapi fungsi kini `suspend`.
+ */
 object ReportManager {
 
-    fun saveReport(
+    private const val PREF_NAME = "ReportHistory"
+    private const val PREF_KEY = "report_list"
+    private const val MIGRATION_FLAG = "report_room_migrated_v1"
 
-        context: Context,
-
-        reportData: ReportData
-
-    ) {
-
-
-        val sharedPref =
-            context.getSharedPreferences(
-                "ReportHistory",
-                Context.MODE_PRIVATE
-            )
-
-        val oldData =
-            sharedPref.getString(
-                "report_list",
-                "[]"
-            )
-
-        val jsonArray =
-            JSONArray(oldData)
-
-        val jsonObject =
-            JSONObject()
-
-        jsonObject.put(
-            "date",
-            reportData.date
-        )
-
-        jsonObject.put(
-            "weight",
-            reportData.weight
-        )
-
-        jsonObject.put(
-            "breakfast",
-            reportData.breakfast
-        )
-
-        jsonObject.put(
-            "lunch",
-            reportData.lunch
-        )
-
-        jsonObject.put(
-            "dinner",
-            reportData.dinner
-        )
-
-        jsonObject.put(
-            "total",
-            reportData.total
-        )
-
-        jsonObject.put(
-            "bmr",
-            reportData.bmr
-        )
-
-        jsonObject.put(
-            "tdee",
-            reportData.tdee
-        )
-
-        var updated = false
-
-        for (i in 0 until jsonArray.length()) {
-
-            val obj =
-                jsonArray.getJSONObject(i)
-
-            if (
-                obj.getString("date")
-                ==
-                reportData.date
-            ) {
-
-                jsonArray.put(i, jsonObject)
-
-                updated = true
-
-                break
-            }
-        }
-
-        if (!updated) {
-
-            jsonArray.put(jsonObject)
-        }
-
-        sharedPref.edit()
-            .putString(
-                "report_list",
-                jsonArray.toString()
-            )
-            .apply()
+    suspend fun saveReport(context: Context, reportData: ReportData) {
+        ensureMigrated(context)
+        ReportRepository.save(context, reportData.toEntity())
     }
-    fun getReports(
-        context: Context
-    ): List<ReportData> {
 
-        val sharedPref =
-            context.getSharedPreferences(
-                "ReportHistory",
-                Context.MODE_PRIVATE
-            )
+    suspend fun getReports(context: Context): List<ReportData> {
+        ensureMigrated(context)
+        return ReportRepository.getAll(context).map { it.toReportData() }
+    }
 
-        val savedData =
-            sharedPref.getString(
-                "report_list",
-                "[]"
-            )
+    /**
+     * Pindahkan laporan lama (JSON dlm SharedPreferences) ke Room.
+     * Dijalankan sekali sahaja (dikawal oleh flag).
+     */
+    private suspend fun ensureMigrated(context: Context) {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        if (prefs.getBoolean(MIGRATION_FLAG, false)) return
 
-        val jsonArray =
-            JSONArray(savedData)
-
-        val reportList =
-            mutableListOf<ReportData>()
-
-        for (i in 0 until jsonArray.length()) {
-
-            val obj =
-                jsonArray.getJSONObject(i)
-
-            reportList.add(
-
-                ReportData(
-
-                    obj.getString("date"),
-
-                    obj.getString("weight"),
-
-                    obj.getString("breakfast"),
-
-                    obj.getString("lunch"),
-
-                    obj.getString("dinner"),
-
-                    obj.getString("total"),
-
-                    obj.getString("bmr"),
-
-                    obj.getString("tdee")
+        val saved = prefs.getString(PREF_KEY, "[]") ?: "[]"
+        val rows = mutableListOf<ReportEntity>()
+        try {
+            val jsonArray = JSONArray(saved)
+            for (i in 0 until jsonArray.length()) {
+                val obj = jsonArray.getJSONObject(i)
+                rows.add(
+                    ReportEntity(
+                        date = obj.optString("date"),
+                        weight = obj.optString("weight"),
+                        breakfast = obj.optString("breakfast"),
+                        lunch = obj.optString("lunch"),
+                        dinner = obj.optString("dinner"),
+                        total = obj.optString("total"),
+                        bmr = obj.optString("bmr"),
+                        tdee = obj.optString("tdee")
+                    )
                 )
-            )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
-        return reportList.reversed()
+        ReportRepository.insertAll(context, rows.filter { it.date.isNotEmpty() })
+        prefs.edit().putBoolean(MIGRATION_FLAG, true).apply()
     }
+
+    private fun ReportData.toEntity() = ReportEntity(
+        date = date,
+        weight = weight,
+        breakfast = breakfast,
+        lunch = lunch,
+        dinner = dinner,
+        total = total,
+        bmr = bmr,
+        tdee = tdee
+    )
+
+    private fun ReportEntity.toReportData() = ReportData(
+        date, weight, breakfast, lunch, dinner, total, bmr, tdee
+    )
 }

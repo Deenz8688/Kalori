@@ -1,5 +1,6 @@
 package com.deenzstudios.kalori
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import android.net.Uri
+import com.deenzstudios.kalori.data.BackupManager
+import com.deenzstudios.kalori.data.ProfileEntity
+import com.deenzstudios.kalori.data.ProfileRepository
+import kotlinx.coroutines.launch
 
 
 class MeFragment : Fragment() {
@@ -17,6 +23,11 @@ class MeFragment : Fragment() {
     // 1. Isytihar pemboleh ubah di atas sekali dalam kelas
     private lateinit var pickImageLauncher: androidx.activity.result.ActivityResultLauncher<String>
     private var imageUriString: String? = null
+
+    // Launcher backup / pulih data (fail JSON melalui Storage Access Framework)
+    private lateinit var createBackupLauncher: androidx.activity.result.ActivityResultLauncher<String>
+    private lateinit var openBackupLauncher: androidx.activity.result.ActivityResultLauncher<Array<String>>
+    private var onDataImported: (() -> Unit)? = null
 
     // 2. Wajib daftarkan launcher di dalam onCreate!
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +51,43 @@ class MeFragment : Fragment() {
 
                 // 4. Setkan gambar pada komponen UI borang guna 'it'
                 imgFormProfile?.setImageURI(it)
+            }
+        }
+
+        // ================= BACKUP: JANA FAIL JSON (SAF) =================
+        createBackupLauncher = registerForActivityResult(
+            androidx.activity.result.contract.ActivityResultContracts.CreateDocument("application/json")
+        ) { uri ->
+            uri ?: return@registerForActivityResult
+            lifecycleScope.launch {
+                try {
+                    val json = BackupManager.exportJson(requireContext().applicationContext)
+                    requireContext().contentResolver.openOutputStream(uri)?.use {
+                        it.write(json.toByteArray(Charsets.UTF_8))
+                    }
+                    Toast.makeText(requireContext(), "✅ Backup berjaya disimpan!", Toast.LENGTH_LONG).show()
+                } catch (e: Exception) {
+                    Toast.makeText(requireContext(), "❌ Gagal backup: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        // ================= PULIH DATA: BACA FAIL JSON (SAF) =================
+        openBackupLauncher = registerForActivityResult(
+            androidx.activity.result.contract.ActivityResultContracts.OpenDocument()
+        ) { uri ->
+            uri ?: return@registerForActivityResult
+            lifecycleScope.launch {
+                try {
+                    val json = requireContext().contentResolver.openInputStream(uri)
+                        ?.bufferedReader(Charsets.UTF_8)?.use { it.readText() }
+                        ?: return@launch
+                    BackupManager.importJson(requireContext().applicationContext, json)
+                    onDataImported?.invoke()
+                    Toast.makeText(requireContext(), "✅ Data berjaya dipulihkan!", Toast.LENGTH_LONG).show()
+                } catch (e: Exception) {
+                    Toast.makeText(requireContext(), "❌ Gagal pulihkan: ${e.message}", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
@@ -88,31 +136,10 @@ class MeFragment : Fragment() {
 
         val btnEdit = view.findViewById<Button>(R.id.btnEdit)
 
-        val txtAccountStatus =
-            view.findViewById<TextView>(
-                R.id.txtAccountStatus
-            )
-
-        val btnLoginAccount =
-            view.findViewById<Button>(
-                R.id.btnLoginAccount
-            )
-
-
-
-        val btnLogout =
-            view.findViewById<Button>(
-                R.id.btnLogout
-            )
-
-        val btnQuickLogin =
-            view.findViewById<Button>(
-                R.id.btnQuickLogin
-            )
-
-        val sharedPref = requireActivity().getSharedPreferences(
+        // Pref lama kekal sebagai sumber migrasi sekali sahaja
+        val legacyPref = requireActivity().getSharedPreferences(
             "UserProfile",
-            android.content.Context.MODE_PRIVATE
+            Context.MODE_PRIVATE
         )
 
         val activityLevels = arrayOf(
@@ -131,85 +158,65 @@ class MeFragment : Fragment() {
 
         spinnerActivity.adapter = adapter
 
-        val loginPref =
-            requireActivity().getSharedPreferences(
-                "LoginSession",
-                android.content.Context.MODE_PRIVATE
-            )
+        // Profil semasa (dikongsi antara lambda)
+        var currentProfile: ProfileEntity? = null
 
-        val isLoggedIn =
-            loginPref.getBoolean(
-                "isLoggedIn",
-                false
-            )
-
-        val userEmail =
-            loginPref.getString(
-                "userEmail",
-                ""
-            )
-
-        if (isLoggedIn) {
-
-            txtAccountStatus.text =
-                "Log Masuk Sebagai:\n$userEmail"
-
-            btnLoginAccount.visibility =
-                View.GONE
-
-
-
-            btnLogout.visibility =
-                View.VISIBLE
-
-        } else {
-
-            txtAccountStatus.text =
-                "Anda menggunakan mod tetamu"
-
-            btnLoginAccount.visibility =
-                View.VISIBLE
-
-
-
-            btnLogout.visibility =
-                View.GONE
-        }
-
-        // ================= AUTO LOAD DATA TEKS (Apabila Fragment Dibuka) =================
-        val savedName = sharedPref.getString("name", null)
-
-        if (savedName != null) {
+        fun renderProfile(profile: ProfileEntity) {
             profileLayout.visibility = View.VISIBLE
             formLayout.visibility = View.GONE
 
-            // Memaparkan nama terus tanpa perkataan "Nama: "
-            txtProfileName.text = sharedPref.getString("name", "")?.uppercase()
-
-            val savedBmi = sharedPref.getString("bmi", "")
-            val savedStatus = sharedPref.getString("bmiStatus", "")
-            val savedColor = sharedPref.getInt("bmiColor", android.graphics.Color.BLACK)
-
-            txtProfileBMI.text = "BMI: $savedBmi ($savedStatus)"
-            txtProfileBMI.setTextColor(savedColor)
-            txtProfileBMR.text = "BMR: " + sharedPref.getString("bmr", "")
-            txtProfileTDEE.text = "TDEE: " + sharedPref.getString("tdee", "")
-            txtProfileWeight.text = "Berat: " + sharedPref.getString("weight", "") + " kg"
-            txtProfileHeight.text = "Tinggi: " + sharedPref.getString("height", "") + " cm"
-            txtProfileAge.text = "Umur: " + sharedPref.getString("age", "") + " Tahun"
-            txtProfileGender.text = "Jantina: " + sharedPref.getString("gender", "")
-            txtProfileActivity.text = "Aktiviti: " + sharedPref.getString("activity", "")
+            txtProfileName.text = profile.name.uppercase()
+            txtProfileBMI.text = "BMI: ${profile.bmi} (${profile.bmiStatus})"
+            txtProfileBMI.setTextColor(profile.bmiColor)
+            txtProfileBMR.text = "BMR: ${profile.bmr}"
+            txtProfileTDEE.text = "TDEE: ${profile.tdee}"
+            txtProfileWeight.text = "Berat: ${profile.weight} kg"
+            txtProfileHeight.text = "Tinggi: ${profile.height} cm"
+            txtProfileAge.text = "Umur: ${profile.age} Tahun"
+            txtProfileGender.text = "Jantina: ${profile.gender}"
+            txtProfileActivity.text = "Aktiviti: ${profile.activity}"
         }
+
+        fun renderImage(uriString: String?) {
+            if (uriString == null) return
+            val imageUri = Uri.parse(uriString)
+            try {
+                // 🟢 Cuba paparkan pada kedua-dua tempat (Borang dan Kad Paparan)
+                imgFormProfile.setImageURI(imageUri)
+                imgProfileView.setImageURI(imageUri)
+            } catch (e: SecurityException) {
+                // 🔴 Kalau Android sekat kebenaran akses fail lama, dia masuk sini (App TIDAK AKAN crash!)
+                imgFormProfile.setImageResource(R.drawable.ic_launcher_foreground)
+                imgProfileView.setImageResource(R.drawable.ic_launcher_foreground)
+                e.printStackTrace()
+            }
+        }
+
+        // ================= AUTO LOAD DATA DARI ROOM (Apabila Fragment Dibuka) =================
+        fun loadProfileFromRoom() {
+            lifecycleScope.launch {
+                val appCtx = requireContext().applicationContext
+                ProfileRepository.migrateFromPrefs(appCtx, legacyPref)
+
+                val profile = ProfileRepository.getProfile(appCtx)
+                if (profile != null && profile.name.isNotEmpty()) {
+                    currentProfile = profile
+                    renderProfile(profile)
+                    renderImage(profile.profileImage ?: legacyPref.getString("profile_image", null))
+                } else {
+                    profileLayout.visibility = View.GONE
+                    formLayout.visibility = View.VISIBLE
+                    renderImage(legacyPref.getString("profile_image", null))
+                }
+            }
+        }
+
+        // Dipanggil semula selepas data dipulihkan supaya UI dikemas kini
+        onDataImported = { loadProfileFromRoom() }
+        loadProfileFromRoom()
 
         // ================= AKSI BUTANG CALCULATE / SAVE PROFILE =================
         btnCalculate.setOnClickListener {
-            val editor = sharedPref.edit()
-
-            // 1. Simpan string lokasi gambar ke SharedPreferences
-            if (imageUriString != null) {
-                editor.putString("profile_image", imageUriString)
-            }
-
             val weight = edtWeight.text.toString().toDoubleOrNull()
             val height = edtHeight.text.toString().toDoubleOrNull()
             val age = edtAge.text.toString().toIntOrNull()
@@ -247,126 +254,11 @@ class MeFragment : Fragment() {
                         else
                             "Perempuan"
 
-
-
                     Toast.makeText(
                         requireContext(),
                         "Profile berjaya disimpan",
                         Toast.LENGTH_SHORT
                     ).show()
-
-
-                    val loginPref =
-                        requireActivity().getSharedPreferences(
-                            "LoginSession",
-                            android.content.Context.MODE_PRIVATE
-                        )
-
-                    val isLoggedIn =
-                        loginPref.getBoolean(
-                            "isLoggedIn",
-                            false
-                        )
-
-                    if (isLoggedIn) {
-
-                        val userId =
-                            loginPref.getString(
-                                "userId",
-                                ""
-                            ) ?: ""
-
-                        Thread {
-
-                            try {
-
-                                val url =
-                                    java.net.URL(
-                                        "https://specmb.org/kalori_api/save_profile.php"
-                                    )
-
-                                val postData =
-                                    "user_id=" +
-                                            java.net.URLEncoder.encode(userId, "UTF-8") +
-
-                                            "&full_name=" +
-                                            java.net.URLEncoder.encode(name, "UTF-8") +
-
-                                            "&profile_image=" +
-                                            java.net.URLEncoder.encode(imageUriString ?: "", "UTF-8") +
-
-                                            "&activity_level=" +
-                                            java.net.URLEncoder.encode(
-                                                spinnerActivity.selectedItem.toString(),
-                                                "UTF-8"
-                                            ) +
-
-                                            "&gender=" +
-                                            java.net.URLEncoder.encode(gender, "UTF-8") +
-
-                                            "&age=" +
-                                            java.net.URLEncoder.encode(age.toString(), "UTF-8") +
-
-                                            "&weight=" +
-                                            java.net.URLEncoder.encode(weight.toString(), "UTF-8") +
-
-                                            "&height=" +
-                                            java.net.URLEncoder.encode(height.toString(), "UTF-8") +
-
-                                            "&bmi=" +
-                                            java.net.URLEncoder.encode(
-                                                "%.2f".format(bmi),
-                                                "UTF-8"
-                                            ) +
-
-                                            "&bmr=" +
-                                            java.net.URLEncoder.encode(
-                                                "%.0f".format(bmr),
-                                                "UTF-8"
-                                            ) +
-
-                                            "&tdee=" +
-                                            java.net.URLEncoder.encode(
-                                                "%.0f".format(tdee),
-                                                "UTF-8"
-                                            )
-
-                                val conn =
-                                    url.openConnection()
-                                            as java.net.HttpURLConnection
-
-                                conn.requestMethod = "POST"
-
-                                conn.doOutput = true
-
-                                conn.outputStream.write(
-                                    postData.toByteArray()
-                                )
-
-                                conn.inputStream.bufferedReader()
-                                    .readText()
-
-                            } catch (e: Exception) {
-
-                                e.printStackTrace()
-                            }
-
-                        }.start()
-                    }
-
-                    profileLayout.visibility = View.VISIBLE
-                    formLayout.visibility = View.GONE
-
-                    // 2. Papar nama terus dalam huruf besar sejurus selepas save
-                    txtProfileName.text = name.uppercase()
-
-
-
-                    txtProfileWeight.text = "Berat: $weight kg"
-                    txtProfileHeight.text = "Tinggi: $height cm"
-                    txtProfileAge.text = "Umur: $age Tahun"
-                    txtProfileGender.text = "Jantina: $gender"
-                    txtProfileActivity.text = "Aktiviti: ${spinnerActivity.selectedItem}"
 
                     val bmiStatus: String
                     val bmiColor: Int
@@ -394,116 +286,73 @@ class MeFragment : Fragment() {
                         }
                     }
 
-                    txtProfileBMI.text = "BMI: %.2f".format(bmi) + " ($bmiStatus)"
-                    txtProfileBMI.setTextColor(bmiColor)
-                    txtProfileBMR.text = "BMR: %.0f kcal".format(bmr)
-                    txtProfileTDEE.text = "TDEE: %.0f kcal".format(tdee)
+                    val profile = ProfileEntity(
+                        name = name,
+                        weight = weight.toString(),
+                        height = height.toString(),
+                        age = age.toString(),
+                        gender = gender,
+                        activity = spinnerActivity.selectedItem.toString(),
+                        bmi = "%.2f".format(bmi),
+                        bmiStatus = bmiStatus,
+                        bmiColor = bmiColor,
+                        bmr = "%.0f kcal".format(bmr),
+                        tdee = "%.0f kcal".format(tdee),
+                        profileImage = imageUriString ?: currentProfile?.profileImage
+                    )
+                    currentProfile = profile
 
-                    // 3. Kemas kini imej pada paparan profile secara real-time
+                    // Papar serta-merta pada kad profil
+                    renderProfile(profile)
+
+                    // Kemas kini imej pada paparan profile secara real-time
                     if (imageUriString != null) {
                         imgProfileView.setImageURI(Uri.parse(imageUriString))
                     }
 
-                    // Simpan semua data ke SharedPreferences secara kekal
-                    editor.putString("name", name)
-                        .putString("bmi", "%.2f".format(bmi))
-                        .putString("bmiStatus", bmiStatus)
-                        .putInt("bmiColor", bmiColor)
-                        .putString("bmr", "%.0f kcal".format(bmr))
-                        .putString("tdee", "%.0f kcal".format(tdee))
-                        .putString("weight", weight.toString())
-                        .putString("height", height.toString())
-                        .putString("age", age.toString())
-                        .putString("gender", gender)
-                        .putString("activity", spinnerActivity.selectedItem.toString())
-                        .apply()
+                    // Simpan ke Room secara kekal
+                    lifecycleScope.launch {
+                        ProfileRepository.saveProfile(requireContext().applicationContext, profile)
+                    }
                 }
             } else {
                 Toast.makeText(requireContext(), "Sila lengkapkan semua maklumat", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // ================= AUTO LOAD DATA GAMBAR (Apabila Fragment Dibuka) =================
-        val savedImageUriString = sharedPref.getString("profile_image", null)
-
-        if (savedImageUriString != null) {
-            val imageUri = Uri.parse(savedImageUriString)
-
-            try {
-                // 🟢 Cuba paparkan pada kedua-dua tempat (Borang dan Kad Paparan)
-                imgFormProfile.setImageURI(imageUri)
-                imgProfileView.setImageURI(imageUri)
-            } catch (e: SecurityException) {
-                // 🔴 Kalau Android sekat kebenaran akses fail lama, dia masuk sini (App TIDAK AKAN crash!)
-                // Sistem akan gantikan dengan gambar robot hijau standard sementara
-                imgFormProfile.setImageResource(R.drawable.ic_launcher_foreground)
-                imgProfileView.setImageResource(R.drawable.ic_launcher_foreground)
-                e.printStackTrace()
-            }
-        }
-
         // ================= AKSI BUTANG EDIT PROFILE =================
         btnEdit.setOnClickListener {
-            profileLayout.visibility = View.GONE
-            formLayout.visibility = View.VISIBLE
+            lifecycleScope.launch {
+                val profile = ProfileRepository.getProfile(requireContext().applicationContext) ?: return@launch
 
-            edtName.setText(sharedPref.getString("name", ""))
-            edtWeight.setText(sharedPref.getString("weight", ""))
-            edtHeight.setText(sharedPref.getString("height", ""))
-            edtAge.setText(sharedPref.getString("age", ""))
+                profileLayout.visibility = View.GONE
+                formLayout.visibility = View.VISIBLE
 
-            val savedGender = sharedPref.getString("gender", "")
+                edtName.setText(profile.name)
+                edtWeight.setText(profile.weight)
+                edtHeight.setText(profile.height)
+                edtAge.setText(profile.age)
 
-            if (savedGender == "Lelaki") {
-                radioMale.isChecked = true
-            } else {
-                radioFemale.isChecked = true
+                if (profile.gender == "Lelaki") {
+                    radioMale.isChecked = true
+                } else {
+                    radioFemale.isChecked = true
+                }
+
+                val position = activityLevels.indexOf(profile.activity)
+                spinnerActivity.setSelection(if (position >= 0) position else 0)
             }
-
-            val savedActivity = sharedPref.getString("activity", "Tidak Aktif")
-            val position = activityLevels.indexOf(savedActivity)
-            spinnerActivity.setSelection(position)
-        }
-        btnLoginAccount.setOnClickListener {
-
-            startActivity(
-                Intent(
-                    requireContext(),
-                    LoginActivity::class.java
-                )
-            )
         }
 
-
-
-        btnLogout.setOnClickListener {
-
-            loginPref.edit().clear().apply()
-
-            Toast.makeText(
-                requireContext(),
-                "Berjaya Log Out",
-                Toast.LENGTH_SHORT
-            ).show()
-
-            startActivity(
-                Intent(
-                    requireContext(),
-                    LoginActivity::class.java
-                )
-            )
-
-            requireActivity().finish()
+        // ================= AKSI BUTANG BACKUP & PULIH DATA =================
+        view.findViewById<Button>(R.id.btnBackup).setOnClickListener {
+            val stamp = java.text.SimpleDateFormat("yyyyMMdd_HHmm", java.util.Locale.getDefault())
+                .format(java.util.Date())
+            createBackupLauncher.launch("kalori_backup_$stamp.json")
         }
 
-        btnQuickLogin.setOnClickListener {
-
-            startActivity(
-                Intent(
-                    requireContext(),
-                    LoginActivity::class.java
-                )
-            )
+        view.findViewById<Button>(R.id.btnRestore).setOnClickListener {
+            openBackupLauncher.launch(arrayOf("application/json", "text/plain", "*/*"))
         }
 
         return view

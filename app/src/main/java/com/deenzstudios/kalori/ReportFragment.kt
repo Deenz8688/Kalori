@@ -1,22 +1,36 @@
 package com.deenzstudios.kalori
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.widget.AdapterView
+import com.deenzstudios.kalori.data.ProfileRepository
+import com.deenzstudios.kalori.data.WaterRepository
+import com.google.android.material.button.MaterialButtonToggleGroup
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class ReportFragment : Fragment() {
 
-    private lateinit var spinnerReportFilter: Spinner
+    private lateinit var txtReportTitle: TextView
+    private lateinit var btnGoToGraph: View
     private lateinit var recyclerReport: RecyclerView
+
+    private lateinit var groupReportType: MaterialButtonToggleGroup
+    private lateinit var spinnerReportFilter: Spinner
+
+    private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,120 +44,144 @@ class ReportFragment : Fragment() {
             false
         )
 
-        // ================= SPINNER =================
+        txtReportTitle = view.findViewById(R.id.txtReportTitle)
+        btnGoToGraph = view.findViewById(R.id.btnGoToGraph)
+
+        // ================= BUTANG TOGGLE (JENIS & TAPISAN) =================
+        groupReportType = view.findViewById(R.id.groupReportType)
+
+        // ================= SPINNER TAPISAN MASA =================
         spinnerReportFilter = view.findViewById(R.id.spinnerReportFilter)
-
-        val filterList = listOf(
-            "Hari Ini",
-            "Semalam",
-            "Minggu Lepas",
-            "Bulan Lepas"
-        )
-
-        val adapter = ArrayAdapter(
+        val filterList = listOf("Hari Ini", "Semalam", "Minggu Lepas", "Bulan Lepas")
+        spinnerReportFilter.adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_dropdown_item,
             filterList
         )
 
-        spinnerReportFilter.adapter = adapter
-
-        fun loadFilteredReports(filter: String) {
-            val allReports = ReportManager.getReports(requireContext())
-            val filteredList = mutableListOf<ReportData>()
-            val today = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
-            val calendar = java.util.Calendar.getInstance()
-
-            when (filter) {
-                "Hari Ini" -> {
-                    val todayDate = today.format(calendar.time)
-                    filteredList.addAll(allReports.filter { it.date == todayDate })
-                }
-                "Semalam" -> {
-                    calendar.add(java.util.Calendar.DAY_OF_MONTH, -1)
-                    val yesterday = today.format(calendar.time)
-                    filteredList.addAll(allReports.filter { it.date == yesterday })
-                }
-                "Minggu Lepas" -> {
-                    val currentMillis = calendar.timeInMillis
-                    calendar.add(java.util.Calendar.DAY_OF_MONTH, -7)
-                    val weekAgo = calendar.timeInMillis
-                    filteredList.addAll(allReports.filter {
-                        val reportDate = today.parse(it.date)
-                        reportDate != null && reportDate.time >= weekAgo && reportDate.time <= currentMillis
-                    })
-                }
-                "Bulan Lepas" -> {
-                    val currentMillis = calendar.timeInMillis
-                    calendar.add(java.util.Calendar.MONTH, -1)
-                    val monthAgo = calendar.timeInMillis
-                    filteredList.addAll(allReports.filter {
-                        val reportDate = today.parse(it.date)
-                        reportDate != null && reportDate.time >= monthAgo && reportDate.time <= currentMillis
-                    })
-                }
-            }
-
-            // ================= 🔥 LANGKAH SUSUN TARIKH BARU DI ATAS =================
-            // Kod ni akan bedah string tarikh, tukar jadi objek Date, dan susun terbalik (paling baru di atas)
-            filteredList.sortByDescending {
-                today.parse(it.date)
-            }
-            // =======================================================================
-
-            // Hantar list yang dah siap disusun rapi ke adapter
-            recyclerReport.adapter = ReportAdapter(filteredList)
-        }
-
-        spinnerReportFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                loadFilteredReports(filterList[position])
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-
         // ================= RECYCLER VIEW =================
         recyclerReport = view.findViewById(R.id.recyclerReport)
         recyclerReport.layoutManager = LinearLayoutManager(requireContext())
 
-        loadFilteredReports("Hari Ini")
+        spinnerReportFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, v: View?, position: Int, id: Long) {
+                loadData()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
 
-        // ================= 🔥 HUBUNGKAN BUTANG GRAF BARU =================
-        val btnGoToGraph = view.findViewById<View>(R.id.btnGoToGraph)
+        groupReportType.addOnButtonCheckedListener { _, _, isChecked ->
+            if (isChecked) loadData()
+        }
+
+        loadData()
+
+        // ================= 🔥 HUBUNGKAN BUTANG GRAF =================
         btnGoToGraph.setOnClickListener {
-            // Logik buka skrin GraphActivity
             val intent = Intent(requireContext(), GraphActivity::class.java)
             startActivity(intent)
         }
 
         return view
     }
+
+    // Tapis senarai tarikh ikut pilihan masa
+    private fun filterDates(filter: String, allDates: List<String>): List<String> {
+        val calendar = Calendar.getInstance()
+        val now = calendar.timeInMillis
+        return when (filter) {
+            "Hari Ini" -> {
+                val todayDate = dateFormat.format(calendar.time)
+                allDates.filter { it == todayDate }
+            }
+            "Semalam" -> {
+                calendar.add(Calendar.DAY_OF_MONTH, -1)
+                val yesterday = dateFormat.format(calendar.time)
+                allDates.filter { it == yesterday }
+            }
+            "Minggu Lepas" -> {
+                calendar.add(Calendar.DAY_OF_MONTH, -7)
+                val from = calendar.timeInMillis
+                allDates.filter {
+                    val d = dateFormat.parse(it)
+                    d != null && d.time >= from && d.time <= now
+                }
+            }
+            "Bulan Lepas" -> {
+                calendar.add(Calendar.MONTH, -1)
+                val from = calendar.timeInMillis
+                allDates.filter {
+                    val d = dateFormat.parse(it)
+                    d != null && d.time >= from && d.time <= now
+                }
+            }
+            else -> allDates
+        }
+    }
+
+    // Baca tapisan masa yang terpilih
+    private fun currentFilter(): String =
+        spinnerReportFilter.selectedItem?.toString() ?: "Hari Ini"
+
+    // Muat data ikut JENIS (Kalori/Air) + TAPISAN masa
+    private fun loadData() {
+        if (!isAdded) return
+        val type = if (groupReportType.checkedButtonId == R.id.buttonAir) "Air" else "Kalori"
+        val filter = currentFilter()
+
+        lifecycleScope.launch {
+            if (type == "Air") {
+                txtReportTitle.text = "Laporan Air"
+                btnGoToGraph.visibility = View.GONE
+
+                val allWater = WaterRepository.getAll(requireContext())
+                val map = allWater.associateBy { it.date }
+                val list = filterDates(filter, allWater.map { it.date })
+                    .sortedByDescending { dateFormat.parse(it) }
+                    .mapNotNull { map[it] }
+
+                val targetMl = ProfileRepository.getProfile(requireContext())?.waterTargetMl
+                    ?: WaterRepository.DEFAULT_TARGET_ML
+                recyclerReport.adapter = WaterReportAdapter(list, targetMl)
+            } else {
+                txtReportTitle.text = "Laporan Kalori"
+                btnGoToGraph.visibility = View.VISIBLE
+
+                val allReports = ReportManager.getReports(requireContext())
+                val map = allReports.associateBy { it.date }
+                val list = filterDates(filter, allReports.map { it.date })
+                    .sortedByDescending { dateFormat.parse(it) }
+                    .mapNotNull { map[it] }
+
+                recyclerReport.adapter = ReportAdapter(list)
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
 
-        val context = requireContext()
-        // Pastikan nama ID spinnerReportFilter ini sebiji ikut XML fragment_report awak
-        val viewFilter = view?.findViewById<Spinner>(R.id.spinnerReportFilter)
+        if (!::recyclerReport.isInitialized) return
 
-        if (viewFilter != null) {
-            // ⭐ 1. KEMASKINI DATABASE DULU SEBELUM REFRESH SKRIN DISPLAY
-            val todayDateStr = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()).format(java.util.Calendar.getInstance().time)
+        lifecycleScope.launch {
+            val context = requireContext()
+
+            // ⭐ 1. KEMASKINI DATA LAPORAN KALORI HARI INI SEBELUM REFRESH SKRIN
+            val todayDateStr = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                .format(Calendar.getInstance().time)
             val allReports = ReportManager.getReports(context)
 
-            // Cari rekod hari ini dlm fail data laporan
             val todayReport = allReports.find { it.date == todayDateStr }
 
             if (todayReport != null) {
-                // Sedut berat terkini yang baru diubah dlm profile tadi
-                val profilePref = context.getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
-                val freshWeight = profilePref.getString("weight", "0") + " kg"
-                val freshBmr = profilePref.getString("bmr", "0 kcal") ?: "0 kcal"
-                val freshTdee = profilePref.getString("tdee", "0 kcal") ?: "0 kcal"
+                val profile = ProfileRepository.getProfile(context)
+                val freshWeight = (profile?.weight?.ifEmpty { "0" } ?: "0") + " kg"
+                val freshBmr = profile?.bmr?.ifEmpty { "0 kcal" } ?: "0 kcal"
+                val freshTdee = profile?.tdee?.ifEmpty { "0 kcal" } ?: "0 kcal"
 
-                // Cipta data laporan segar untuk hari ini dengan kandungan kalori makanan asal yang sedia ada
                 val updatedReport = ReportData(
                     todayReport.date,
-                    freshWeight, // 🔥 Tindih berat lama dengan berat profil baru!
+                    freshWeight,
                     todayReport.breakfast,
                     todayReport.lunch,
                     todayReport.dinner,
@@ -152,17 +190,11 @@ class ReportFragment : Fragment() {
                     freshTdee
                 )
 
-                // Paksa ReportManager tulis data segar ni masuk ke fail memori phone secara kekal
                 ReportManager.saveReport(context, updatedReport)
             }
 
-            // ⭐ 2. SIMULASI SENTUHAN SPINNER UNTUK REFRESH PAPARAN KAD DI SKRIN UI
-            val currentFilter = viewFilter.selectedItem.toString()
-            viewFilter.postDelayed({
-                val position = (viewFilter.adapter as? ArrayAdapter<String>)?.getPosition(currentFilter) ?: 0
-                viewFilter.onItemSelectedListener?.onItemSelected(viewFilter, viewFilter.selectedView, position, position.toLong())
-            }, 200)
+            // ⭐ 2. REFRESH PAPARAN KAD
+            loadData()
         }
     }
-    
 }

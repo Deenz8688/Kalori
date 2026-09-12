@@ -15,6 +15,8 @@ import android.widget.Spinner
 import android.widget.ArrayAdapter
 import android.view.View
 import android.widget.AdapterView
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class GraphActivity : AppCompatActivity() {
 
@@ -33,8 +35,7 @@ class GraphActivity : AppCompatActivity() {
         spinnerGraphFilter.adapter = filterAdapter
 
         // ================= 🔥 2. FUNGSI DINAMIK UNTUK TAPIS & LUKIS =================
-        fun loadGraphByFilter(filter: String) {
-            val allReports = ReportManager.getReports(this)
+        fun renderGraph(filter: String, allReports: List<ReportData>) {
             val filteredList = mutableListOf<ReportData>()
 
             val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -175,6 +176,13 @@ class GraphActivity : AppCompatActivity() {
                 lineChart.setNoDataText("Tiada data rekod berat badan untuk dilukis.")
             }
             lineChart.invalidate()
+        }
+
+        fun loadGraphByFilter(filter: String) {
+            lifecycleScope.launch {
+                val allReports = ReportManager.getReports(this@GraphActivity)
+                renderGraph(filter, allReports)
+            }
         }
 
         // ================= 🔥 4. AKSI APABILA DROPDOWN DIPILIH =================

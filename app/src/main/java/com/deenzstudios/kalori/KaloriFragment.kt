@@ -17,8 +17,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.content.Intent
 import android.provider.MediaStore
-import java.net.URL
-import java.net.URLEncoder // 🔥 Ditambah untuk fungsi bungkusan URL Encode
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -26,6 +24,10 @@ import android.os.StrictMode
 import android.widget.LinearLayout
 import android.widget.Button
 import androidx.lifecycle.lifecycleScope
+import com.deenzstudios.kalori.data.FoodRepository
+import com.deenzstudios.kalori.data.MealRecordEntity
+import com.deenzstudios.kalori.data.MealRepository
+import com.deenzstudios.kalori.data.ProfileRepository
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
@@ -149,34 +151,14 @@ class KaloriFragment : Fragment() {
         val txtTotalCalories = view.findViewById<TextView>(R.id.txtTotalCalories)
         val txtBalance = view.findViewById<TextView>(R.id.txtBalance)
 
-        // ================= VIEW PROFILE PREFERENCES =================
-        val profilePref = requireContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
-        val currentTdee = profilePref.getString("tdee", "0 kcal") ?: "0 kcal"
-        val currentBmr = profilePref.getString("bmr", "0 kcal") ?: "0 kcal"
+        // ================= PROFIL (ROOM) =================
+        // Pref lama kekal sebagai sumber migrasi sekali sahaja
+        val legacyPref = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
 
-        // ================= JALANKAN SEKATAN WAJIB PROFIL =================
-        if (currentTdee == "0 kcal" || currentBmr == "0 kcal" || currentTdee.isEmpty()) {
-            layoutWarningProfile.visibility = View.VISIBLE
-            layoutUtamaKalori.visibility = View.GONE
-
-            //btnGoToProfile.setOnClickListener {
-                //val bottomNav = requireActivity().findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavigationView)
-                //bottomNav.selectedItemId = R.id.nav_Me
-            //}
-        } else {
-            layoutWarningProfile.visibility = View.GONE
-            layoutUtamaKalori.visibility = View.VISIBLE
-        }
-
-        // ================= SHARED PREF (LANGKAH 2) =================
-        val sharedPref = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
-        val savedTdee = sharedPref.getString("tdee", "0 kcal") ?: "0 kcal"
-        val savedBmr = sharedPref.getString("bmr", "0 kcal") ?: "0 kcal"
-
-        // Set nilai teks tdee dngan bmr ke ringkasan bawah dashboard
-        txtTdee.text = savedTdee
-        txtBmr.text = savedBmr
+        // Nilai profil dimuat dari Room secara async (diisi dlm coroutine di bawah)
+        var savedTdee = "0 kcal"
+        var savedBmr = "0 kcal"
+        var savedWeight = "0"
 
         // ================= FOOD LIST =================
         val foodList = mutableListOf<Food>()
@@ -191,151 +173,120 @@ class KaloriFragment : Fragment() {
         var lunchTotal = 0.0
         var dinnerTotal = 0.0
 
-        // ================= LOAD DATA LOCAL (LANGKAH 3) =================
+        // ================= LOAD DATA DARI ROOM (SQLITE) =================
+        val appContext = requireContext().applicationContext
+
         fun loadDataByDate(selectedDate: String) {
             txtSummaryDate.text = selectedDate
 
-            // 1. Tarik data teks menu makanan yang pernah disave dlm tarikh ni
-            val breakfastText = sharedPref.getString("${selectedDate}_breakfast_text", "")
-            val lunchText = sharedPref.getString("${selectedDate}_lunch_text", "")
-            val dinnerText = sharedPref.getString("${selectedDate}_dinner_text", "")
+            lifecycleScope.launch {
+                // Pindahkan rekod lama SharedPreferences -> Room (sekali sahaja)
+                MealRepository.migrateFromPrefs(appContext, legacyPref)
 
-            // 2. Tarik total kalori lama dlm tarikh ni
-            // 🔄 GANTI BAHAGIAN INI SAHAJA BIAR REKOD LUNCH KEMAS BALIK:
-            breakfastTotal = sharedPref.getFloat("${selectedDate}_breakfast_total", 0f).toDouble()
-            lunchTotal = sharedPref.getFloat("${selectedDate}_lunch_total", 0f).toDouble() // ✅ Dah bersih!
-            dinnerTotal = sharedPref.getFloat("${selectedDate}_dinner_total", 0f).toDouble()
+                val records = MealRepository.getByDate(appContext, selectedDate)
 
-            // 3. MASUKKAN DATA KE KAD SARAPAN
-            if (!breakfastText.isNullOrEmpty()) {
-                txtCardSarapanMenu.text = breakfastText
-                txtCardSarapanCalori.text = "%.0f kcal".format(breakfastTotal)
-                txtCardSarapanCalori.setTextColor(Color.parseColor("#4CAF50"))
-            } else {
-                txtCardSarapanMenu.text = "Belum ada hidangan ditambah."
-                txtCardSarapanCalori.text = "0 kcal"
-                txtCardSarapanCalori.setTextColor(Color.parseColor("#757575"))
+                val breakfastRecords = records.filter { it.mealType == MealRepository.SARAPAN }
+                val lunchRecords = records.filter { it.mealType == MealRepository.TENGAH_HARI }
+                val dinnerRecords = records.filter { it.mealType == MealRepository.MAKAN_MALAM }
+
+                val breakfastText = breakfastRecords.joinToString("\n") { it.foodName }
+                val lunchText = lunchRecords.joinToString("\n") { it.foodName }
+                val dinnerText = dinnerRecords.joinToString("\n") { it.foodName }
+
+                breakfastTotal = breakfastRecords.sumOf { it.calories }
+                lunchTotal = lunchRecords.sumOf { it.calories }
+                dinnerTotal = dinnerRecords.sumOf { it.calories }
+
+                // 3. MASUKKAN DATA KE KAD SARAPAN
+                if (breakfastText.isNotEmpty()) {
+                    txtCardSarapanMenu.text = breakfastText
+                    txtCardSarapanCalori.text = "%.0f kcal".format(breakfastTotal)
+                    txtCardSarapanCalori.setTextColor(Color.parseColor("#4CAF50"))
+                } else {
+                    txtCardSarapanMenu.text = "Belum ada hidangan ditambah."
+                    txtCardSarapanCalori.text = "0 kcal"
+                    txtCardSarapanCalori.setTextColor(Color.parseColor("#757575"))
+                }
+
+                // 4. MASUKKAN DATA KE KAD TENGAH HARI
+                if (lunchText.isNotEmpty()) {
+                    txtCardTengahHariMenu.text = lunchText
+                    txtCardTengahHariCalori.text = "%.0f kcal".format(lunchTotal)
+                    txtCardTengahHariCalori.setTextColor(Color.parseColor("#4CAF50"))
+                } else {
+                    txtCardTengahHariMenu.text = "Belum ada hidangan ditambah."
+                    txtCardTengahHariCalori.text = "0 kcal"
+                    txtCardTengahHariCalori.setTextColor(Color.parseColor("#757575"))
+                }
+
+                // 5. MASUKKAN DATA KE KAD MAKAN MALAM
+                if (dinnerText.isNotEmpty()) {
+                    txtCardMalamMenu.text = dinnerText
+                    txtCardMalamCalori.text = "%.0f kcal".format(dinnerTotal)
+                    txtCardMalamCalori.setTextColor(Color.parseColor("#4CAF50"))
+                } else {
+                    txtCardMalamMenu.text = "Belum ada hidangan ditambah."
+                    txtCardMalamCalori.text = "0 kcal"
+                    txtCardMalamCalori.setTextColor(Color.parseColor("#757575"))
+                }
+
+                // 6. Kemas kini Ringkasan Harian Kecil dlm Dashboard bawah
+                val totalCalories = breakfastTotal + lunchTotal + dinnerTotal
+                val tdeeValue = savedTdee.replace("kcal", "").trim().toDoubleOrNull() ?: 0.0
+                val balance = tdeeValue - totalCalories
+
+                txtTotalCalories.text = "%.0f kcal".format(totalCalories)
+                txtBalance.text = "%.0f kcal".format(balance)
             }
-
-            // 4. MASUKKAN DATA KE KAD TENGAH HARI
-            if (!lunchText.isNullOrEmpty()) {
-                txtCardTengahHariMenu.text = lunchText
-                txtCardTengahHariCalori.text = "%.0f kcal".format(lunchTotal)
-                txtCardTengahHariCalori.setTextColor(Color.parseColor("#4CAF50"))
-            } else {
-                txtCardTengahHariMenu.text = "Belum ada hidangan ditambah."
-                txtCardTengahHariCalori.text = "0 kcal"
-                txtCardTengahHariCalori.setTextColor(Color.parseColor("#757575"))
-            }
-
-            // 5. MASUKKAN DATA KE KAD MAKAN MALAM
-            if (!dinnerText.isNullOrEmpty()) {
-                txtCardMalamMenu.text = dinnerText
-                txtCardMalamCalori.text = "%.0f kcal".format(dinnerTotal)
-                txtCardMalamCalori.setTextColor(Color.parseColor("#4CAF50"))
-            } else {
-                txtCardMalamMenu.text = "Belum ada hidangan ditambah."
-                txtCardMalamCalori.text = "0 kcal"
-                txtCardMalamCalori.setTextColor(Color.parseColor("#757575"))
-            }
-
-            // 6. Kemas kini Ringkasan Harian Kecil dlm Dashboard bawah
-            val totalCalories = sharedPref.getFloat("${selectedDate}_totalCalories", 0f)
-            val balance = sharedPref.getFloat("${selectedDate}_balance", 0f)
-
-            txtTotalCalories.text = "%.0f kcal".format(totalCalories)
-            txtBalance.text = "%.0f kcal".format(balance)
         }
 
-        // ================= LOGIK TAMBAHAN: SIMPAN MAKANAN DARI AI =================
+        // ================= SEGERAK LAPORAN HARIAN KE ROOM =================
+        // Kira semula total hidangan sesuatu tarikh & simpan sebagai laporan harian.
+        // Wajib dipanggil selepas setiap perubahan hidangan supaya menu Laporan terisi.
+        suspend fun syncReportNow(date: String) {
+            val breakfast = MealRepository.totalFor(appContext, date, MealRepository.SARAPAN)
+            val lunch = MealRepository.totalFor(appContext, date, MealRepository.TENGAH_HARI)
+            val dinner = MealRepository.totalFor(appContext, date, MealRepository.MAKAN_MALAM)
+            val grandTotal = breakfast + lunch + dinner
+
+            val todayDateStr = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Calendar.getInstance().time)
+            val existing = ReportManager.getReports(requireContext()).find { it.date == date }
+            // Berat profil semasa utk hari ini; kekalkan berat lama utk tarikh lepas
+            val weight = if (date == todayDateStr) "$savedWeight kg" else existing?.weight ?: "$savedWeight kg"
+
+            ReportManager.saveReport(
+                requireContext(),
+                ReportData(
+                    date, weight,
+                    "%.0f kcal".format(breakfast),
+                    "%.0f kcal".format(lunch),
+                    "%.0f kcal".format(dinner),
+                    "%.0f kcal".format(grandTotal),
+                    savedBmr, savedTdee
+                )
+            )
+        }
+
+        fun syncReportForDate(date: String) {
+            lifecycleScope.launch { syncReportNow(date) }
+        }
+
+        // ================= LOGIK TAMBAHAN: SIMPAN MAKANAN DARI AI (ROOM) =================
         onAiFoodResult = { food ->
             val selectedDate = edtDate.text.toString()
-            val mealType = currentMealTypeForCamera
-
-            val key = when (mealType) {
-                "Sarapan", "🍳 Sarapan" -> "breakfast"
-                "Tengah Hari", "🍛 Tengah Hari" -> "lunch"
-                else -> "dinner"
-            }
+            val mealKey = MealRepository.normalizeMealType(currentMealTypeForCamera)
 
             // 🔥 POTONG INFO MAKRO: Ambil berat saja supaya list tak "panjang2"
             val beratSaja = food.serving.split("|")[0].trim()
-            
-            // 🚀 BERSIHKAN NAMA: Buang tanda ' (apostrophe) supaya tak pecahkan SQL MySQL Din
             val cleanName = food.name.replace("'", "")
             val itemText = "• $cleanName ($beratSaja) = %.0f kcal".format(food.calories)
-            
-            val oldText = sharedPref.getString("${selectedDate}_${key}_text", "") ?: ""
-            val combinedText = if (oldText.isNotEmpty()) oldText + "\n" + itemText else itemText
 
-            val oldTotal = when (mealType) {
-                "Sarapan", "🍳 Sarapan" -> breakfastTotal
-                "Tengah Hari", "🍛 Tengah Hari" -> lunchTotal
-                else -> dinnerTotal
+            lifecycleScope.launch {
+                MealRepository.add(appContext, selectedDate, mealKey, itemText, food.calories)
+                syncReportNow(selectedDate)
+                loadDataByDate(selectedDate)
+                Toast.makeText(requireContext(), "Berjaya ditambah!", Toast.LENGTH_SHORT).show()
             }
-            val newTotal = oldTotal + food.calories
-
-            when (mealType) {
-                "Sarapan", "🍳 Sarapan" -> {
-                    breakfastTotal = newTotal
-                    editor.putString("${selectedDate}_breakfast_text", combinedText)
-                    editor.putFloat("${selectedDate}_breakfast_total", newTotal.toFloat())
-                }
-                "Tengah Hari", "🍛 Tengah Hari" -> {
-                    lunchTotal = newTotal
-                    editor.putString("${selectedDate}_lunch_text", combinedText)
-                    editor.putFloat("${selectedDate}_lunch_total", newTotal.toFloat())
-                }
-                "Makan Malam", "🌙 Makan Malam" -> {
-                    dinnerTotal = newTotal
-                    editor.putString("${selectedDate}_dinner_text", combinedText)
-                    editor.putFloat("${selectedDate}_dinner_total", newTotal.toFloat())
-                }
-            }
-
-            val grandTotal = breakfastTotal + lunchTotal + dinnerTotal
-            val tdeeValue = savedTdee.replace("kcal", "").trim().toDoubleOrNull() ?: 0.0
-            val balance = tdeeValue - grandTotal
-
-            editor.putFloat("${selectedDate}_totalCalories", grandTotal.toFloat())
-            editor.putFloat("${selectedDate}_balance", balance.toFloat())
-            editor.putString("${selectedDate}_tdee", savedTdee)
-            editor.putString("${selectedDate}_bmr", savedBmr)
-            editor.apply()
-
-            // Hantar ke MySQL
-            lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-                try {
-                    val loginPref2 = requireActivity().getSharedPreferences("LoginSession", Context.MODE_PRIVATE)
-                    val userId2 = loginPref2.getString("userId", "") ?: ""
-                    val mealName = if(mealType.contains("Sarapan")) "Sarapan" else if(mealType.contains("Tengah")) "Tengah Hari" else "Makan Malam"
-                    val dateParts = selectedDate.split("/")
-                    val mysqlDate = "${dateParts[2]}-${dateParts[1]}-${dateParts[0]}"
-                    val currentWeight = sharedPref.getString("weight", "0") + " kg"
-
-                    // Gunakan itemText (format asal Din) supaya konsisten dalam database
-                    val postData = "user_id=$userId2" +
-                            "&meal_type=${URLEncoder.encode(mealName, "UTF-8")}" +
-                            "&food_name=${URLEncoder.encode(itemText, "UTF-8")}" +
-                            "&calories=${food.calories.toInt()}" +
-                            "&food_date=$mysqlDate" +
-                            "&weight=${URLEncoder.encode(currentWeight, "UTF-8")}" +
-                            "&bmr=${URLEncoder.encode(savedBmr, "UTF-8")}" +
-                            "&tdee=${URLEncoder.encode(savedTdee, "UTF-8")}"
-
-                    val conn = URL("https://specmb.org/kalori_api/save_food.php").openConnection()
-                    conn.doOutput = true
-                    conn.getOutputStream().write(postData.toByteArray())
-                    
-                    // Baca sampai habis supaya server sempat simpan (Ikut cara manual Din)
-                    val response = conn.getInputStream().bufferedReader().readText()
-                    android.util.Log.d("AI_SAVE", "Respon: $response")
-
-                } catch (e: Exception) { e.printStackTrace() }
-            }
-
-            loadDataByDate(selectedDate)
-            Toast.makeText(requireContext(), "Berjaya ditambah!", Toast.LENGTH_SHORT).show()
         }
 
         // ================= HUBUNGKAN BUTANG KAMERA DASHBOARD =================
@@ -352,8 +303,34 @@ class KaloriFragment : Fragment() {
             bukaKamera()
         }
 
-        // Jalankan load data permulaan untuk tarikh hari ini
-        loadDataByDate(edtDate.text.toString())
+        // ================= MUAT PROFIL DARI ROOM =================
+        lifecycleScope.launch {
+            ProfileRepository.migrateFromPrefs(appContext, legacyPref)
+            val profile = ProfileRepository.getProfile(appContext)
+
+            savedTdee = profile?.tdee?.ifEmpty { "0 kcal" } ?: "0 kcal"
+            savedBmr = profile?.bmr?.ifEmpty { "0 kcal" } ?: "0 kcal"
+            savedWeight = profile?.weight?.ifEmpty { "0" } ?: "0"
+
+            // ================= SEKATAN WAJIB PROFIL =================
+            if (savedTdee == "0 kcal" || savedBmr == "0 kcal" || savedTdee.isEmpty()) {
+                layoutWarningProfile.visibility = View.VISIBLE
+                layoutUtamaKalori.visibility = View.GONE
+            } else {
+                layoutWarningProfile.visibility = View.GONE
+                layoutUtamaKalori.visibility = View.VISIBLE
+            }
+
+            // Set nilai teks tdee dngan bmr ke ringkasan bawah dashboard
+            txtTdee.text = savedTdee
+            txtBmr.text = savedBmr
+
+            // Jalankan load data permulaan untuk tarikh hari ini (selepas profil siap)
+            loadDataByDate(edtDate.text.toString())
+
+            // Pulihkan laporan bagi semua tarikh yg ada rekod hidangan (cth. data dari Fasa 3)
+            MealRepository.getAllDates(appContext).forEach { syncReportNow(it) }
+        }
 
         // ================= DATE PICKER (LANGKAH 4) =================
         edtDate.setOnClickListener {
@@ -369,153 +346,6 @@ class KaloriFragment : Fragment() {
                 calendar.get(Calendar.DAY_OF_MONTH)
             ).show()
         }
-        // ================= CLOUD RESTORE DATABASE (MENGALIRKAN REKOD DARI MYSQL) =================
-        fun loadCloudFoods(userId: String) {
-            try {
-                val url = URL("https://specmb.org/kalori_api/get_all_foods.php?user_id=$userId")
-                val response = url.readText()
-                val jsonArray = org.json.JSONArray(response)
-
-                // Bersihkan data lama dlm SharedPreferences telefon dlu sebelum ganti dngan data cloud
-                val allKeys = sharedPref.all.keys
-                for (key in allKeys) {
-                    if (key.contains("_breakfast") || key.contains("_lunch") || key.contains("_dinner") || key.contains("_totalCalories") || key.contains("_balance")) {
-                        editor.remove(key)
-                    }
-                }
-                editor.apply()
-
-                val uniqueDates = mutableSetOf<String>()
-
-                // 🚀 FASA 1: Longgokkan semua baris data makanan dari MySQL ke SharedPreferences telefon dlu
-                for (i in 0 until jsonArray.length()) {
-                    val obj = jsonArray.getJSONObject(i)
-                    val mealType = obj.getString("meal_type").trim()
-                    val foodName = obj.getString("food_name")
-                    val calories = obj.getString("calories").toFloat()
-                    val rawDate = obj.getString("food_date")
-                    val parts = rawDate.split("-")
-                    val foodDate = "${parts[2]}/${parts[1]}/${parts[0]}"
-
-                    uniqueDates.add(foodDate)
-
-                    val formattedFoodName = foodName.split(",").joinToString("\n") { "• ${it.trim()}" }
-
-                    val currentSavedBreakfastTotal = sharedPref.getFloat("${foodDate}_breakfast_total", 0f).toDouble()
-                    val currentSavedLunchTotal = sharedPref.getFloat("${foodDate}_lunch_total", 0f).toDouble()
-                    val currentSavedDinnerTotal = sharedPref.getFloat("${foodDate}_dinner_total", 0f).toDouble()
-
-                    when (mealType) {
-                        "Sarapan", "🍳 Sarapan" -> {
-                            val newTotal = currentSavedBreakfastTotal + calories
-                            val oldBreakfast = sharedPref.getString("${foodDate}_breakfast_text", "") ?: ""
-                            val newBreakfast = if (oldBreakfast.isEmpty()) formattedFoodName else oldBreakfast + "\n" + formattedFoodName
-                            editor.putString("${foodDate}_breakfast_text", newBreakfast)
-                            editor.putFloat("${foodDate}_breakfast_total", newTotal.toFloat())
-                        }
-                        "Tengah Hari", "🍛 Tengah Hari" -> {
-                            val newTotal = currentSavedLunchTotal + calories
-                            val oldLunch = sharedPref.getString("${foodDate}_lunch_text", "") ?: ""
-                            val newLunch = if (oldLunch.isEmpty()) formattedFoodName else oldLunch + "\n" + formattedFoodName
-                            editor.putString("${foodDate}_lunch_text", newLunch)
-                            editor.putFloat("${foodDate}_lunch_total", newTotal.toFloat())
-                        }
-                        "Makan Malam", "🌙 Makan Malam" -> {
-                            val newTotal = currentSavedDinnerTotal + calories
-                            val oldDinner = sharedPref.getString("${foodDate}_dinner_text", "") ?: ""
-                            val newDinner = if (oldDinner.isEmpty()) formattedFoodName else oldDinner + "\n" + formattedFoodName
-                            editor.putString("${foodDate}_dinner_text", newDinner)
-                            editor.putFloat("${foodDate}_dinner_total", newTotal.toFloat())
-                        }
-                    }
-                }
-                editor.apply()
-
-                // 🚀 FASA 2: Kirakan Grand Total & Kunci sejarah profil dlm ReportManager bagi setiap tarikh unik
-                for (foodDate in uniqueDates) {
-                    var cloudWeight = "0 kg"
-                    var cloudBmr = "0 kcal"
-                    var cloudTdee = "0 kcal"
-
-                    for (k in 0 until jsonArray.length()) {
-                        val obj = jsonArray.getJSONObject(k)
-                        val rawDate = obj.getString("food_date")
-                        val parts = rawDate.split("-")
-                        val dateToCheck = "${parts[2]}/${parts[1]}/${parts[0]}"
-
-                        if (dateToCheck == foodDate) {
-                            cloudWeight = obj.optString("weight", "0 kg")
-                            cloudBmr = obj.optString("bmr", "0 kcal")
-                            cloudTdee = obj.optString("tdee", "0 kcal")
-                            break
-                        }
-                    }
-
-                    val finalBreakfast = sharedPref.getFloat("${foodDate}_breakfast_total", 0f).toDouble()
-                    val finalLunch = sharedPref.getFloat("${foodDate}_lunch_total", 0f).toDouble()
-                    val finalDinner = sharedPref.getFloat("${foodDate}_dinner_total", 0f).toDouble()
-
-                    val grandTotal = finalBreakfast + finalLunch + finalDinner
-                    val tdeeValue = cloudTdee.replace("kcal", "").trim().toDoubleOrNull() ?: 0.0
-                    val balance = tdeeValue - grandTotal
-
-                    editor.putFloat("${foodDate}_totalCalories", grandTotal.toFloat())
-                    editor.putFloat("${foodDate}_balance", balance.toFloat())
-
-                    val verifiedWeight = if (!cloudWeight.contains("kg") && cloudWeight != "NULL" && cloudWeight.isNotEmpty()) {
-                        "$cloudWeight kg"
-                    } else if (cloudWeight == "NULL" || cloudWeight.isEmpty()) {
-                        "0 kg"
-                    } else {
-                        cloudWeight
-                    }
-
-                    val reportData = ReportData(
-                        foodDate,
-                        verifiedWeight,
-                        "%.0f kcal".format(finalBreakfast),
-                        "%.0f kcal".format(finalLunch),
-                        "%.0f kcal".format(finalDinner),
-                        "%.0f kcal".format(grandTotal),
-                        cloudBmr,
-                        cloudTdee
-                    )
-                    ReportManager.saveReport(requireContext(), reportData)
-                }
-                editor.apply()
-
-                // Segarkan data dashboard mengikut tarikh kotak teks semasa dlm phone
-                loadDataByDate(edtDate.text.toString())
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-
-        // ================= HUBUNGKAN BUTANG KAMERA DASHBOARD =================
-        view.findViewById<ImageView>(R.id.btnCameraSarapan).setOnClickListener {
-            currentMealTypeForCamera = "🍳 Sarapan"
-            bukaKamera()
-        }
-        view.findViewById<ImageView>(R.id.btnCameraTengahHari).setOnClickListener {
-            currentMealTypeForCamera = "🍛 Tengah Hari"
-            bukaKamera()
-        }
-        view.findViewById<ImageView>(R.id.btnCameraMalam).setOnClickListener {
-            currentMealTypeForCamera = "🌙 Makan Malam"
-            bukaKamera()
-        }
-
-        // Jalankan load data permulaan untuk tarikh hari ini
-        loadDataByDate(edtDate.text.toString())
-
-        // 🚀 PANGGIL KOD DATABASE BILA USER LOG MASUK
-        val loginPref = requireActivity().getSharedPreferences("LoginSession", Context.MODE_PRIVATE)
-        val userId = loginPref.getString("userId", "") ?: ""
-        if (userId.isNotEmpty()) {
-            loadCloudFoods(userId)
-        }
-
         // ================= POPUP DIALOG CONTROL (LANGKAH 5 - BAHAGIAN A) =================
         fun showTambahMakananPopup(mealType: String) {
             // 1. Cipta AlertDialog dan letakkan layout popup_tambah_makanan ke dalamnya
@@ -553,7 +383,7 @@ class KaloriFragment : Fragment() {
             // Set threshold untuk auto-complete cari makanan dlm popup
             edtBreakfastFood.threshold = 1
 
-            // 4. LOGIK CARIAN AUTOMATIK DARI DATABASE MYSQL (API SEARCH)
+            // 4. LOGIK CARIAN AUTOMATIK DARI ROOM (SQLITE) — OFFLINE
             edtBreakfastFood.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
@@ -565,47 +395,36 @@ class KaloriFragment : Fragment() {
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val searchText = s.toString().trim()
-                    if (searchText.length >= 1) {
-                        try {
-                            val url = URL(
-                                "https://specmb.org/kalori_api/search_food.php?q=${
-                                    URLEncoder.encode(
-                                        searchText,
-                                        "UTF-8"
-                                    )
-                                }"
+                    if (searchText.isEmpty()) return
+                    val ctx = context?.applicationContext ?: return
+                    lifecycleScope.launch {
+                        val hasil = FoodRepository.search(ctx, searchText)
+                        // Abaikan hasil jika teks carian telah berubah
+                        if (edtBreakfastFood.text.toString().trim() != searchText) return@launch
+
+                        foodList.clear()
+                        val foodNames = mutableListOf<String>()
+                        hasil.forEach { entiti ->
+                            val food = Food(
+                                entiti.name,
+                                entiti.serving,
+                                entiti.gram,
+                                entiti.calories,
+                                entiti.unit
                             )
-                            val response = url.readText()
-                            val jsonArray = org.json.JSONArray(response)
-
-                            foodList.clear()
-                            val foodNames = mutableListOf<String>()
-
-                            for (i in 0 until jsonArray.length()) {
-                                val obj = jsonArray.getJSONObject(i)
-                                val food = Food(
-                                    obj.getString("Makanan"),
-                                    obj.getString("Hidangan"),
-                                    obj.getDouble("Berat"),
-                                    obj.getDouble("Kalori"),
-                                    obj.getString("Unit")
-                                )
-                                foodList.add(food)
-                                foodNames.add(food.name)
-                            }
-
-                            val adapter = ArrayAdapter(
-                                requireContext(),
-                                android.R.layout.simple_dropdown_item_1line,
-                                foodNames
-                            )
-                            edtBreakfastFood.setAdapter(adapter)
-                            adapter.notifyDataSetChanged()
-                            edtBreakfastFood.showDropDown()
-
-                        } catch (e: Exception) {
-                            e.printStackTrace()
+                            foodList.add(food)
+                            foodNames.add(food.name)
                         }
+
+                        if (!isAdded) return@launch
+                        val adapter = ArrayAdapter(
+                            requireContext(),
+                            android.R.layout.simple_dropdown_item_1line,
+                            foodNames
+                        )
+                        edtBreakfastFood.setAdapter(adapter)
+                        adapter.notifyDataSetChanged()
+                        edtBreakfastFood.showDropDown()
                     }
                 }
 
@@ -824,189 +643,49 @@ class KaloriFragment : Fragment() {
             // ================= LOGIK BUTANG PADAM / KOSONGKAN HIDANGAN FASA INI =================
             btnDeleteMeal.setOnClickListener {
                 val selectedDate = edtDate.text.toString()
+                val mealKey = MealRepository.normalizeMealType(mealType)
 
-                // 1. Bersihkan pembolehubah kaunter & SharedPreferences tempatan mengikut jenis fasa
-                when (mealType) {
-                    "Sarapan", "🍳 Sarapan" -> {
-                        breakfastTotal = 0.0
-                        editor.remove("${selectedDate}_breakfast_text")
-                        editor.remove("${selectedDate}_breakfast_total")
-                    }
-                    "Tengah Hari", "🍛 Tengah Hari" -> {
-                        lunchTotal = 0.0
-                        editor.remove("${selectedDate}_lunch_text")
-                        editor.remove("${selectedDate}_lunch_total")
-                    }
-                    "Makan Malam", "🌙 Makan Malam" -> {
-                        dinnerTotal = 0.0
-                        editor.remove("${selectedDate}_dinner_text")
-                        editor.remove("${selectedDate}_dinner_total")
-                    }
+                lifecycleScope.launch {
+                    // 1. Padam semua rekod fasa ini dari Room
+                    MealRepository.deleteMeal(appContext, selectedDate, mealKey)
+
+                    // 2. Kira semula & kemas kini laporan harian
+                    syncReportNow(selectedDate)
+
+                    // 3. Segarkan dashboard utama dngan tutup dialog
+                    loadDataByDate(selectedDate)
+                    alertDialog.dismiss()
+                    Toast.makeText(requireContext(), "$mealType berjaya dikosongkan!", Toast.LENGTH_SHORT).show()
                 }
-
-                // 2. Kira semula baki grand total harian
-                val grandTotal = breakfastTotal + lunchTotal + dinnerTotal
-                val tdeeValue = savedTdee.replace("kcal", "").trim().toDoubleOrNull() ?: 0.0
-                val balance = tdeeValue - grandTotal
-
-                editor.putFloat("${selectedDate}_totalCalories", grandTotal.roundToInt().toFloat())
-                editor.putFloat("${selectedDate}_balance", balance.toFloat())
-                editor.apply()
-
-                // 3. Hantar arahan padam terus ke server MySQL cloud api awak
-                try {
-                    val mealWithoutEmoji = when (mealType) {
-                        "Sarapan", "🍳 Sarapan" -> "Sarapan"
-                        "Tengah Hari", "🍛 Tengah Hari" -> "Tengah Hari"
-                        else -> "Makan Malam"
-                    }
-                    val dateParts = selectedDate.split("/")
-                    val mysqlDate = "${dateParts[2]}-${dateParts[1]}-${dateParts[0]}"
-                    val url = URL("https://specmb.org/kalori_api/delete_food.php")
-                    val connection = url.openConnection()
-                    connection.doOutput = true
-
-                    val loginPref2 = requireActivity().getSharedPreferences("LoginSession", Context.MODE_PRIVATE)
-                    val userId2 = loginPref2.getString("userId", "") ?: ""
-                    val postData = "user_id=$userId2&meal_type=$mealWithoutEmoji&food_date=$mysqlDate"
-
-                    connection.getOutputStream().write(postData.toByteArray())
-                    val response = connection.getInputStream().bufferedReader().readText()
-                    android.util.Log.d("DELETE_FOOD", "Respon Padam MySQL: $response")
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-                // 4. Kunci data dlm ReportManager sejarah kelmarin
-                val todayDateStr2 = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()).format(java.util.Calendar.getInstance().time)
-                val existingReports2 = ReportManager.getReports(requireContext())
-                val oldReportForThisDate2 = existingReports2.find { it.date == selectedDate }
-
-                val currentWeight = if (selectedDate == todayDateStr2) {
-                    val profilePref2 = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
-                    profilePref2.getString("weight", "0") + " kg"
-                } else {
-                    oldReportForThisDate2?.weight ?: (profilePref.getString("weight", "0") + " kg")
-                }
-
-                val reportData = ReportData(
-                    selectedDate, currentWeight,
-                    "%.0f kcal".format(breakfastTotal), "%.0f kcal".format(lunchTotal), "%.0f kcal".format(dinnerTotal),
-                    "%.0f kcal".format(grandTotal), savedBmr, savedTdee
-                )
-                ReportManager.saveReport(requireContext(), reportData)
-
-                // 5. Segarkan dashboard utama dngan tutup dialog
-                loadDataByDate(selectedDate)
-                alertDialog.dismiss()
-                Toast.makeText(requireContext(), "$mealType berjaya dikosongkan!", Toast.LENGTH_SHORT).show()
             }
-            // 10. LOGIK BUTANG SIMPAN MENU KE DATABASE MYSQL
+            // 10. LOGIK BUTANG SIMPAN MENU KE DATABASE ROOM (SQLITE) — OFFLINE
             btnSaveMeal.setOnClickListener {
                 val selectedDate = edtDate.text.toString()
+                val mealKey = MealRepository.normalizeMealType(mealType)
 
-                val oldText = when (mealType) {
-                    "Sarapan", "🍳 Sarapan" -> sharedPref.getString("${selectedDate}_breakfast_text", "")
-                    "Tengah Hari", "🍛 Tengah Hari" -> sharedPref.getString("${selectedDate}_lunch_text", "")
-                    else -> sharedPref.getString("${selectedDate}_dinner_text", "")
-                } ?: ""
-
-                val combinedText = if (oldText.isNotEmpty()) oldText + "\n" + tempMealList.joinToString("\n") else tempMealList.joinToString("\n")
-
-                val oldTotal = when (mealType) {
-                    "Sarapan", "🍳 Sarapan" -> breakfastTotal
-                    "Tengah Hari", "🍛 Tengah Hari" -> lunchTotal
-                    else -> dinnerTotal
+                if (tempMealList.isEmpty()) {
+                    Toast.makeText(requireContext(), "Tiada item untuk disimpan.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
                 }
 
-                val newTotal = oldTotal + tempTotal
-
-                // Kemas kini pembolehubah kaunter & SharedPreferences lokal mengikut jenis fasa makanan
-                when (mealType) {
-                    "Sarapan", "🍳 Sarapan" -> {
-                        breakfastTotal = newTotal
-                        editor.putString("${selectedDate}_breakfast_text", combinedText)
-                        editor.putFloat("${selectedDate}_breakfast_total", newTotal.toFloat())
-                    }
-                    "Tengah Hari", "🍛 Tengah Hari" -> {
-                        lunchTotal = newTotal
-                        editor.putString("${selectedDate}_lunch_text", combinedText)
-                        editor.putFloat("${selectedDate}_lunch_total", newTotal.toFloat())
-                    }
-                    "Makan Malam", "🌙 Makan Malam" -> {
-                        dinnerTotal = newTotal
-                        editor.putString("${selectedDate}_dinner_text", combinedText)
-                        editor.putFloat("${selectedDate}_dinner_total", newTotal.toFloat())
-                    }
+                // Tukar setiap teks paparan item ("• Nama (unit) = 123 kcal") jadi rekod Room
+                val calRegex = Regex("=\\s*([0-9]+(?:\\.[0-9]+)?)\\s*kcal")
+                val records = tempMealList.map { itemText ->
+                    val calories = calRegex.find(itemText)?.groupValues?.get(1)?.toDoubleOrNull() ?: 0.0
+                    MealRecordEntity(
+                        date = selectedDate,
+                        mealType = mealKey,
+                        foodName = itemText,
+                        calories = calories
+                    )
                 }
 
-                val grandTotal = breakfastTotal + lunchTotal + dinnerTotal
-                val tdeeValue = savedTdee.replace("kcal", "").trim().toDoubleOrNull() ?: 0.0
-                val balance = tdeeValue - grandTotal
-
-                editor.putFloat("${selectedDate}_totalCalories", grandTotal.toFloat())
-                editor.putFloat("${selectedDate}_balance", balance.toFloat())
-                editor.putString("${selectedDate}_tdee", savedTdee)
-                editor.putString("${selectedDate}_bmr", savedBmr)
-                editor.apply()
-
-                // Hantar rekod ke pelayan MySQL cloud api dngan selamat
-                lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-                    try {
-                        val loginPref2 = requireActivity().getSharedPreferences("LoginSession", Context.MODE_PRIVATE)
-                        val userId2 = loginPref2.getString("userId", "") ?: ""
-
-                        val mealWithoutEmoji = when(mealType) {
-                            "Sarapan", "🍳 Sarapan" -> "Sarapan"
-                            "Tengah Hari", "🍛 Tengah Hari" -> "Tengah Hari"
-                            else -> "Makan Malam"
-                        }
-
-                        val foodName = tempMealList.joinToString(", ")
-                        val url = URL("https://specmb.org/kalori_api/save_food.php")
-                        val connection = url.openConnection()
-                        connection.doOutput = true
-
-                        val dateParts = selectedDate.split("/")
-                        val mysqlDate = "${dateParts[2]}-${dateParts[1]}-${dateParts[0]}"
-
-                        val currentWeight5 = sharedPref.getString("weight", "0") + " kg"
-                        val currentBmr5 = sharedPref.getString("bmr", "0 kcal") ?: "0 kcal"
-                        val currentTdee5 = sharedPref.getString("tdee", "0 kcal") ?: "0 kcal"
-
-                        val encodedMeal = URLEncoder.encode(mealWithoutEmoji, "UTF-8")
-                        val encodedFood = URLEncoder.encode(foodName, "UTF-8")
-                        val encodedWeight = URLEncoder.encode(currentWeight5, "UTF-8")
-                        val encodedBmr = URLEncoder.encode(currentBmr5, "UTF-8")
-                        val encodedTdee = URLEncoder.encode(currentTdee5, "UTF-8")
-
-                        val postData = "user_id=$userId2" +
-                                "&meal_type=$encodedMeal" +
-                                "&food_name=$encodedFood" +
-                                "&calories=${tempTotal.toInt()}" +
-                                "&food_date=$mysqlDate" +
-                                "&weight=$encodedWeight" +
-                                "&bmr=$encodedBmr" +
-                                "&tdee=$encodedTdee"
-
-                        connection.getOutputStream().write(postData.toByteArray())
-                        val response = connection.getInputStream().bufferedReader().readText()
-                        android.util.Log.d("SAVE_FOOD", "Respon MySQL: $response")
-
-                        // Panggil semula logik penyelarasan cloud jika data berjaya masuk ke pelayan web
-                        if (response.trim().contains("Food Saved") && userId2.isNotEmpty()) {
-                            requireActivity().runOnUiThread {
-                                loadCloudFoods(userId2)
-                            }
-                        }
-
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                lifecycleScope.launch {
+                    MealRepository.addAll(appContext, records)
+                    syncReportNow(selectedDate)
+                    loadDataByDate(selectedDate)
                 }
 
-                // Segarkan paparan data pada 3 kad utama di dashboard phone
-                loadDataByDate(selectedDate)
                 alertDialog.dismiss() // Tutup popup selepas tamat menyimpan data dngan jaya
             }
 
