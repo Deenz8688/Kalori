@@ -81,7 +81,7 @@ class KaloriFragment : Fragment() {
         loadingDialog.show()
 
         lifecycleScope.launch {
-            val food = GeminiHelper.analisisGambarMakananAI(bitmap)
+            val food = DeepSeekHelper.analisisGambarMakananAI(bitmap)
             loadingDialog.dismiss()
 
             if (food != null) {
@@ -744,13 +744,13 @@ class KaloriFragment : Fragment() {
                     edtBreakfastFood.requestFocus()
 
                 } else {
-                    // ❌ TAK JUMPA DALAM DATABASE → GUNA GEMINI AI (FALLBACK)
+                    // ❌ TAK JUMPA DALAM DATABASE → GUNA DEEPSEEK AI (FALLBACK)
                     val fullPromptQuery = "$searchText sebanyak $amountText"
 
                     txtBreakfastCalories.text = "⏳ AI sedang mengira..."
 
                     lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-                        val foundFood = GeminiHelper.dapatkanKaloriDariAI(fullPromptQuery)
+                        val foundFood = DeepSeekHelper.dapatkanKaloriDariAI(fullPromptQuery)
 
                         withContext(kotlinx.coroutines.Dispatchers.Main) {
                             if (foundFood != null) {
