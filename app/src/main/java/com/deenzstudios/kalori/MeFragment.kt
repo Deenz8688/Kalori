@@ -13,6 +13,7 @@ import android.net.Uri
 import com.deenzstudios.kalori.data.BackupManager
 import com.deenzstudios.kalori.data.ProfileEntity
 import com.deenzstudios.kalori.data.ProfileRepository
+import com.deenzstudios.kalori.data.WaterRepository
 import kotlinx.coroutines.launch
 
 
@@ -298,6 +299,9 @@ class MeFragment : Fragment() {
                         bmiColor = bmiColor,
                         bmr = "%.0f kcal".format(bmr),
                         tdee = "%.0f kcal".format(tdee),
+                        // Kekalkan sasaran air yang telah diset di tab Air (jangan reset ke default)
+                        waterTargetMl = currentProfile?.waterTargetMl
+                            ?: WaterRepository.DEFAULT_TARGET_ML,
                         profileImage = imageUriString ?: currentProfile?.profileImage
                     )
                     currentProfile = profile

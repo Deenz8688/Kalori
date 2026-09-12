@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="24dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
