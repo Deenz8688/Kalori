@@ -80,18 +80,55 @@ object DeepSeekHelper {
             )
             val dataUrl = "data:image/jpeg;base64,$encodedImage"
 
-            val prompt = """
-            Anda adalah Pakar Nutrisi Malaysia yang sangat teliti. Tugas anda adalah mengenalpasti menu dalam gambar dengan tepat.
+            val systemPrompt = "Anda pakar masakan & nutrisi (Malaysia, Asia & antarabangsa) yang sangat teliti. " +
+                "Jawab HANYA dengan JSON yang sah, tiada ayat lain."
 
-            Berikan hasil dalam format json SAHAJA:
+            val prompt = """
+            Kenal pasti hidangan dalam gambar ini DENGAN TEPAT.
+
+            LANGKAH 1 — TENTUKAN JENIS MASAKAN dahulu:
+            - Jika ia masakan MALAYSIA / ASIA TENGGARA (kuah, sambal, santan, nasi, mi, lauk tempatan) => guna PANDUAN A.
+            - Jika ia masakan BARAT / ANTARABANGSA (burger, pizza, pasta, sandwich, salad, steak, ayam goreng, kentang, sushi, dsb.) => guna PANDUAN B.
+            - Jika tidak pasti, kenal pasti ikut apa yang PALING KELIHATAN dan guna nama standard paling dikenali.
+
+            PANDUAN A — MASAKAN MALAYSIA/ASIA (buat dalam kepala, jangan tulis dalam jawapan):
+            1. Perhatikan KUAH/SOS — warna, kepekatan, ada santan atau tidak:
+               - Kuah hampir jernih / kuning pucat & cair, berasaskan air asam (asam keping) + kunyit + cili padi => SINGGANG / PINDANG (BUKAN kari!).
+               - Kuah kuning pekat & keruh, berasaskan santan + cili => MASAK LEMAK CILI API / GULAI.
+               - Kuah oren/merah kekuningan pekat, berempah (ketumbar/jintan) => KARI.
+               - Kuah merah pekat & pedas, ada tomato/bendi => ASAM PEDAS.
+               - Kuah kuning pekat berasaskan kunyit + santan => KARI/GULAI (hanya jika nampak rempah kari).
+               - Tiada kuah / kering => GORENG, BAKAR, SAMBAL TUMIS atau KICAP.
+            2. Perhatikan bahan utama: jenis ikan (kembung, tenggiri, senangin, bawal), ayam, daging, telur, tauhu, tempe atau sayur.
+            3. Perhatikan bahan sampingan: bendi, terung, tomato, kentang, nanas, daun kesum, daun kunyit, cili padi.
+
+            BEZA PENTING (jangan keliru):
+            - Ikan Singgang: kuah hampir jernih/kuning muda, hirisan bawang + cili padi + asam keping + daun kunyit/kesum. TIADA santan, TIDAK berwarna oren.
+            - Ikan Kari: kuah oren/merah pekat berempah, kadangkala bersantan.
+            - Ikan Masak Lemak: kuah kuning pekat bersantan.
+            - Ikan Asam Pedas: kuah merah pekat pedas.
+            - Ikan Goreng: kering, permukaan garing, tiada kuah.
+
+            PANDUAN B — MASAKAN BARAT/ANTARABANGSA:
+            - Kenal pasti ikut NAMA STANDARD antarabangsa yang biasa dikenali, bukan nama tempatan yang dipaksa.
+            - Contoh: "Cheeseburger", "Pepperoni Pizza", "Spaghetti Carbonara", "Grilled Chicken Caesar Salad", "Chicken Sandwich", "French Fries", "Fried Chicken", "Beef Steak", "Chicken Chop", "Sushi Roll".
+            - Perhatikan: jenis roti/bun, jenis keju, sos (mayo, tomato, BBQ, krim), jenis daging/ayam, ada kentang/nasi/roti sisi atau tidak.
+            - Anggar saiz & kalori ikut hidangan barat biasa (cth: burger standard ±250–350g, sepinggan pasta ±300g). Jangan overestimate.
+
+            PERATURAN WAJIB (kedua-dua panduan):
+            - JANGAN pulangkan nama generik seperti "Makanan", "Ikan Masak" atau "Hidangan".
+            - JANGAN terus anggap semua ikan berkuah sebagai "Kari". Pilih nama PALING SEPADAN dengan warna kuah & bahan yang kelihatan.
+            - Jika ragu, pilih nama yang paling sepadan dengan apa yang KELIHATAN (warna, tekstur, bahan).
+            - Sertakan cara masakan dalam nama bila jelas (cth: "Ikan Singgang", "Ikan Kari", "Ayam Masak Merah", "Sambal Tumis Udang", "Grilled Chicken", "Beef Burger").
+            - Anggar berat sebenar hidangan (gram) & kira kalori realistik. Jangan overestimate.
+
+            Balas HANYA dengan JSON ini (tiada ayat lain):
             {
-              "name": "Nama Makanan Spesifik",
+              "name": "Nama hidangan spesifik",
               "serving": "Anggaran Berat | PROTEIN: 0g, KARBOHIDRAT: 0g, LEMAK: 0g",
               "gram": 0.0,
               "calories": 0.0
             }
-
-            PENTING: Masukkan info makro nutrisi dalam ruangan 'serving' selepas tanda '|'.
             """.trimIndent()
 
             val contentArray = JSONArray().apply {
@@ -104,6 +141,7 @@ object DeepSeekHelper {
             }
 
             val messages = JSONArray().apply {
+                put(JSONObject().put("role", "system").put("content", systemPrompt))
                 put(JSONObject().put("role", "user").put("content", contentArray))
             }
 
